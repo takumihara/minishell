@@ -17,7 +17,7 @@ else
 	 LIB += -lreadline
 endif
 
-all: $(NAME)
+all: $(NAME) run
 
 $(NAME): $(OBJS)
 	@make -C $(LIBFT_PATH)
@@ -39,4 +39,7 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all bonus clean fclean re
+run:
+	./$(NAME)
+
+.PHONY: all bonus clean fclean re run

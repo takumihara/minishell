@@ -7,14 +7,19 @@
 #include <signal.h>
 #include "libft/libft.h"
 
+//	rl_on_new_line();
+//	rl_replace_line("", 0); // <- 現状、何故かこの関数だけがコンパイルエラーとなり動かない
+//	rl_redisplay();
+
 // 何らかのSIGNAL(Ctrl-C(SIGINT), Ctrl-\(SIGQUIT))を受け取った時の挙動を定義する
 static void	signal_handler(int signo)
 {
-	(void)signo;
-	printf("\n");
-	rl_on_new_line();
-	rl_replace_line("", 0); // <- 現状、何故かこの関数だけがコンパイルエラーとなり動かない
-	rl_redisplay();
+//	printf("signo: %d\n", signo);
+	if (signo == 2)
+	{
+		rl_on_new_line();
+		rl_redisplay();
+	}
 }
 
 void	set_signal_handler(void)
@@ -32,9 +37,11 @@ int	main(void)
 	while (1)
 	{
 		line = readline("minishell> ");
-		if (ft_strncmp(line, "exit", 4) == 0)
+		// line can be NULL when Ctrl+d
+		if (!line || ft_strncmp(line, "exit", 4) == 0)
 		{
 			free(line);
+			write(STDOUT_FILENO, "exit\n", 5);
 			break ;
 		}
 		printf("line is '%s'\n", line);
