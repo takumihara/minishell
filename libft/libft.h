@@ -71,4 +71,6 @@ t_list			*ft_lstmap(t_list *lst,
 
 // Original
 
+int				ft_isspace(char c);
+
 #endif
