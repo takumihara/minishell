@@ -20,6 +20,7 @@ char *debug_token_type[20] = {
 		"ARGUMENT",
 		"PIPE",
 		"REDIRECT",
+		"HEREDOC",
 };
 
 int main()
@@ -34,15 +35,19 @@ int main()
 
 	t_lexer *lexer = new_lexer(input1);
 
-	for (int i = 0; i < 4; ++i) {
-		t_token token = next_token(lexer);
+	read_char(lexer);
 
+	for (int i = 0; i < 4; ++i) {
+		t_token *token = next_token(lexer);
+
+		printf("token->literal:'%s'\n", token->literal);
 		//todo: printf is used - make sure not to include _test.c in srcs when compiling
-		if (token.type != test[i].expected_type)
-			printf("test[%d] - token type wrong. expected=%s, got=%s\n", i, debug_token_type[test[i].expected_type], debug_token_type[token.type]);
-		if (!ft_strncmp(token.literal, test[i].expected_literal, ft_strlen(test[i].expected_literal)))
-			printf("test[%d] - token literal wrong. expected=%s, got=%s\n", i, test[i].expected_literal, token.literal);
-//		free(token.literal);
+		if (token->type != test[i].expected_type)
+			printf("test[%d] - token type wrong. expected=%s, got=%s\n", i, debug_token_type[test[i].expected_type], debug_token_type[token->type]);
+		if (ft_strcmp(token->literal, test[i].expected_literal))
+			printf("test[%d] - token literal wrong. expected=%s, got=%s\n", i, test[i].expected_literal, token->literal);
+		free(token->literal);
+		free(token);
 	}
 	free(lexer);
 	for (int i = 0; i < 4; ++i) {

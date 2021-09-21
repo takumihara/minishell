@@ -72,5 +72,6 @@ t_list			*ft_lstmap(t_list *lst,
 // Original
 
 int				ft_isspace(char c);
+int				ft_strcmp(const char *s1, const char *s2);
 
 #endif
