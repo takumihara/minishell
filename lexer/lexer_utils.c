@@ -1,5 +1,20 @@
+#include <printf.h>
 #include "lexer.h"
 #include "../libft/libft.h"
+
+t_token new_token_string(t_lexer *lexer)
+{
+	size_t start;
+	t_token token;
+
+	start = lexer->position;
+	while (!ft_strchr(DELIMITER, lexer->input[lexer->read_position]))
+		read_char(lexer);
+
+	token.type = STRING;
+	ft_memmove(token.literal, &lexer->input[start], (lexer->read_position - start)*sizeof(char));
+	return (token);
+}
 
 void	read_char(t_lexer *lexer)
 {
