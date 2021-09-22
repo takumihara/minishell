@@ -6,7 +6,7 @@
 // todo: remove this
 # include "printf.h"
 
-# define DELIMITER "|&<>= "
+# define DELIMITER "|&<>=$ "
 
 // todo: need to discuss if read_position is actually needed?
 // todo: type of positions are different from the book

@@ -20,6 +20,7 @@ typedef enum e_token_type {
 	AND_IF,
 	OR_IF,
 	STRING,
+	ENVIRONMENT,
 }	t_token_type;
 
 // todo: need to discuss how to hold the value of literal
