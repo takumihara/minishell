@@ -4,7 +4,12 @@
 # include "../token/token.h"
 # include <stdlib.h>
 # include <stdio.h>
+// todo: remove this
+# include "printf.h"
 
+# define DELIMITER "|&<>=$ "
+
+// todo: need to discuss if read_position is actually needed?
 // todo: type of positions are different from the book
 // position: current character
 // read_point: next character
@@ -22,6 +27,7 @@ t_lexer	*new_lexer(char *input);
 t_token	*next_token(t_lexer *lexer);
 
 // lexer_utils.c
+t_token new_token_string(t_lexer *lexer);
 void	read_char(t_lexer *lexer);
 void	skip_space(t_lexer *lexer);
 t_token	*new_token(t_token_type token_type, char ch);

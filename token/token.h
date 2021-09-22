@@ -1,6 +1,8 @@
 #ifndef TOKEN_H
 # define TOKEN_H
 
+// AND_IF: &&
+// OR_IF: ||
 typedef enum e_token_type {
 	ILLEGAL,
 	EOL,
@@ -14,8 +16,15 @@ typedef enum e_token_type {
 	PIPE,
 	REDIRECT,
 	HEREDOC,
+	LPAREN,
+	RPAREN,
+	AND_IF,
+	OR_IF,
+	STRING,
+	ENVIRONMENT,
 }	t_token_type;
 
+// todo: use struct of char* and int len
 typedef struct s_token {
 	enum e_token_type	type;
 	char				*literal;
