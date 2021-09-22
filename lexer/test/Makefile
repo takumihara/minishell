@@ -1,13 +1,14 @@
 NAME    = a.out
 SRCS    = $(wildcard *.c)
-SRCS	+= $(wildcard ../token/*.c)
+SRCS    = $(wildcard ../*.c)
+SRCS	+= $(wildcard ../../token/*.c)
 OBJDIR  = ./obj
 OBJS    = $(addprefix $(OBJDIR)/, $(SRCS:%.c=%.o))
 CC      = gcc
 CFLAG   = -Wall -Wextra -Werror -fsanitize=address
 
 LIBFT_PATH = ../libft
-INCLUDE		= -I../lexer -I../token
+INCLUDE		= -I../../lexer -I../../token
 
 #all: $(NAME)
 all: run
