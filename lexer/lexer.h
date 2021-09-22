@@ -3,6 +3,7 @@
 
 # include "../token/token.h"
 # include <stdlib.h>
+# include <stdio.h>
 // todo: remove this
 # include "printf.h"
 
@@ -23,12 +24,15 @@ typedef struct s_lexer
 
 // lexer.c
 t_lexer	*new_lexer(char *input);
-t_token	next_token(t_lexer *lexer);
+t_token	*next_token(t_lexer *lexer);
 
 // lexer_utils.c
 t_token new_token_string(t_lexer *lexer);
 void	read_char(t_lexer *lexer);
 void	skip_space(t_lexer *lexer);
-t_token new_token(t_token_type token_type, char ch);
+t_token	*new_token(t_token_type token_type, char ch);
+int		is_letter(char ch);
+char	*read_identifier(t_lexer *lexer);
+enum e_token_type	lookup_ident(char *ident);
 
 #endif //LEXER_H

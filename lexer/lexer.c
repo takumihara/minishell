@@ -11,15 +11,14 @@ t_lexer *new_lexer(char *input)
 		return (NULL);
 	lexer->input = input;
 	lexer->position = 0;
-	lexer->read_position = 1;
-	lexer->ch = lexer->input[lexer->position];
+	lexer->read_position = 0;
 	return lexer;
 }
 
 
-t_token next_token(t_lexer *lexer)
+t_token *next_token(t_lexer *lexer)
 {
-	t_token	token;
+	t_token	*token;
 
 	skip_space(lexer);
 	if (lexer->ch == '|')
@@ -47,15 +46,21 @@ t_token next_token(t_lexer *lexer)
 			token = new_token(ILLEGAL, lexer->ch);
 	}
 	else if (lexer->ch == '\0')
-	{
-		token.type = EOL;
-		// todo: different from the book
-		token.literal[0] = 0;
-	}
+		token = new_token(EOL, 4);
 	else
-		token = new_token_string(lexer);
-//		token = new_token(ILLEGAL, lexer->ch);
-// make sure lexer->position now indicates the last char of this tern
+	{
+    // TODO: rm is_letter
+		if (is_letter(lexer->ch))
+		{
+			token = (t_token *)malloc(sizeof(t_token));
+			token->literal = read_identifier(lexer);
+			token->type = lookup_ident(token->literal);
+			return (token);
+			// printf("%s\n", token.literal);
+		}
+    // 	else
+// 		token = new_token_string(lexer);
+	}
 	read_char(lexer);
 	return (token);
 }
