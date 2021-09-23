@@ -59,11 +59,13 @@ int main()
 		printf("input:%s\n", input);
 
 		t_lexer *lexer = new_lexer(input);
-		read_char(lexer);
+		t_token *token;
+		char	*token_literal_str;
+
+		token = lexer_main(lexer);
 
 		for (int i = 0; i < 4; ++i) {
-			t_token *token = next_token(lexer);
-			char	*token_literal_str = (char *)malloc(sizeof(char) * (token->literal.len + 1));
+			token_literal_str = (char *)malloc(sizeof(char) * (token->literal.len + 1));
 
 			ft_memmove(token_literal_str, token->literal.start, token->literal.len);
 			token_literal_str[token->literal.len] = '\0';
@@ -75,7 +77,7 @@ int main()
 			if (ft_strncmp(token->literal.start, test[i].expected_literal, token->literal.len))
 				printf("test[%d] - token literal wrong. expected=%s, got=%s\n", i, test[i].expected_literal, token_literal_str);
 			free(token_literal_str);
-			free(token);
+			token = token->next;
 		}
 		printf("---------------------------------\n");
 		free(lexer);

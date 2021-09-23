@@ -7,7 +7,6 @@ void	read_char(t_lexer *lexer)
 	if (lexer->read_position == ft_strlen(lexer->input))
 		lexer->ch = 0;
 	else if (lexer->read_position > ft_strlen(lexer->input))
-
 		return ;
 	else
 		lexer->ch = lexer->input[lexer->read_position];
@@ -32,6 +31,8 @@ t_token	*new_token(t_token_type token_type, t_lexer *lexer, size_t len)
 	token->type = token_type;
 	token->literal.start = &lexer->input[lexer->position];
 	token->literal.len = len;
+	token->prev = NULL;
+	token->next = NULL;
 	return (token);
 }
 
@@ -51,6 +52,8 @@ t_token	*new_token_string(t_lexer *lexer)
 	token->type = STRING;
 	token->literal.len = lexer->position - len_start;
 	token->literal.start = str_start;
+	token->prev = NULL;
+	token->next = NULL;
 	return (token);
 }
 
@@ -71,5 +74,7 @@ t_token	*new_token_environment(t_lexer *lexer)
 	token->type = ENVIRONMENT;
 	token->literal.len = lexer->position - len_start;
 	token->literal.start = str_start;
+	token->prev = NULL;
+	token->next = NULL;
 	return (token);
 }

@@ -34,6 +34,8 @@ typedef struct s_string {
 typedef struct s_token {
 	enum e_token_type	type;
 	t_string			literal;
+	struct s_token		*prev;
+	struct s_token		*next;
 }	t_token;
 
 #endif //TOKEN_H

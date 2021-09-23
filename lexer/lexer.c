@@ -15,7 +15,6 @@ t_lexer *new_lexer(char *input)
 	return lexer;
 }
 
-
 t_token *next_token(t_lexer *lexer)
 {
 	t_token	*token;
@@ -59,5 +58,23 @@ t_token *next_token(t_lexer *lexer)
 		return (token);
 	}
 	read_char(lexer);
+	return (token);
+}
+
+// token_listの先頭アドレスを返す
+t_token	*lexer_main(t_lexer *lexer)
+{
+	t_token	*token;
+
+	token = NULL;
+	read_char(lexer);
+	while (lexer->ch)
+	{
+		if (!token_lstadd_back(&token, next_token(lexer)))
+		{
+			// todo: token_lstclear() to free list
+			return (NULL);
+		}
+	}
 	return (token);
 }
