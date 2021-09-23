@@ -27,13 +27,15 @@ typedef enum e_token_type {
 }	t_token_type;
 
 typedef struct s_string {
-	char	*str;
+	char	*start;
 	size_t	len;
 }	t_string;
 
 typedef struct s_token {
 	enum e_token_type	type;
 	t_string			literal;
+	struct s_token		*prev;
+	struct s_token		*next;
 }	t_token;
 
 #endif //TOKEN_H
