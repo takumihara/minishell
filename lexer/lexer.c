@@ -43,8 +43,16 @@ t_token *next_token(t_lexer *lexer)
 		else
 			token = new_token(ILLEGAL, lexer, 1);
 	}
-// 	else if (lexer->ch == '\0')
-// 		token = new_token(EOL, 4);
+	else if (lexer->ch == '$')
+	{
+		if (!ft_strchr(DELIMITER, lexer->input[lexer->read_position]))
+		{
+			token = new_token_environment(lexer);
+			return (token);
+		}
+		else
+			token = new_token(ILLEGAL, lexer, 1);
+	}
 	else
 	{
 		token = new_token_string(lexer);

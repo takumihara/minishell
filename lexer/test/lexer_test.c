@@ -161,7 +161,7 @@ int main()
 		t_lexer *lexer = new_lexer(input);
 		read_char(lexer);
 
-		for (int i = 0; i < 4; ++i) {
+		for (int i = 0; i < 5; ++i) {
 			t_token *token = next_token(lexer);
 			char	*token_literal_str = (char *)malloc(sizeof(char) * (token->literal.len + 1));
 
@@ -195,7 +195,7 @@ int main()
 		t_lexer *lexer = new_lexer(input);
 		read_char(lexer);
 
-		for (int i = 0; i < 4; ++i) {
+		for (int i = 0; i < 5; ++i) {
 			t_token *token = next_token(lexer);
 			char	*token_literal_str = (char *)malloc(sizeof(char) * (token->literal.len + 1));
 
@@ -215,25 +215,35 @@ int main()
 		free(lexer);
 	}
 
-	// {
-	// 	//todo: how to deal with "echo$HELLO'a'"
-	// 	char input[] = "echo$HELLO 'a'";
-	// 	struct test test[5] = {
-	// 			{STRING, "echo"},
-	// 			{ENVIRONMENT, "$HELLO"},
-	// 			{AND_IF, "&&"},
-	// 			{STRING, "echo"},
-	// 			{STRING, "success"},
-	// 	};
-	// 	t_lexer *lexer = new_lexer(input);
+	{
+		//todo: how to deal with "echo$HELLO'a'"
+		char input[] = "echo$HELLO";
+		struct test test[2] = {
+				{STRING, "echo"},
+				{ENVIRONMENT, "$HELLO"},
+		};
+		printf("input:%s\n", input);
 
-	// 	for (int i = 0; i < 5; ++i) {
-	// 		t_token token = next_token(lexer);
-	// 		if (token.type != test[i].expected_type)
-	// 			printf("test[%d] - token type wrong. expected=%s, got=%s\n", i, debug_token_type[test[i].expected_type], debug_token_type[token.type]);
-	// 		if (ft_strncmp(token.literal, test[i].expected_literal, ft_strlen(test[i].expected_literal)))
-	// 			printf("test[%d] - token literal wrong. expected=%s, got=%s\n", i, test[i].expected_literal, token.literal);
-	// 	}
-	// 	free(lexer);
-	// }
+		t_lexer *lexer = new_lexer(input);
+		read_char(lexer);
+
+		for (int i = 0; i < 2; ++i) {
+			t_token *token = next_token(lexer);
+			char	*token_literal_str = (char *)malloc(sizeof(char) * (token->literal.len + 1));
+
+			ft_memmove(token_literal_str, token->literal.start, token->literal.len);
+			token_literal_str[token->literal.len] = '\0';
+			printf("{Type:%s, Literal:'%s'}\n", debug_token_type[token->type], token_literal_str);
+
+			//todo: printf is used - make sure not to include _test.c in srcs when compiling
+			if (token->type != test[i].expected_type)
+				printf("test[%d] - token type wrong. expected=%s, got=%s\n", i, debug_token_type[test[i].expected_type], debug_token_type[token->type]);
+			if (ft_strncmp(token->literal.start, test[i].expected_literal, token->literal.len))
+				printf("test[%d] - token literal wrong. expected=%s, got=%s\n", i, test[i].expected_literal, token_literal_str);
+			free(token_literal_str);
+			free(token);
+		}
+		printf("---------------------------------\n");
+		free(lexer);
+	}
 }

@@ -31,5 +31,6 @@ void	read_char(t_lexer *lexer);
 void	skip_space(t_lexer *lexer);
 t_token	*new_token(t_token_type token_type, t_lexer *lexer, size_t len);
 t_token *new_token_string(t_lexer *lexer);
+t_token	*new_token_environment(t_lexer *lexer);
 
 #endif //LEXER_H
