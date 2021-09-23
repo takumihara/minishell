@@ -15,7 +15,6 @@ t_lexer *new_lexer(char *input)
 	return lexer;
 }
 
-
 t_token *next_token(t_lexer *lexer)
 {
 	t_token	*token;
@@ -43,13 +42,39 @@ t_token *next_token(t_lexer *lexer)
 		else
 			token = new_token(ILLEGAL, lexer, 1);
 	}
-// 	else if (lexer->ch == '\0')
-// 		token = new_token(EOL, 4);
+	else if (lexer->ch == '$')
+	{
+		if (!ft_strchr(DELIMITER, lexer->input[lexer->read_position]))
+		{
+			token = new_token_environment(lexer);
+			return (token);
+		}
+		else
+			token = new_token(ILLEGAL, lexer, 1);
+	}
 	else
 	{
 		token = new_token_string(lexer);
 		return (token);
 	}
 	read_char(lexer);
+	return (token);
+}
+
+// token_listの先頭アドレスを返す
+t_token	*lexer_main(t_lexer *lexer)
+{
+	t_token	*token;
+
+	token = NULL;
+	read_char(lexer);
+	while (lexer->ch)
+	{
+		if (!token_lstadd_back(&token, next_token(lexer)))
+		{
+			// todo: token_lstclear() to free list
+			return (NULL);
+		}
+	}
 	return (token);
 }
