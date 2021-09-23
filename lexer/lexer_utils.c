@@ -12,7 +12,6 @@ t_token	*new_token_string(t_lexer *lexer)
 	if (!token)
 		return (NULL);
 	str = &(lexer->input[lexer->position]);
-	printf("str:%s\n", str);
 	start = lexer->position;
 	while (!ft_strchr(DELIMITER, lexer->ch))
 		read_char(lexer);
