@@ -1,6 +1,6 @@
 NAME    = a.out
 SRCS    = $(wildcard *.c)
-SRCS    = $(wildcard ../*.c)
+SRCS    += $(wildcard ../*.c)
 SRCS	+= $(wildcard ../../token/*.c)
 OBJDIR  = ./obj
 OBJS    = $(addprefix $(OBJDIR)/, $(SRCS:%.c=%.o))

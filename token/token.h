@@ -33,7 +33,7 @@ typedef struct s_string {
 
 typedef struct s_token {
 	enum e_token_type	type;
-	t_string			*literal;
+	t_string			literal;
 }	t_token;
 
 #endif //TOKEN_H
