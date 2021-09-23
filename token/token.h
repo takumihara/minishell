@@ -27,7 +27,7 @@ typedef enum e_token_type {
 }	t_token_type;
 
 typedef struct s_string {
-	char	*str;
+	char	*start;
 	size_t	len;
 }	t_string;
 
