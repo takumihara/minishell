@@ -7,7 +7,7 @@ OBJS    = $(addprefix $(OBJDIR)/, $(SRCS:%.c=%.o))
 CC      = gcc
 CFLAG   = -Wall -Wextra -Werror -fsanitize=address
 
-LIBFT_PATH = ../libft
+LIBFT_PATH = ../../libft
 INCLUDE		= -I../../lexer -I../../token
 
 #all: $(NAME)
