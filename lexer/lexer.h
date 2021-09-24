@@ -31,9 +31,12 @@ t_token	*lexer_main(t_lexer *lexer);
 // lexer_utils.c
 void	read_char(t_lexer *lexer);
 void	skip_space(t_lexer *lexer);
+
+// lexer_new_token.c
 t_token	*new_token(t_token_type token_type, t_lexer *lexer, size_t len);
 t_token	*new_token_string(t_lexer *lexer);
 t_token	*new_token_environment(t_lexer *lexer);
+t_token	*new_token_single_quote(t_lexer *lexer);
 
 // lexer_list.c
 int		token_lstadd_back(t_token **lst, t_token *new);
