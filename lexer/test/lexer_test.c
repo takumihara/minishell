@@ -24,7 +24,7 @@ struct test {
 //	AND_IF,
 //	OR_IF,
 //	STRING,
-char *debug_token_type[20] = {
+char *debug_token_type[30] = {
 		"ILLEGAL",
 		"EOL",
 		"IDENT",
@@ -35,8 +35,10 @@ char *debug_token_type[20] = {
 		"MINUS",
 		"ARGUMENT",
 		"PIPE",
-		"REDIRECT",
-		"HEREDOC",
+		"REDIRECT_IN",  // "<"
+    	"REDIRECT_OUT",  // ">"
+    	"HEREDOC",  // "<<"
+    	"REDIRECT_APPEND", // ">>"
 		"LPAREN",
 		"RPAREN",
 		"AND_IF",
@@ -47,7 +49,6 @@ char *debug_token_type[20] = {
 
 int main()
 {
-	printf("\n---------------------------------\n");
 	{
 		char input[] = "echo hello|cat";
 		struct test test[4] = {
@@ -56,6 +57,9 @@ int main()
 				{PIPE, "|"},
 				{STRING, "cat"},
 		};
+		printf("\n---------------------------------\n");
+		printf("	 [%s] TEST\n", debug_token_type[PIPE]);
+		printf("---------------------------------\n");
 		printf("input:%s\n", input);
 
 		t_lexer *lexer = new_lexer(input);
@@ -82,7 +86,6 @@ int main()
 			token = token->next;
 		}
 		token_lstclear(&head_token);
-		printf("---------------------------------\n");
 		free(lexer);
 	}
   
@@ -94,6 +97,9 @@ int main()
 				{OR_IF, "||"},
 				{STRING, "cat"},
 		};
+		printf("\n---------------------------------\n");
+		printf("	 [%s] TEST\n", debug_token_type[OR_IF]);
+		printf("---------------------------------\n");
 		printf("input:%s\n", input);
 
 		t_lexer *lexer = new_lexer(input);
@@ -120,7 +126,6 @@ int main()
 			token = token->next;
 		}
 		token_lstclear(&head_token);
-		printf("---------------------------------\n");
 		free(lexer);
 	}
 
@@ -129,9 +134,12 @@ int main()
 		struct test test[4] = {
 				{STRING, "echo"},
 				{STRING, "hello"},
-				{REDIRECT, ">"},
+				{REDIRECT_OUT, ">"},
 				{STRING, "res"},
 		};
+		printf("\n---------------------------------\n");
+		printf("	 [%s] TEST\n", debug_token_type[REDIRECT_OUT]);
+		printf("---------------------------------\n");
 		printf("input:%s\n", input);
 
 		t_lexer *lexer = new_lexer(input);
@@ -158,7 +166,6 @@ int main()
 			token = token->next;
 		}
 		token_lstclear(&head_token);
-		printf("---------------------------------\n");
 		free(lexer);
 	}
 
@@ -171,6 +178,9 @@ int main()
 				{STRING, "echo"},
 				{STRING, "success"},
 		};
+		printf("\n---------------------------------\n");
+		printf("	 [%s] TEST\n", debug_token_type[AND_IF]);
+		printf("---------------------------------\n");
 		printf("input:%s\n", input);
 
 		t_lexer *lexer = new_lexer(input);
@@ -197,7 +207,6 @@ int main()
 			token = token->next;
 		}
 		token_lstclear(&head_token);
-		printf("---------------------------------\n");
 		free(lexer);
 	}
 
@@ -210,6 +219,9 @@ int main()
 				{STRING, "echo"},
 				{STRING, "success"},
 		};
+		printf("\n---------------------------------\n");
+		printf("	 [%s] TEST\n", debug_token_type[ILLEGAL]);
+		printf("---------------------------------\n");
 		printf("input:%s\n", input);
 
 		t_lexer *lexer = new_lexer(input);
@@ -236,7 +248,6 @@ int main()
 			token = token->next;
 		}
 		token_lstclear(&head_token);
-		printf("---------------------------------\n");
 		free(lexer);
 	}
 
@@ -247,6 +258,9 @@ int main()
 				{STRING, "echo"},
 				{ENVIRONMENT, "$HELLO"},
 		};
+		printf("\n---------------------------------\n");
+		printf("	 [%s] TEST\n", debug_token_type[ENVIRONMENT]);
+		printf("---------------------------------\n");
 		printf("input:%s\n", input);
 
 		t_lexer *lexer = new_lexer(input);
@@ -273,7 +287,6 @@ int main()
 			token = token->next;
 		}
 		token_lstclear(&head_token);
-		printf("---------------------------------\n");
 		free(lexer);
 	}
 }

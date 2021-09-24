@@ -31,7 +31,7 @@ t_token *next_token(t_lexer *lexer)
 			token = new_token(PIPE, lexer, 1);
 	}
 	else if (lexer->ch == '>')
-		token = new_token(REDIRECT, lexer, 1);
+		token = new_token(REDIRECT_OUT, lexer, 1);
 	else if (lexer->ch == '&')
 	{
 		if (lexer->input[lexer->read_position] == '&')

@@ -8,6 +8,7 @@
 # include "printf.h"
 
 # define DELIMITER "|&<>=$ "
+# define QUOTE "\"\'"
 
 // todo: need to discuss if read_position is actually needed?
 // todo: type of positions are different from the book

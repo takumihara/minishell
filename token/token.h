@@ -16,8 +16,10 @@ typedef enum e_token_type {
 	MINUS,
 	ARGUMENT,
 	PIPE,
-	REDIRECT,
-	HEREDOC,
+	REDIRECT_IN,  // "<"
+    REDIRECT_OUT,  // ">"
+    HEREDOC,  // "<<"
+    REDIRECT_APPEND, // ">>"
 	LPAREN,
 	RPAREN,
 	AND_IF,
