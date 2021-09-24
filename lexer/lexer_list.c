@@ -31,3 +31,19 @@ t_token	*token_lstlast(t_token *lst)
 			tmp = tmp->next;
 	return (tmp);
 }
+
+void	token_lstclear(t_token **lst)
+{
+	t_token	*tmp;
+
+	if (!lst)
+		return ;
+	while (*lst)
+	{
+		tmp = (*lst)->next;
+		free(*lst);
+		*lst = NULL;
+		*lst = tmp;
+	}
+	lst = NULL;
+}
