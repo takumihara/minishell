@@ -46,6 +46,7 @@ char *debug_token_type[30] = {
 		"STRING",
 		"ENVIRONMENT",
 		"NOT_CLOSED",
+		"EQUAL",
 };
 
 void	compare_literal_and_type(char *input, char **debug_token_type, int expected_type, t_test *test, int token_num);
@@ -213,6 +214,17 @@ int main()
 				{RPAREN, ")"},
 		};
 		compare_literal_and_type(input, debug_token_type, LPAREN, test, 4);
+	}
+
+	{
+		char input[] = "export $TEST=\"test\"";
+		struct test test[4] = {
+				{STRING, "export"},
+				{ENVIRONMENT, "$TEST"},
+				{EQUAL, "="},
+				{STRING, "test"},
+		};
+		compare_literal_and_type(input, debug_token_type, EQUAL, test, 4);
 	}
 
 }
