@@ -8,6 +8,7 @@
 # include "printf.h"
 
 # define DELIMITER "|&<>=$ "
+# define QUOTE "\"\'"
 
 // todo: need to discuss if read_position is actually needed?
 // todo: type of positions are different from the book
@@ -31,11 +32,12 @@ t_token	*lexer_main(t_lexer *lexer);
 void	read_char(t_lexer *lexer);
 void	skip_space(t_lexer *lexer);
 t_token	*new_token(t_token_type token_type, t_lexer *lexer, size_t len);
-t_token *new_token_string(t_lexer *lexer);
+t_token	*new_token_string(t_lexer *lexer);
 t_token	*new_token_environment(t_lexer *lexer);
 
 // lexer_list.c
 int		token_lstadd_back(t_token **lst, t_token *new);
 t_token	*token_lstlast(t_token *lst);
+void	token_lstclear(t_token **lst);
 
 #endif //LEXER_H
