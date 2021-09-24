@@ -192,7 +192,7 @@ int main()
 				{STRING, "echo"},
 				{NOT_CLOSED, "hello"},
 		};
-		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
+		compare_literal_and_type(input, debug_token_type, NOT_CLOSED, test, 2);
 	}
 
 	{
@@ -201,7 +201,7 @@ int main()
 				{STRING, "echo"},
 				{NOT_CLOSED, "$PATH"},
 		};
-		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
+		compare_literal_and_type(input, debug_token_type, NOT_CLOSED, test, 2);
 	}
 
 }
