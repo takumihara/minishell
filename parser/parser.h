@@ -7,17 +7,14 @@
 #include "../libft/libft.h"
 
 typedef struct t_parser {
-	t_lexer *l;
 	t_token *token;
 }	t_parser;
 
 // parser.c
-t_node *parse(t_lexer *lexer);
-t_node *parse_string(t_parser *p);
-t_node *parse_builtin(t_parser *p);
+t_node *parse(t_token *token);
 
 // parser_utils.c
-t_parser *new_parser(t_lexer *lexer);
+t_parser *new_parser(t_token *token);
 int is_builtin(t_string *literal);
 int is_delim_token(t_token_type type);
 

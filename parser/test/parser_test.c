@@ -26,20 +26,26 @@ int main()
 			printf("input:%s\n", test[i].input);
 
 			t_lexer *lexer = new_lexer(test[i].input);
-			read_char(lexer);
-			t_node *node = parse(lexer);
+			t_token *token = lexer_main(lexer);
+			t_node *node = parse(token);
 
 			char *literal = join_tokens(node->tokens);
+			if (!literal) {
+				printf("test[%d] - join_tokens returned NULL", i);
+				continue;
+			}
 
 			printf("{Type:%s, Literal:'%s'}\n", debug_node_type[node->type], literal);
 
 			if (node->type != test[i].expected_type)
 				printf("test[%d] - token type wrong. expected=%s, got=%s\n", i, debug_node_type[test[i].expected_type], debug_node_type[node->type]);
-			// todo
 			if (ft_strcmp(literal, test[i].expected_literal))
 				printf("test[%d] - token literal wrong. expected=%s, got=%s\n", i, test[i].expected_literal, literal);
 			free(literal);
 			free(lexer);
+			// todo: free token in node->tokens
+			free(node->tokens);
+			free(node);
 		}
 		printf("---------------------------------\n");
 	}
@@ -47,8 +53,8 @@ int main()
 	// test program
 	{
 		struct test test[2] = {
-				{"cat -n hello.txt", PROGRAM, "echo -n hello"},
-				{"cat     -n    hello.txt", PROGRAM, "echo -n hello"},
+				{"cat -n hello.txt", PROGRAM, "cat -n hello.txt"},
+				{"cat     -n    hello.txt", PROGRAM, "cat -n hello.txt"},
 		};
 
 		for (int i = 0; i < 2; ++i) {
@@ -56,20 +62,25 @@ int main()
 			printf("input:%s\n", test[i].input);
 
 			t_lexer *lexer = new_lexer(test[i].input);
-			read_char(lexer);
-			t_node *node = parse(lexer);
+			t_token *token = lexer_main(lexer);
+			t_node *node = parse(token);
 
 			char *literal = join_tokens(node->tokens);
+			if (!literal) {
+				printf("test[%d] - join_tokens returned NULL", i);
+				continue;
+			}
 
 			printf("{Type:%s, Literal:'%s'}\n", debug_node_type[node->type], literal);
 
 			if (node->type != test[i].expected_type)
 				printf("test[%d] - token type wrong. expected=%s, got=%s\n", i, debug_node_type[test[i].expected_type], debug_node_type[node->type]);
-			// todo
 			if (ft_strcmp(literal, test[i].expected_literal))
 				printf("test[%d] - token literal wrong. expected=%s, got=%s\n", i, test[i].expected_literal, literal);
 			free(literal);
 			free(lexer);
+			free(node->tokens);
+			free(node);
 		}
 		printf("---------------------------------\n");
 	}

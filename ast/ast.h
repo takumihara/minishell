@@ -23,6 +23,6 @@ struct s_node {
 	t_node_type	type;
 	t_tokens	*tokens;
 	t_node		*next;
-}
+};
 
 #endif //MINISHELL_AST_H

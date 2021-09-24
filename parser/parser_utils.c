@@ -1,32 +1,31 @@
 #include "parser.h"
 
-t_parser *new_parser(t_lexer *lexer)
+t_parser *new_parser(t_token *token)
 {
 	t_parser *parser;
 
 	parser = malloc(sizeof(t_parser));
 	if (!parser)
 		return (NULL);
-	parser->l = lexer;
-	next_token(parser->l);
+	parser->token = token;
 	return (parser);
 }
 
 int is_builtin(t_string *literal)
 {
-	if (literal->len == 4 && !ft_strncmp(literal->str, "echo", literal->len))
+	if (literal->len == 4 && !ft_strncmp(literal->start, "echo", literal->len))
 		return (1);
-	if (literal->len == 2 && !ft_strncmp(literal->str, "cd", literal->len))
+	if (literal->len == 2 && !ft_strncmp(literal->start, "cd", literal->len))
 		return (1);
-	if (literal->len == 3 && !ft_strncmp(literal->str, "pwd", literal->len))
+	if (literal->len == 3 && !ft_strncmp(literal->start, "pwd", literal->len))
 		return (1);
-	if (literal->len == 6 && !ft_strncmp(literal->str, "export", literal->len))
+	if (literal->len == 6 && !ft_strncmp(literal->start, "export", literal->len))
 		return (1);
-	if (literal->len == 5 && !ft_strncmp(literal->str, "unset", literal->len))
+	if (literal->len == 5 && !ft_strncmp(literal->start, "unset", literal->len))
 		return (1);
-	if (literal->len == 3 && !ft_strncmp(literal->str, "env", literal->len))
+	if (literal->len == 3 && !ft_strncmp(literal->start, "env", literal->len))
 		return (1);
-	if (literal->len == 4 && !ft_strncmp(literal->str, "exit", literal->len))
+	if (literal->len == 4 && !ft_strncmp(literal->start, "exit", literal->len))
 		return (1);
 	return (0);
 }
