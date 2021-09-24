@@ -72,6 +72,11 @@ t_token *next_token(t_lexer *lexer)
 		else
 			token = new_token(ILLEGAL, lexer, 1);
 	}
+	else if (lexer->ch == '\'')
+	{
+		token = new_token_single_quote(lexer);
+		return (token);
+	}
 	else
 	{
 		token = new_token_string(lexer);

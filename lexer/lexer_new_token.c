@@ -59,3 +59,28 @@ t_token	*new_token_environment(t_lexer *lexer)
 	token->next = NULL;
 	return (token);
 }
+
+t_token	*new_token_single_quote(t_lexer *lexer)
+{
+	t_token	*token;
+	char	*str_start;
+	size_t	len_start;
+
+	token = (t_token *)malloc(sizeof(t_token));
+	if (!token)
+		return (NULL);
+	read_char(lexer);
+	str_start = &(lexer->input[lexer->position]);
+	len_start = lexer->position;
+	while (lexer->ch != '\'' && lexer->ch != '\0')
+		read_char(lexer);
+	token->literal.start = str_start;
+	token->literal.len = lexer->position - len_start;
+	if (lexer->ch == '\'')
+		token->type = STRING;
+	else if (lexer->ch == '\0')
+		token->type = NOT_CLOSED;
+	token->prev = NULL;
+	token->next = NULL;
+	return (token);
+}

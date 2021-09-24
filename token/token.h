@@ -26,6 +26,7 @@ typedef enum e_token_type {
 	OR_IF,
 	STRING,
 	ENVIRONMENT,
+	NOT_CLOSED,
 }	t_token_type;
 
 typedef struct s_string {
