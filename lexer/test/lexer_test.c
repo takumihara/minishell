@@ -167,7 +167,43 @@ int main()
 		};
 		compare_literal_and_type(input, debug_token_type, NOT_CLOSED, test, 2);
 	}
-	
+
+	{
+		char input[] = "echo \"hello\"";
+		struct test test[2] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+		};
+		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
+	}
+
+	{
+		char input[] = "echo \"$PATH\"";
+		struct test test[2] = {
+				{STRING, "echo"},
+				{ENVIRONMENT, "$PATH"},
+		};
+		compare_literal_and_type(input, debug_token_type, ENVIRONMENT, test, 2);
+	}
+
+	{
+		char input[] = "echo \"hello";
+		struct test test[2] = {
+				{STRING, "echo"},
+				{NOT_CLOSED, "hello"},
+		};
+		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
+	}
+
+	{
+		char input[] = "echo \"$PATH";
+		struct test test[2] = {
+				{STRING, "echo"},
+				{NOT_CLOSED, "$PATH"},
+		};
+		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
+	}
+
 }
 
 void	compare_literal_and_type(char *input, char **debug_token_type, int expected_type, t_test *test, int token_num)

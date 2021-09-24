@@ -77,6 +77,11 @@ t_token *next_token(t_lexer *lexer)
 		token = new_token_single_quote(lexer);
 		return (token);
 	}
+	else if (lexer->ch == '\"')
+	{
+		token = new_token_double_quote(lexer);
+		return (token);
+	}
 	else
 	{
 		token = new_token_string(lexer);
