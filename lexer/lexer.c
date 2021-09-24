@@ -44,7 +44,13 @@ t_token *next_token(t_lexer *lexer)
 	}
 	else if (lexer->ch == '<')
 	{
-		token = new_token(REDIRECT_IN, lexer, 1);
+		if (lexer->input[lexer->read_position] == '<')
+		{
+			token = new_token(HEREDOC, lexer, 2);
+			read_char(lexer);
+		}
+		else
+			token = new_token(REDIRECT_IN, lexer, 1);
 	}
 	else if (lexer->ch == '&')
 	{
