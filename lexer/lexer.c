@@ -73,6 +73,7 @@ t_token	*lexer_main(t_lexer *lexer)
 		if (!token_lstadd_back(&token, next_token(lexer)))
 		{
 			// todo: token_lstclear() to free list
+			token_lstclear(&token);
 			return (NULL);
 		}
 	}
