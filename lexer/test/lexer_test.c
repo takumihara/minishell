@@ -203,6 +203,17 @@ int main()
 		};
 		compare_literal_and_type(input, debug_token_type, NOT_CLOSED, test, 2);
 	}
+	
+	{
+		char input[] = "(echo $PATH)";
+		struct test test[4] = {
+				{LPAREN, "("},
+				{STRING, "echo"},
+				{ENVIRONMENT, "$PATH"},
+				{RPAREN, ")"},
+		};
+		compare_literal_and_type(input, debug_token_type, LPAREN, test, 4);
+	}
 
 }
 

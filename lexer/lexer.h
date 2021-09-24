@@ -7,7 +7,7 @@
 // todo: remove this
 # include "printf.h"
 
-# define DELIMITER "|&<>=$ "
+# define DELIMITER "|&<>=$() "
 # define QUOTE "\"\'"
 
 // todo: need to discuss if read_position is actually needed?
