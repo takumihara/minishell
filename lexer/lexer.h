@@ -8,7 +8,6 @@
 # include "printf.h"
 
 # define DELIMITER "|&<>=$() "
-# define QUOTE "\"\'"
 
 // todo: need to discuss if read_position is actually needed?
 // todo: type of positions are different from the book
@@ -22,6 +21,10 @@ typedef struct s_lexer
 	size_t	read_position;
 	char	ch;
 }	t_lexer;
+
+typedef int	t_bool;
+# define FALSE 0
+# define TRUE 1
 
 // lexer.c
 t_lexer	*new_lexer(char *input);
