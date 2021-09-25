@@ -46,7 +46,6 @@ char *debug_token_type[30] = {
 		"STRING",
 		"ENVIRONMENT",
 		"NOT_CLOSED",
-		"EQUAL",
 };
 
 void	compare_literal_and_type(char *input, char **debug_token_type, int expected_type, t_test *test, int token_num);
@@ -220,10 +219,10 @@ int main()
 		struct test test[4] = {
 				{STRING, "export"},
 				{ENVIRONMENT, "$TEST"},
-				{EQUAL, "="},
+				{ASSIGN, "="},
 				{STRING, "\"test\""},
 		};
-		compare_literal_and_type(input, debug_token_type, EQUAL, test, 4);
+		compare_literal_and_type(input, debug_token_type, ASSIGN, test, 4);
 	}
 
 	{

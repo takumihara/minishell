@@ -77,7 +77,7 @@ t_token *next_token(t_lexer *lexer)
 	else if (lexer->ch == ')')
 		token = new_token(RPAREN, lexer, 1);
 	else if (lexer->ch == '=')
-		token = new_token(EQUAL, lexer, 1);
+		token = new_token(ASSIGN, lexer, 1);
 	else
 	{
 		token = new_token_string(lexer);
