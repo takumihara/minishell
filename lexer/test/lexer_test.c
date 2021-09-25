@@ -142,7 +142,6 @@ int main()
 	}
 
 	{
-		//todo: how to deal with "echo$HELLO'a'"
 		char input[] = "echo$HELLO";
 		struct test test[2] = {
 				{STRING, "echo"},
@@ -155,7 +154,7 @@ int main()
 		char input[] = "echo \'hello\'";
 		struct test test[2] = {
 				{STRING, "echo"},
-				{STRING, "hello"},
+				{STRING, "\'hello\'"},
 		};
 		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
 	}
@@ -164,16 +163,16 @@ int main()
 		char input[] = "echo \'hello";
 		struct test test[2] = {
 				{STRING, "echo"},
-				{NOT_CLOSED, "hello"},
+				{STRING, "\'hello"},
 		};
-		compare_literal_and_type(input, debug_token_type, NOT_CLOSED, test, 2);
+		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
 	}
 
 	{
 		char input[] = "echo \"hello\"";
 		struct test test[2] = {
 				{STRING, "echo"},
-				{STRING, "hello"},
+				{STRING, "\"hello\""},
 		};
 		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
 	}
@@ -182,27 +181,27 @@ int main()
 		char input[] = "echo \"$PATH\"";
 		struct test test[2] = {
 				{STRING, "echo"},
-				{ENVIRONMENT, "$PATH"},
+				{STRING, "\"$PATH\""},
 		};
-		compare_literal_and_type(input, debug_token_type, ENVIRONMENT, test, 2);
+		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
 	}
 
 	{
 		char input[] = "echo \"hello";
 		struct test test[2] = {
 				{STRING, "echo"},
-				{NOT_CLOSED, "hello"},
+				{STRING, "\"hello"},
 		};
-		compare_literal_and_type(input, debug_token_type, NOT_CLOSED, test, 2);
+		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
 	}
 
 	{
 		char input[] = "echo \"$PATH";
 		struct test test[2] = {
 				{STRING, "echo"},
-				{NOT_CLOSED, "$PATH"},
+				{STRING, "\"$PATH"},
 		};
-		compare_literal_and_type(input, debug_token_type, NOT_CLOSED, test, 2);
+		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
 	}
 	
 	{
@@ -222,7 +221,7 @@ int main()
 				{STRING, "export"},
 				{ENVIRONMENT, "$TEST"},
 				{EQUAL, "="},
-				{STRING, "test"},
+				{STRING, "\"test\""},
 		};
 		compare_literal_and_type(input, debug_token_type, EQUAL, test, 4);
 	}
@@ -249,7 +248,7 @@ void	compare_literal_and_type(char *input, char **debug_token_type, int expected
 
 		ft_memmove(token_literal_str, token->literal.start, token->literal.len);
 		token_literal_str[token->literal.len] = '\0';
-		printf("{Type:%s, Literal:'%s'}\n", debug_token_type[token->type], token_literal_str);
+		printf("{%s, \"%s\"}\n", debug_token_type[token->type], token_literal_str);
 
 		//todo: printf is used - make sure not to include _test.c in srcs when compiling
 		if (token->type != test[i].expected_type)
