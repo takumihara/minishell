@@ -37,7 +37,6 @@ t_token	*new_token_string(t_lexer *lexer)
 			read_char(lexer);
 			while (lexer->ch != quote_type && lexer->ch != '\0')
 				read_char(lexer);
-			continue ;
 		}
 		read_char(lexer);
 	}

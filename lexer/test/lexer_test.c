@@ -226,6 +226,24 @@ int main()
 		compare_literal_and_type(input, debug_token_type, EQUAL, test, 4);
 	}
 
+	{
+		char input[] = "e\"$TEST\"o hello";
+		struct test test[2] = {
+				{STRING, "e\"$TEST\"o"},
+				{STRING, "hello"},
+		};
+		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
+	}
+
+	{
+		char input[] = "e\"e$TEST\"o  hello";
+		struct test test[2] = {
+				{STRING, "e\"e$TEST\"o"},
+				{STRING, "hello"},
+		};
+		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
+	}
+
 }
 
 void	compare_literal_and_type(char *input, char **debug_token_type, int expected_type, t_test *test, int token_num)
