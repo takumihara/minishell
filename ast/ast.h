@@ -27,7 +27,6 @@ struct s_tokens {
 	size_t len;
 };
 
-// used vars depend on its type
 struct s_ast_node {
 	t_node_type	type;
 	t_string	*data;

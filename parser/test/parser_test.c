@@ -21,7 +21,7 @@ typedef struct s_test {
 }	test;
 
 void	print_ast_nodes(t_ast_node *node, int level);
-void	test_parser(char input[], test *expected, t_node_type test_type);
+void	test_parser(char input[], test *expected, int test_type);
 void	test_ast_nodes(t_ast_node *node, int level, test *expected);
 
 int ast_index;
@@ -89,7 +89,7 @@ int main()
 //	}
 }
 
-void	test_parser(char input[], test *expected, t_node_type test_type)
+void	test_parser(char input[], test *expected, int test_type)
 {
 	printf("\n---------------------------------\n");
 	if (test_type == -1)
