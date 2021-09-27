@@ -20,3 +20,8 @@ void	skip_space(t_lexer *lexer)
 	while (ft_isspace(lexer->ch))
 		read_char(lexer);
 }
+
+int	is_digit(char c)
+{
+	return ('0' <= c && c <= '9');
+}
