@@ -216,14 +216,12 @@ int main()
 	}
 
 	{
-		char input[] = "export $TEST=\"test\"";
-		struct test test[4] = {
+		char input[] = "export TEST=\"test\"";
+		struct test test[2] = {
 				{STRING, "export"},
-				{ENVIRONMENT, "$TEST"},
-				{ASSIGN, "="},
-				{STRING, "\"test\""},
+				{STRING, "TEST=\"test\""},
 		};
-		compare_literal_and_type(input, debug_token_type, ASSIGN, test, 4);
+		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
 	}
 
 	{
