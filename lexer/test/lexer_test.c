@@ -45,6 +45,8 @@ char *debug_token_type[30] = {
 		"OR_IF",
 		"STRING",
 		"ENVIRONMENT",
+		"NOT_CLOSED",
+		"REDIRECT_MODIFIER",
 };
 
 void	compare_literal_and_type(char *input, char **debug_token_type, int expected_type, t_test *test, int token_num);
@@ -140,7 +142,6 @@ int main()
 	}
 
 	{
-		//todo: how to deal with "echo$HELLO'a'"
 		char input[] = "echo$HELLO";
 		struct test test[2] = {
 				{STRING, "echo"},
@@ -148,7 +149,270 @@ int main()
 		};
 		compare_literal_and_type(input, debug_token_type, ENVIRONMENT, test, 2);
 	}
+
+	{
+		char input[] = "echo \'hello\'";
+		struct test test[2] = {
+				{STRING, "echo"},
+				{STRING, "\'hello\'"},
+		};
+		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
+	}
+
+	{
+		char input[] = "echo \'hello";
+		struct test test[2] = {
+				{STRING, "echo"},
+				{STRING, "\'hello"},
+		};
+		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
+	}
+
+	{
+		char input[] = "echo \"hello\"";
+		struct test test[2] = {
+				{STRING, "echo"},
+				{STRING, "\"hello\""},
+		};
+		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
+	}
+
+	{
+		char input[] = "echo \"$PATH\"";
+		struct test test[2] = {
+				{STRING, "echo"},
+				{STRING, "\"$PATH\""},
+		};
+		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
+	}
+
+	{
+		char input[] = "echo \"hello";
+		struct test test[2] = {
+				{STRING, "echo"},
+				{STRING, "\"hello"},
+		};
+		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
+	}
+
+	{
+		char input[] = "echo \"$PATH";
+		struct test test[2] = {
+				{STRING, "echo"},
+				{STRING, "\"$PATH"},
+		};
+		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
+	}
 	
+	{
+		char input[] = "(echo $PATH)";
+		struct test test[4] = {
+				{LPAREN, "("},
+				{STRING, "echo"},
+				{ENVIRONMENT, "$PATH"},
+				{RPAREN, ")"},
+		};
+		compare_literal_and_type(input, debug_token_type, LPAREN, test, 4);
+	}
+
+	{
+		char input[] = "export TEST=\"test\"";
+		struct test test[2] = {
+				{STRING, "export"},
+				{STRING, "TEST=\"test\""},
+		};
+		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
+	}
+
+	{
+		char input[] = "e\"$TEST\"o hello";
+		struct test test[2] = {
+				{STRING, "e\"$TEST\"o"},
+				{STRING, "hello"},
+		};
+		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
+	}
+
+	{
+		char input[] = "echo hello 11 res";
+		struct test test[4] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{STRING, "11"},
+				{STRING, "res"},
+		};
+		compare_literal_and_type(input, debug_token_type, STRING, test, 4);
+	}
+
+	{
+		char input[] = "echo hello 1a> res";
+		struct test test[5] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{STRING, "1a"},
+				{REDIRECT_OUT, ">"},
+				{STRING, "res"},
+		};
+		compare_literal_and_type(input, debug_token_type, REDIRECT_OUT, test, 5);
+	}
+
+	{
+		char input[] = "echo hello 1> res";
+		struct test test[5] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{REDIRECT_MODIFIER, "1"},
+				{REDIRECT_OUT, ">"},
+				{STRING, "res"},
+		};
+		compare_literal_and_type(input, debug_token_type, REDIRECT_OUT, test, sizeof(test)/sizeof(test[0]));
+	}
+
+	{
+		char input[] = "echo hello 100> res";
+		struct test test[5] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{REDIRECT_MODIFIER, "100"},
+				{REDIRECT_OUT, ">"},
+				{STRING, "res"},
+		};
+		compare_literal_and_type(input, debug_token_type, REDIRECT_OUT, test, sizeof(test)/sizeof(test[0]));
+	}
+
+	{
+		char input[] = "echo hello 1 > res";
+		struct test test[5] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{STRING, "1"},
+				{REDIRECT_OUT, ">"},
+				{STRING, "res"},
+		};
+		compare_literal_and_type(input, debug_token_type, REDIRECT_OUT, test, 5);
+	}
+
+	{
+		char input[] = "echo hello 1a< res";
+		struct test test[5] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{STRING, "1a"},
+				{REDIRECT_IN, "<"},
+				{STRING, "res"},
+		};
+		
+		compare_literal_and_type(input, debug_token_type, REDIRECT_IN, test, 5);
+	}
+
+	{
+		char input[] = "echo hello 2< res";
+		struct test test[5] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{REDIRECT_MODIFIER, "2"},
+				{REDIRECT_IN, "<"},
+				{STRING, "res"},
+		};
+		compare_literal_and_type(input, debug_token_type, REDIRECT_IN, test, 5);
+	}
+
+	{
+		char input[] = "echo hello 200< res";
+		struct test test[5] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{REDIRECT_MODIFIER, "200"},
+				{REDIRECT_IN, "<"},
+				{STRING, "res"},
+		};
+		compare_literal_and_type(input, debug_token_type, REDIRECT_IN, test, 5);
+	}
+
+	{
+		char input[] = "echo hello 1 < res";
+		struct test test[5] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{STRING, "1"},
+				{REDIRECT_IN, "<"},
+				{STRING, "res"},
+		};
+		compare_literal_and_type(input, debug_token_type, REDIRECT_IN, test, 5);
+	}
+
+	{
+		char input[] = "echo hello 1a<< res";
+		struct test test[5] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{STRING, "1a"},
+				{HEREDOC, "<<"},
+				{STRING, "res"},
+		};
+		compare_literal_and_type(input, debug_token_type, HEREDOC, test, 5);
+	}
+
+	{
+		char input[] = "echo hello 3<< res";
+		struct test test[5] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{REDIRECT_MODIFIER, "3"},
+				{HEREDOC, "<<"},
+				{STRING, "res"},
+		};
+		compare_literal_and_type(input, debug_token_type, HEREDOC, test, 5);
+	}
+
+	{
+		char input[] = "echo hello 1 << res";
+		struct test test[5] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{STRING, "1"},
+				{HEREDOC, "<<"},
+				{STRING, "res"},
+		};
+		compare_literal_and_type(input, debug_token_type, HEREDOC, test, 5);
+	}
+
+	{
+		char input[] = "echo hello 1a>> res";
+		struct test test[5] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{STRING, "1a"},
+				{REDIRECT_APPEND, ">>"},
+				{STRING, "res"},
+		};
+		compare_literal_and_type(input, debug_token_type, REDIRECT_APPEND, test, 5);
+	}
+
+	{
+		char input[] = "echo hello 4>> res";
+		struct test test[5] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{REDIRECT_MODIFIER, "4"},
+				{REDIRECT_APPEND, ">>"},
+				{STRING, "res"},
+		};
+		compare_literal_and_type(input, debug_token_type, REDIRECT_APPEND, test, 5);
+	}
+
+	{
+		char input[] = "echo hello 1 >> res";
+		struct test test[5] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{STRING, "1"},
+				{REDIRECT_APPEND, ">>"},
+				{STRING, "res"},
+		};
+		compare_literal_and_type(input, debug_token_type, REDIRECT_APPEND, test, 5);
+	}
+
 }
 
 void	compare_literal_and_type(char *input, char **debug_token_type, int expected_type, t_test *test, int token_num)
@@ -171,7 +435,7 @@ void	compare_literal_and_type(char *input, char **debug_token_type, int expected
 
 		ft_memmove(token_literal_str, token->literal.start, token->literal.len);
 		token_literal_str[token->literal.len] = '\0';
-		printf("{Type:%s, Literal:'%s'}\n", debug_token_type[token->type], token_literal_str);
+		printf("{%s, \"%s\"}\n", debug_token_type[token->type], token_literal_str);
 
 		//todo: printf is used - make sure not to include _test.c in srcs when compiling
 		if (token->type != test[i].expected_type)
