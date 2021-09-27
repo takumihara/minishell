@@ -385,6 +385,40 @@ int main()
 		compare_literal_and_type(input, debug_token_type, REDIRECT_APPEND, test, 5);
 	}
 
+	{
+		char input[] = "echo -n hello > res > res2";
+		struct test test[7] = {
+				{STRING, "echo"},
+				{STRING, "-n"},
+				{STRING, "hello"},
+				{REDIRECT_OUT, ">"},
+				{STRING, "res"},
+				{REDIRECT_OUT, ">"},
+				{STRING, "res2"},
+		};
+		compare_literal_and_type(input, debug_token_type, REDIRECT_APPEND, test, 7);
+	}
+
+	{
+		char input[] = "echo -n hello > res | cat && echo success || echo failure";
+		struct test test[13] = {
+				{STRING, "echo"},
+				{STRING, "-n"},
+				{STRING, "hello"},
+				{REDIRECT_OUT, ">"},
+				{STRING, "res"},
+				{PIPE, "|"},
+				{STRING, "cat"},
+				{AND_IF, "&&"},
+				{STRING, "echo"},
+				{STRING, "success"},
+				{OR_IF, "||"},
+				{STRING, "echo"},
+				{STRING, "failure"},
+		};
+		compare_literal_and_type(input, debug_token_type, REDIRECT_APPEND, test, sizeof(test)/sizeof(test[0]));
+	}
+
 }
 
 void	compare_literal_and_type(char *input, char **debug_token_type, int expected_type, t_test *test, int token_num)
