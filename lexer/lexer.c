@@ -72,6 +72,15 @@ t_token *next_token(t_lexer *lexer)
 		else
 			token = new_token(ILLEGAL, lexer, 1);
 	}
+	else if (lexer->ch == '(')
+		token = new_token(LPAREN, lexer, 1);
+	else if (lexer->ch == ')')
+		token = new_token(RPAREN, lexer, 1);
+	else if (is_digit(lexer->ch))
+	{
+		token = new_token_redirect_or_string(lexer);
+		return (token);
+	}
 	else
 	{
 		token = new_token_string(lexer);
@@ -92,7 +101,6 @@ t_token	*lexer_main(t_lexer *lexer)
 	{
 		if (!token_lstadd_back(&token, next_token(lexer)))
 		{
-			// todo: token_lstclear() to free list
 			token_lstclear(&token);
 			return (NULL);
 		}
