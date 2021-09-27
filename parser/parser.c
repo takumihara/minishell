@@ -34,14 +34,11 @@ static t_ast_node *command_element1(t_parser *p);
 //<redirection>
 static t_ast_node *command_element2(t_parser *p);
 
+//<number>? '>' <word>
+//<number>? '<' <word>
+//<number>?　'>>' <word>
+//<number>? '<<' <word>
 static t_ast_node *redirection(t_parser *p);
-//'>' <word>
-static t_ast_node *redirection1(t_parser *p);
-//'<' <word>
-static t_ast_node *redirection2(t_parser *p);
-//<number>　'>>' <word>
-static t_ast_node *redirection3(t_parser *p);
-static t_ast_node *redirection4(t_parser *p);
 
 //<command_line>	::= <pipeline> '&&' <newline> <command_line>
 //					|   <pipeline> '||' <newline> <command_line>
@@ -59,14 +56,10 @@ static t_ast_node *redirection4(t_parser *p);
 //<command_element>	::= <word>
 //					|	<redirection>
 
-//<redirection>	::= '>' <word>
-//				|	'<' <word>
-//				|	'>>' <word>
-//				|	'<<' <word>
-//				|	<number>　'>' <word> #lexer space check
-//				|	<number>　'<' <word>
-//				|	<number>　'>>' <word>
-//				|	<number>　'<<' <word>
+//<redirection>	::= <number>? '>' <word>
+//				|	<number>? '<' <word>
+//				|	<number>? '>>' <word>
+//				|	<number>? '<<' <word>
 
 
 t_ast_node *parse(t_token *token)
@@ -277,102 +270,27 @@ t_ast_node *command_element2(t_parser *p)
 
 t_ast_node *redirection(t_parser *p)
 {
-	t_token *tmp;
-	t_ast_node *node;
-
-	tmp = p->token;
-	node = redirection1(p);
-	if (node)
-		return (node);
-	p->token = tmp;
-	node = redirection2(p);
-	if (node)
-		return (node);
-	p->token = tmp;
-	node = redirection3(p);
-	if (node)
-		return (node);
-	p->token = tmp;
-	node = redirection4(p);
-	if (node)
-		return (node);
-	return (NULL);
-}
-
-t_ast_node *redirection1(t_parser *p)
-{
 	t_ast_node	*redirection;
-	t_ast_node	*filename;
+	t_ast_node	*operand;
 
 	if (!new_ast_node(&redirection))
 		return (NULL);
-	if (!consume_token(p, REDIRECT_OUT, NULL))
-		return (NULL);
-	redirection->type = REDIRECT_OUT_NODE;
-	if (!new_ast_node(&filename))
+	consume_token(p, REDIRECT_MODIFIER, redirection);
+	if (consume_token(p, REDIRECT_IN, NULL))
+		redirection->type = REDIRECT_IN_NODE;
+	else if (consume_token(p, REDIRECT_OUT, NULL))
+		redirection->type = REDIRECT_OUT_NODE;
+	else if (consume_token(p, REDIRECT_APPEND, NULL))
+		redirection->type = REDIRECT_APPEND_NODE;
+	else if (consume_token(p, HEREDOC, NULL))
+		redirection->type = HEREDOC_NODE;
+	else
 		return (delete_ast_nodes(redirection, NULL));
-	if (!consume_token(p, STRING, filename))
+	if (!new_ast_node(&operand))
 		return (delete_ast_nodes(redirection, NULL));
-	//todo: check if this is a valid file name string
-	filename->type = FILENAME_NODE;
-	set_ast_nodes(redirection, NULL, filename);
-	return (redirection);
-}
-
-t_ast_node *redirection2(t_parser *p)
-{
-	t_ast_node	*redirection;
-	t_ast_node	*filename;
-
-	if (!new_ast_node(&redirection))
-		return (NULL);
-	if (!consume_token(p, REDIRECT_IN, NULL))
-		return (NULL);
-	redirection->type = REDIRECT_IN_NODE;
-	if (!new_ast_node(&filename))
-		return (delete_ast_nodes(redirection, NULL));
-	if (!consume_token(p, STRING, filename))
-		return (delete_ast_nodes(redirection, NULL));
-	filename->type = FILENAME_NODE;
-	set_ast_nodes(redirection, NULL, filename);
-	return (redirection);
-}
-
-t_ast_node *redirection3(t_parser *p)
-{
-	t_ast_node	*redirection;
-	t_ast_node	*filename;
-
-	if (!new_ast_node(&redirection))
-		return (NULL);
-	if (!consume_token(p, REDIRECT_APPEND, NULL))
-		return (NULL);
-	redirection->type = REDIRECT_APPEND_NODE;
-	if (!new_ast_node(&filename))
-		return (delete_ast_nodes(redirection, NULL));
-	if (!consume_token(p, STRING, filename))
-		return (delete_ast_nodes(redirection, NULL));
-	filename->type = FILENAME_NODE;
-	set_ast_nodes(redirection, NULL, filename);
-	return (redirection);
-}
-
-t_ast_node *redirection4(t_parser *p)
-{
-	t_ast_node	*redirection;
-	t_ast_node	*filename;
-
-	if (!new_ast_node(&redirection))
-		return (NULL);
-	if (!consume_token(p, HEREDOC, NULL))
-		return (NULL);
-	redirection->type = HEREDOC_NODE;
-	if (!new_ast_node(&filename))
-		return (delete_ast_nodes(redirection, NULL));
-	if (!consume_token(p, STRING, filename))
-		return (delete_ast_nodes(redirection, NULL));
-	// todo: I am not sure if there is a need to have specific node type
-	filename->type = HEREDOC_DELIM_NODE;
-	set_ast_nodes(redirection, NULL, filename);
+	if (!consume_token(p, STRING, operand))
+		return (delete_ast_nodes(redirection, operand));
+	operand->type = REDIRECT_OPERAND_NODE;
+	set_ast_nodes(redirection, NULL, operand);
 	return (redirection);
 }

@@ -18,8 +18,7 @@ typedef enum e_node_type {
 	REDIRECT_IN_NODE,
 	REDIRECT_APPEND_NODE,
 	HEREDOC_NODE,
-	FILENAME_NODE,
-	HEREDOC_DELIM_NODE
+	REDIRECT_OPERAND_NODE,
 }	t_node_type;
 
 struct s_tokens {
