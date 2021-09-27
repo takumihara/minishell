@@ -2,7 +2,8 @@ NAME = a.out
 
 PARSER_PATH	= ..
 LEXER_PATH	= ../../lexer
-SRC_PATHS	= . $(PARSER_PATH) $(LEXER_PATH)
+AST_PATH	= ../../ast
+SRC_PATHS	= . $(PARSER_PATH) $(LEXER_PATH) $(AST_PATH)
 SRCS		= $(foreach path, $(SRC_PATHS), $(wildcard $(path)/*.c))
 
 OBJDIR  = ./obj
@@ -30,6 +31,10 @@ $(OBJDIR)/%.o: $(PARSER_PATH)/%.c
 	$(CC) $(CFLAG) -o $@ -c $<
 
 $(OBJDIR)/%.o: $(LEXER_PATH)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAG) -o $@ -c $<
+
+$(OBJDIR)/%.o: $(AST_PATH)/%.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAG) -o $@ -c $<
 
