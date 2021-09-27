@@ -70,32 +70,6 @@ t_token	*new_token_environment(t_lexer *lexer)
 	return (token);
 }
 
-t_token	*new_token_redirect(t_lexer *lexer, size_t digits)
-{
-	t_token	*token;
-
-	token = NULL;
-	if (lexer->input[lexer->position + digits] == '>')
-	{
-		if (lexer->input[lexer->read_position + digits] == '>')
-			token = new_token(REDIRECT_APPEND, lexer, digits + 2);
-		else
-			token = new_token(REDIRECT_OUT, lexer, digits + 1);
-	}
-	if (lexer->input[lexer->position + digits] == '<')
-	{
-		if (lexer->input[lexer->read_position + digits] == '<')
-			token = new_token(HEREDOC, lexer, digits + 2);
-		else
-			token = new_token(REDIRECT_IN, lexer, digits + 1);
-	}
-	lexer->position += digits;
-	lexer->read_position += digits + 1;
-	if (token->type == REDIRECT_APPEND || token->type == HEREDOC)
-		read_char(lexer);
-	return (token);
-}
-
 t_token	*new_token_redirect_or_string(t_lexer *lexer)
 {
 	t_token	*token;
@@ -113,8 +87,9 @@ t_token	*new_token_redirect_or_string(t_lexer *lexer)
 	lexer->read_position = len_start + 1;
 	if (lexer->ch == '<' || lexer->ch == '>')
 	{
-		token = new_token_redirect(lexer, digits);
-		read_char(lexer);
+		token = new_token(REDIRECT_MODIFIER, lexer, digits);
+		while (digits-- > 0)
+			read_char(lexer);
 	}
 	else
 	{

@@ -43,7 +43,6 @@ int		is_digit(char c);
 t_token	*new_token(t_token_type token_type, t_lexer *lexer, size_t len);
 t_token	*new_token_string(t_lexer *lexer);
 t_token	*new_token_environment(t_lexer *lexer);
-t_token	*new_token_redirect(t_lexer *lexer, size_t digits);
 t_token	*new_token_redirect_or_string(t_lexer *lexer);
 
 // lexer_list.c
