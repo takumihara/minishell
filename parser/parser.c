@@ -90,9 +90,9 @@ t_ast_node *parse(t_token *token)
 	// todo: after EOL token was implemented, remove (p->token)
 	if (p->token != NULL && p->token->type != EOL)
 	{
-		write(STDERR_FILENO, "Syntax Error near: ", 19);
+		write(STDERR_FILENO, RED "Syntax Error near: ", 24);
 		write(STDERR_FILENO, p->token->literal.start, p->token->literal.len);
-		write(STDERR_FILENO, "\n", 1);
+		write(STDERR_FILENO, "\n" RESET, 6);
 		return (NULL);
 	}
 	free(p);
@@ -164,8 +164,10 @@ t_ast_node *subshell(t_parser *p)
 
 	if (!consume_token(p, LPAREN, NULL))
 		return (NULL);
+	consume_token(p, SUBSHELL_NEWLINE, NULL);
 	if (!assign_ast_node(&compound_list_, compound_list(p)))
 		return (NULL);
+	consume_token(p, SUBSHELL_NEWLINE, NULL);
 	if (!consume_token(p, RPAREN, NULL))
 		return (NULL);
 	if (!new_ast_node(&result))
@@ -191,7 +193,7 @@ t_ast_node *compound_list(t_parser *p)
 		result->type = AND_IF_NODE;
 	else if (consume_token(p, OR_IF, NULL))
 		result->type = OR_IF_NODE;
-	else if (consume_token(p, STRING, NULL)) //todo: switch token type
+	else if (consume_token(p, SUBSHELL_NEWLINE, NULL))
 		result->type = SUBSHELL_NEWLINE_NODE;
 	else
 	{

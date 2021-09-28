@@ -1,9 +1,6 @@
 #include <string.h>
 #include "../parser.h"
 
-#define RESET   "\033[0m"
-#define RED     "\033[31m"      /* Red */
-
 char *debug_node_type[20] = {
 		"UNSET_NODE",
 		"PIPE_NODE",
@@ -36,7 +33,7 @@ int ast_index;
 int main() {
 	{
 		char input[] = "echo -n hello > res | cat && echo success || echo failure";
-		test expected[15] = {
+		test expected[] = {
 				{AND_IF_NODE,           0, ""},
 				{PIPE_NODE,             1, ""},
 				{COMMAND_ARG_NODE,      2, "echo"},
@@ -55,7 +52,7 @@ int main() {
 	}
 	{
 		char input[] = "cat << EOS hello | ls -l | wc -l >> 1.txt || echo failure";
-		test expected[16] = {
+		test expected[] = {
 				{OR_IF_NODE,            0, ""},
 				{PIPE_NODE,             1, ""},
 				{COMMAND_ARG_NODE,      2, "cat"},
@@ -76,7 +73,7 @@ int main() {
 	}
 	{
 		char input[] = "cat | ls -l | wc -l 12>> 1.txt hello || echo failure";
-		test expected[16] = {
+		test expected[] = {
 				{OR_IF_NODE,            0, ""},
 				{PIPE_NODE,             1, ""},
 				{COMMAND_ARG_NODE,      2, "cat"},
@@ -95,7 +92,7 @@ int main() {
 	}
 	{
 		char input[] = "(cd ..)";
-		test expected[16] = {
+		test expected[] = {
 				{SUBSHELL_NODE,    0, ""},
 				{COMMAND_ARG_NODE, 1, "cd"},
 				{COMMAND_ARG_NODE, 2, ".."},
@@ -104,7 +101,7 @@ int main() {
 	}
 	{
 		char input[] = "(echo success || echo failure)";
-		test expected[16] = {
+		test expected[] = {
 				{SUBSHELL_NODE,    0, ""},
 				{OR_IF_NODE,       1, ""},
 				{COMMAND_ARG_NODE, 2, "echo"},
@@ -116,7 +113,7 @@ int main() {
 	}
 	{
 		char input[] = "echo hoge && (echo success || echo failure)";
-		test expected[16] = {
+		test expected[] = {
 				{AND_IF_NODE,      0, ""},
 				{COMMAND_ARG_NODE, 1, "echo"},
 				{COMMAND_ARG_NODE, 2, "hoge"},
@@ -131,7 +128,7 @@ int main() {
 	}
 	{
 		char input[] = "(echo success) < input 2> res >> res1 << EOL";
-		test expected[16] = {
+		test expected[] = {
 				{SUBSHELL_NODE,         0, ""},
 				{COMMAND_ARG_NODE,      1, "echo"},
 				{COMMAND_ARG_NODE,      2, "success"},
@@ -148,7 +145,7 @@ int main() {
 	}
 	{
 		char input[] = "echo \"hello\"";
-		test expected[2] = {
+		test expected[] = {
 				{COMMAND_ARG_NODE, 0, "echo"},
 				{COMMAND_ARG_NODE, 1, "\"hello\""},
 		};
@@ -156,12 +153,55 @@ int main() {
 	}
 	{
 		char input[] = "echo \'hello\'";
-		test expected[2] = {
+		test expected[] = {
 				{COMMAND_ARG_NODE, 0, "echo"},
 				{COMMAND_ARG_NODE, 1, "\'hello\'"},
 		};
 		test_parser(input, expected, COMMAND_ARG_NODE);
 	}
+	{
+		char input[] = "(\n\n\n echo hello \n\n\n)";
+		test expected[] = {
+				{SUBSHELL_NODE,    0, ""},
+				{COMMAND_ARG_NODE, 1, "echo"},
+				{COMMAND_ARG_NODE, 2, "hello"},
+		};
+		test_parser(input, expected, SUBSHELL_NODE);
+	}
+	{
+		char input[] = "(echo hello \n echo success)";
+		test expected[] = {
+				{SUBSHELL_NODE,         0, ""},
+				{SUBSHELL_NEWLINE_NODE, 1, ""},
+				{COMMAND_ARG_NODE,      2, "echo"},
+				{COMMAND_ARG_NODE,      3, "hello"},
+				{COMMAND_ARG_NODE,      2, "echo"},
+				{COMMAND_ARG_NODE,      3, "success"},
+		};
+		test_parser(input, expected, SUBSHELL_NODE);
+	}
+//	{
+//		char input[] = "(echo hello";
+//		test expected[] = {
+//				{SUBSHELL_NODE,         0, ""},
+//				{SUBSHELL_NEWLINE_NODE, 1, ""},
+//				{COMMAND_ARG_NODE,      2, "echo"},
+//				{COMMAND_ARG_NODE,      3, "hello"},
+//				{COMMAND_ARG_NODE,      2, "echo"},
+//				{COMMAND_ARG_NODE,      3, "success"},
+//		};
+//		test_parser(input, expected, SUBSHELL_NODE);
+//	}
+//	{
+//		char input[] = "(echo success) && ";
+//		test expected[4] = {
+//				{AND_IF_NODE,      0, ""},
+//				{SUBSHELL_NODE,    1, ""},
+//				{COMMAND_ARG_NODE, 2, "echo"},
+//				{COMMAND_ARG_NODE, 3, "success"},
+//		};
+//		test_parser(input, expected, COMMAND_ARG_NODE);
+//	}
 }
 
 void test_parser(char input[], test *expected, int test_type) {
