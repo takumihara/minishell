@@ -50,9 +50,7 @@ t_token	*new_token_redirect_or_string(t_lexer *lexer);
 t_token	*new_token_newline(t_lexer *lexer);
 
 // lexer_list.c
-int		token_lstadd_back(t_token **lst, t_token *new);
-t_token	*token_lstlast(t_token *lst);
-void	token_lstclear(t_token **lst);
+void	token_lstclear(t_token *lst);
 
 
 #endif //LEXER_H

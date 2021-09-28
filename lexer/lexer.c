@@ -103,26 +103,29 @@ t_token *next_token(t_lexer *l)
 // token_listの先頭アドレスを返す
 t_token	*lex(char *input)
 {
-	t_token	*token;
+	t_token	token;
+	t_token	*tmp;
 	t_lexer	*l;
-	// t_token	*last;
 
 	l = new_lexer(input);
 	if (!l)
 		return (NULL);
-	token = NULL;
+	token.next = NULL;
+	tmp = &token;
 	l->is_subshell = false;
 	read_char(l);
 	while (1)
 	{
-		if (!token_lstadd_back(&token, next_token(l)))
+		tmp->next = next_token(l);
+		if (!tmp->next)
 		{
 			token_lstclear(&token);
 			return (NULL);
 		}
-		if (token_lstlast(token)->type == EOL)
+		if (tmp->type == EOL)
 			break ;
+		tmp = tmp->next;
 	}
 	free(l);
-	return (token);
+	return (token.next);
 }

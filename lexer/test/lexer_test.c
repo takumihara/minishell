@@ -477,6 +477,7 @@ int main()
 				{STRING, "echo"},
 				{STRING, "success;"},
 				{RPAREN, ")"},
+				{EOL, "\0"},
 		};
 		compare_literal_and_type(input, debug_token_type, LPAREN, test, 7);
 	}
@@ -525,5 +526,5 @@ void	compare_literal_and_type(char *input, char **debug_token_type, int expected
 		free(token_literal_str);
 		token = token->next;
 	}
-	token_lstclear(&head_token);
+	token_lstclear(head_token);
 }
