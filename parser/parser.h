@@ -7,6 +7,7 @@
 #include "../lexer/lexer.h"
 #include "../ast/ast.h"
 #include "../libft/libft.h"
+#include "../utils/utils.h"
 
 typedef struct t_parser {
 	t_token *token;
@@ -18,6 +19,7 @@ t_ast_node *parse(t_token *token);
 // parser_utils.c
 t_parser *new_parser(t_token *token);
 bool	consume_token(t_parser *p, t_token_type expected_type, t_ast_node *node);
+t_ast_node	*route_expressions(t_parser *p, t_ast_node *(*f[])(t_parser *), int element_num);
 
 // t_string related functions
 char	*st_append(char *s1, t_string const *s2);
