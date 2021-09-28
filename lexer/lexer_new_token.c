@@ -2,7 +2,7 @@
 #include "lexer.h"
 #include "../libft/libft.h"
 
-t_token	*new_token(t_token_type token_type, t_lexer *lexer, size_t len)
+t_token	*new_token(t_token_type token_type, t_lexer *l, size_t len, size_t len_start)
 {
 	t_token	 *token;
 
@@ -10,91 +10,99 @@ t_token	*new_token(t_token_type token_type, t_lexer *lexer, size_t len)
 	if (!token)
 		return (NULL);
 	token->type = token_type;
-	token->literal.start = &lexer->input[lexer->position];
+	token->literal.start = &(l->input[len_start]);
 	token->literal.len = len;
-	token->prev = NULL;
 	token->next = NULL;
 	return (token);
 }
 
-t_token	*new_token_string(t_lexer *lexer)
+t_token	*new_token_string(t_lexer *l)
 {
-	t_token	*token;
-	char	*str_start;
-	size_t	len_start;
-	char	quote_type;
+	t_token			*token;
+	const size_t	len_start = l->position;
+	char			quote_type;
 
 	token = (t_token *)malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
-	str_start = &(lexer->input[lexer->position]);
-	len_start = lexer->position;
-	while (!ft_strchr(DELIMITER, lexer->ch))
+	while (!ft_strchr(DELIMITER, l->ch))
 	{
-		if (lexer->ch == '\'' || lexer->ch == '\"')
+		if (l->ch == '\'' || l->ch == '\"')
 		{
-			quote_type = lexer->ch;
-			read_char(lexer);
-			while (lexer->ch != quote_type && lexer->ch != '\0')
-				read_char(lexer);
+			quote_type = l->ch;
+			read_char(l);
+			while (l->ch != quote_type && l->ch != '\0')
+				read_char(l);
 		}
-		read_char(lexer);
+		read_char(l);
+		if (l->is_subshell && l->ch == '\n')
+			break ;
 	}
 	token->type = STRING;
-	token->literal.len = lexer->position - len_start;
-	token->literal.start = str_start;
-	token->prev = NULL;
+	token->literal.len = l->position - len_start;
+	token->literal.start = &(l->input[len_start]);
 	token->next = NULL;
 	return (token);
 }
 
-t_token	*new_token_environment(t_lexer *lexer)
+t_token	*new_token_environment(t_lexer *l)
 {
-	t_token	*token;
-	char	*str_start;
-	size_t	len_start;
+	t_token			*token;
+	const size_t	len_start = l->position;
 
 	token = (t_token *)malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
-	str_start = &(lexer->input[lexer->position]);
-	len_start = lexer->position;
-	read_char(lexer);
-	while (!ft_strchr(DELIMITER, lexer->ch))
-		read_char(lexer);
+	read_char(l);
+	while (!ft_strchr(DELIMITER, l->ch))
+	{
+		read_char(l);
+		if (l->is_subshell && l->ch == '\n')
+			break ;
+	}
 	token->type = ENVIRONMENT;
-	token->literal.len = lexer->position - len_start;
-	token->literal.start = str_start;
-	token->prev = NULL;
+	token->literal.len = l->position - len_start;
+	token->literal.start = &(l->input[len_start]);
 	token->next = NULL;
 	return (token);
 }
 
-t_token	*new_token_redirect_or_string(t_lexer *lexer)
+t_token	*new_token_redirect_or_string(t_lexer *l)
 {
-	t_token	*token;
-	size_t	len_start;
-	size_t	digits;
+	t_token			*token;
+	const size_t	len_start = l->position;
+	size_t			digits;
 
 	digits = 0;
-	len_start = lexer->position;
-	while (is_digit(lexer->ch))
+	while (is_digit(l->ch))
 	{
-		read_char(lexer);
+		read_char(l);
 		digits++;
 	}
-	lexer->position = len_start;
-	lexer->read_position = len_start + 1;
-	if (lexer->ch == '<' || lexer->ch == '>')
-	{
-		token = new_token(REDIRECT_MODIFIER, lexer, digits);
-		while (digits-- > 0)
-			read_char(lexer);
-	}
+	if (l->ch == '<' || l->ch == '>')
+		token = new_token(REDIRECT_MODIFIER, l, digits, len_start);
 	else
 	{
-		lexer->ch = lexer->input[lexer->position];
-		token = new_token_string(lexer);
+		l->position = len_start;
+		l->read_position = len_start + 1;
+		l->ch = l->input[len_start];
+		token = new_token_string(l);
 	}
+	return (token);
+}
+
+t_token	*new_token_newline(t_lexer *l)
+{
+	t_token			*token;
+	const size_t	len_start = l->position;
+	size_t			newline_num;
+
+	newline_num = 0;
+	while (l->ch != '\n')
+	{
+		read_char(l);
+		newline_num++;
+	}
+	token = new_token(SUBSHELL_NEWLINE, l, newline_num, len_start);
 	return (token);
 }
