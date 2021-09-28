@@ -1,6 +1,7 @@
 #include "lexer.h"
 #include "../libft/libft.h"
 
+// inputに対して新しくlexer構造体を作成する
 t_lexer *new_lexer(char *input)
 {
 	t_lexer *lexer;
@@ -15,6 +16,7 @@ t_lexer *new_lexer(char *input)
 	return lexer;
 }
 
+// token解析のための分岐処理
 t_token *next_token(t_lexer *lexer)
 {
 	t_token	*token;
@@ -31,7 +33,25 @@ t_token *next_token(t_lexer *lexer)
 			token = new_token(PIPE, lexer, 1);
 	}
 	else if (lexer->ch == '>')
-		token = new_token(REDIRECT, lexer, 1);
+	{
+		if (lexer->input[lexer->read_position] == '>')
+		{
+			token = new_token(REDIRECT_APPEND, lexer, 2);
+			read_char(lexer);
+		}
+		else
+			token = new_token(REDIRECT_OUT, lexer, 1);
+	}
+	else if (lexer->ch == '<')
+	{
+		if (lexer->input[lexer->read_position] == '<')
+		{
+			token = new_token(HEREDOC, lexer, 2);
+			read_char(lexer);
+		}
+		else
+			token = new_token(REDIRECT_IN, lexer, 1);
+	}
 	else if (lexer->ch == '&')
 	{
 		if (lexer->input[lexer->read_position] == '&')
@@ -51,6 +71,15 @@ t_token *next_token(t_lexer *lexer)
 		}
 		else
 			token = new_token(ILLEGAL, lexer, 1);
+	}
+	else if (lexer->ch == '(')
+		token = new_token(LPAREN, lexer, 1);
+	else if (lexer->ch == ')')
+		token = new_token(RPAREN, lexer, 1);
+	else if (is_digit(lexer->ch))
+	{
+		token = new_token_redirect_or_string(lexer);
+		return (token);
 	}
 	else
 	{
@@ -72,7 +101,7 @@ t_token	*lexer_main(t_lexer *lexer)
 	{
 		if (!token_lstadd_back(&token, next_token(lexer)))
 		{
-			// todo: token_lstclear() to free list
+			token_lstclear(&token);
 			return (NULL);
 		}
 	}

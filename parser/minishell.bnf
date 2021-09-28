@@ -1,0 +1,57 @@
+TODO:
+- wordの定義 - 数字の認識
+
+<letter>	    ::= a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|
+                    A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z
+<digit>			::= 0|1|2|3|4|5|6|7|8|9
+<number>		::= <digit> <digit>*
+<word>			::= <letter> <letter>*
+				|	<word> '_'
+<word_list>		::= <word>*
+
+--------------------------
+
+<redirection>	    ::= '>' <word>
+                    |	'<' <word>
+                    |	'>>' <word>
+                    |	'<<' <word>
+                    |	<number>　'>' <word> #lexer space check
+                    |	<number>　'<' <word>
+                    |	<number>　'>>' <word>
+                    |	<number>　'<<' <word>
+
+<simple_command_element>	::= <word>
+							|	<redirection>
+<simple_command>			::= <simple_command_element>
+                            |   <simple_command> <simple_command_element>
+<command>					::= <simple_command>
+
+<newline_list> ::=  <newline_list> '\n'
+                |   (empty)
+
+<pipeline>  ::=  <pipeline> '|' <newline_list> <pipeline>
+            |   <command>
+
+<simple_list>  ::= <simple_list> '&&' <newline_list> <simple_list>
+                |   <simple_list> '||' <newline_list> <simple_list>
+                |   <pipeline>
+
+--------------------------
+
+
+
+<command line>	::=	<job>
+                |	<job> '&&' <command line>
+                |	<job> '||' <command line>
+
+<job>				::=	<command> '|' <job>
+					|	<command>
+
+<command>			::=	<simple command>
+	        		|	<simple command> '<' <filename>
+	        		|	<simple command> '>' <filename>
+
+<simple command>	::=	<pathname> <token list>
+
+<token list>		::=	<token> <token list>
+					|	(EMPTY)
