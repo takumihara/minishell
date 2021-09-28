@@ -97,11 +97,10 @@ t_ast_node *parse(t_token *token)
 	t_parser		*p;
 	t_ast_node		*root;
 
-	p = new_parser(token);
-	if (!p)
+	if (!assign_mem((void **) &p, new_parser(token)))
 		return (NULL);
-	// todo: after EOL token was implemented, remove (p->token)
 	root = command_line(p);
+	// todo: after EOL token was implemented, remove (p->token)
 	if (p->token != NULL && p->token->type != EOL)
 	{
 		write(2, "Syntax Error near: ", 19);
@@ -113,22 +112,24 @@ t_ast_node *parse(t_token *token)
 	return (root);
 }
 
-t_ast_node *command_line(t_parser *p)
+// this works with norminette. what do you think?
+t_ast_node	*command_line(t_parser *p)
 {
-	const t_token *tmp = p->token;
-	t_ast_node 	*node;
+	const t_token	*tmp = p->token;
+	t_ast_node		*node;
+	t_ast_node*		(*f[3])(t_parser*);
+	int				i;
 
-	node = command_line1(p);
-	if (node)
-		return (node);
-	p->token = (t_token *)tmp;
-	node = command_line2(p);
-	if (node)
-		return (node);
-	p->token = (t_token *)tmp;
-	node = command_line3(p);
-	if (node)
-		return (node);
+	f[0] = command_line1;
+	f[1] = command_line2;
+	f[2] = command_line3;
+	i = -1;
+	while (++i < 3)
+	{
+		if (assign_ast_node(&node, f[i](p)))
+			return (node);
+		p->token = (t_token *)tmp;
+	}
 	return (NULL);
 }
 
@@ -143,8 +144,7 @@ t_ast_node *command_line1(t_parser *p)
 		return (NULL);
 	if (!consume_token(p, AND_IF, NULL))
 		return (delete_ast_nodes(pipeline_, NULL));
-	commandline_ = command_line(p);
-	if (!commandline_)
+	if (!assign_ast_node(&commandline_, command_line(p)))
 		return (delete_ast_nodes(pipeline_, NULL));
 	if (!new_ast_node(&result))
 		return (delete_ast_nodes(pipeline_, commandline_));
@@ -164,8 +164,7 @@ t_ast_node *command_line2(t_parser *p)
 		return (NULL);
 	if (!consume_token(p, OR_IF, NULL))
 		return (delete_ast_nodes(pipeline_, NULL));
-	commandline_ = command_line(p);
-	if (!commandline_)
+	if (!assign_ast_node(&commandline_, command_line(p)))
 		return (delete_ast_nodes(pipeline_, NULL));
 	if (!new_ast_node(&result))
 		return (delete_ast_nodes(pipeline_, commandline_));
@@ -184,12 +183,10 @@ t_ast_node *pipeline(t_parser *p)
 	const t_token *tmp = p->token;
 	t_ast_node *node;
 
-	node = pipeline1(p);
-	if (node)
+	if (assign_ast_node(&node, pipeline1(p)))
 		return (node);
 	p->token = (t_token *)tmp;
-	node = pipeline2(p);
-	if (node)
+	if (assign_ast_node(&node, pipeline2(p)))
 		return (node);
 	return (NULL);
 }
@@ -205,8 +202,7 @@ t_ast_node *pipeline1(t_parser *p)
 		return (NULL);
 	if (!consume_token(p, PIPE, NULL))
 		return (delete_ast_nodes(command_, NULL));
-	pipeline_ = pipeline(p);
-	if (!pipeline_)
+	if (!assign_ast_node(&pipeline_, pipeline(p)))
 		return (delete_ast_nodes(command_, NULL));
 	if (!new_ast_node(&result))
 		return (delete_ast_nodes(command_, pipeline_));
@@ -222,15 +218,13 @@ t_ast_node *pipeline2(t_parser *p)
 
 t_ast_node *command(t_parser *p)
 {
-	const t_token *tmp = p->token;
-	t_ast_node *node;
+	const t_token	*tmp = p->token;
+	t_ast_node		*node;
 
-	node = simple_command(p);
-	if (node)
+	if (assign_ast_node(&node, simple_command(p)))
 		return (node);
 	p->token = (t_token *)tmp;
-	node = subshell(p);
-	if (node)
+	if (assign_ast_node(&node, subshell(p)))
 		return (node);
 	return (NULL);
 }
@@ -243,7 +237,8 @@ t_ast_node *subshell(t_parser *p)
 
 	if (!consume_token(p, LPAREN, NULL))
 		return (NULL);
-	compound_list_ = compound_list(p);
+	if (!assign_ast_node(&compound_list_, compound_list(p)))
+		return (NULL);
 	if (!consume_token(p, RPAREN, NULL))
 		return (NULL);
 	if (!new_ast_node(&result))
@@ -340,13 +335,12 @@ t_ast_node *compound_list4(t_parser *p)
 
 t_ast_node *simple_command(t_parser *p)
 {
-	t_token *tmp;
-	t_ast_node *node;
+	const t_token	*tmp = p->token;
+	t_ast_node		*node;
 
-	tmp = p->token;
 	if (assign_ast_node(&node, simple_command1(p)))
 		return (node);
-	p->token = tmp;
+	p->token = (t_token *)tmp;
 	if (assign_ast_node(&node, simple_command2(p)))
 		return (node);
 	return (NULL);
@@ -374,16 +368,13 @@ t_ast_node *simple_command2(t_parser *p)
 
 t_ast_node *simple_command_element(t_parser *p)
 {
-	t_token *tmp;
-	t_ast_node *node;
+	const t_token	*tmp = p->token;
+	t_ast_node		*node;
 
-	tmp = p->token;
-	node = simple_command_element1(p);
-	if (node)
+	if (assign_ast_node(&node, simple_command_element1(p)))
 		return (node);
-	p->token = tmp;
-	node = simple_command_element2(p);
-	if (node)
+	p->token = (t_token *)tmp;
+	if (assign_ast_node(&node, simple_command_element2(p)))
 		return (node);
 	return (NULL);
 }
