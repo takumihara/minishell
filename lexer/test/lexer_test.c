@@ -47,6 +47,7 @@ char *debug_token_type[30] = {
 		"ENVIRONMENT",
 		"NOT_CLOSED",
 		"REDIRECT_MODIFIER",
+		"SUBSHELL_NEWLINE",
 };
 
 void	compare_literal_and_type(char *input, char **debug_token_type, int expected_type, t_test *test, int token_num);
@@ -215,14 +216,14 @@ int main()
 		compare_literal_and_type(input, debug_token_type, LPAREN, test, 4);
 	}
 
-	{
-		char input[] = "export TEST=\"test\"";
-		struct test test[2] = {
-				{STRING, "export"},
-				{STRING, "TEST=\"test\""},
-		};
-		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
-	}
+	// {
+	// 	char input[] = "export TEST=\"test\"";
+	// 	struct test test[2] = {
+	// 			{STRING, "export"},
+	// 			{STRING, "TEST=\"test\""},
+	// 	};
+	// 	compare_literal_and_type(input, debug_token_type, STRING, test, 2);
+	// }
 
 	{
 		char input[] = "e\"$TEST\"o hello";
@@ -411,6 +412,53 @@ int main()
 				{STRING, "res"},
 		};
 		compare_literal_and_type(input, debug_token_type, REDIRECT_APPEND, test, 5);
+	}
+
+	{
+		char input[] = "echo hello |\n cat";
+		struct test test[4] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{PIPE, "|"},
+				{STRING, "cat"},
+		};
+		compare_literal_and_type(input, debug_token_type, REDIRECT_APPEND, test, 4);
+	}
+
+	{
+		char input[] = "echo hello &&\n echo world";
+		struct test test[5] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{AND_IF, "&&"},
+				{STRING, "echo"},
+				{STRING, "world"},
+		};
+		compare_literal_and_type(input, debug_token_type, REDIRECT_APPEND, test, 5);
+	}
+
+	{
+		char input[] = "echo hello ||\n cd ..";
+		struct test test[5] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{OR_IF, "||"},
+				{STRING, "cd"},
+				{STRING, ".."},
+		};
+		compare_literal_and_type(input, debug_token_type, REDIRECT_APPEND, test, 5);
+	}
+
+
+	{
+		char input[] = "(\necho\n $PATH\n)";
+		struct test test[4] = {
+				{LPAREN, "("},
+				{STRING, "echo"},
+				{ENVIRONMENT, "$PATH"},
+				{RPAREN, ")"},
+		};
+		compare_literal_and_type(input, debug_token_type, LPAREN, test, 4);
 	}
 
 }

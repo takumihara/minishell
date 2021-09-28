@@ -17,7 +17,7 @@ t_lexer *new_lexer(char *input)
 }
 
 // token解析のための分岐処理
-t_token *next_token(t_lexer *lexer)
+t_token *next_token(t_lexer *lexer, t_tokenizer *tokenizer)
 {
 	t_token	*token;
 
@@ -73,7 +73,10 @@ t_token *next_token(t_lexer *lexer)
 			token = new_token(ILLEGAL, lexer, 1);
 	}
 	else if (lexer->ch == '(')
+	{
 		token = new_token(LPAREN, lexer, 1);
+		tokenizer
+	}
 	else if (lexer->ch == ')')
 		token = new_token(RPAREN, lexer, 1);
 	else if (is_digit(lexer->ch))
@@ -93,13 +96,18 @@ t_token *next_token(t_lexer *lexer)
 // token_listの先頭アドレスを返す
 t_token	*lexer_main(t_lexer *lexer)
 {
-	t_token	*token;
+	t_token		*token;
+	t_tokenizer	*tokenizer;
 
+	tokenizer = (t_tokenizer *)malloc(sizeof(t_tokenizer));
+	if(!tokenizer)
+		return (NULL);
 	token = NULL;
+	init_tokenizer(tokenizer, token);
 	read_char(lexer);
 	while (lexer->ch)
 	{
-		if (!token_lstadd_back(&token, next_token(lexer)))
+		if (!token_lstadd_back(&token, next_token(lexer, tokenizer)))
 		{
 			token_lstclear(&token);
 			return (NULL);
