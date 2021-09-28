@@ -38,7 +38,7 @@ typedef int	t_bool;
 // lexer.c
 t_lexer	*new_lexer(char *input);
 t_token	*next_token(t_lexer *lexer);
-t_token	*lexer_main(t_lexer *lexer);
+t_token	*lex(char *input);
 
 // lexer_utils.c
 void	read_char(t_lexer *lexer);
@@ -46,15 +46,14 @@ t_token	*skip_space(t_lexer *lexer);
 int		is_digit(char c);
 
 // lexer_new_token.c
-t_token	*new_token(t_token_type token_type, t_lexer *lexer, size_t len);
+t_token	*new_token(t_token_type token_type, t_lexer *l, size_t len, size_t start);
 t_token	*new_token_string(t_lexer *lexer);
 t_token	*new_token_environment(t_lexer *lexer);
 t_token	*new_token_redirect_or_string(t_lexer *lexer);
 t_token	*new_token_newline(t_lexer *lexer);
 
 // lexer_list.c
-int		token_lstadd_back(t_token **lst, t_token *new);
-t_token	*token_lstlast(t_token *lst);
-void	token_lstclear(t_token **lst);
+void	token_lstclear(t_token *lst);
+
 
 #endif //LEXER_H

@@ -4,115 +4,128 @@
 // inputに対して新しくlexer構造体を作成する
 t_lexer *new_lexer(char *input)
 {
-	t_lexer *lexer;
+	t_lexer *l;
 
 	// todo: FREE required!!
-	lexer = malloc(sizeof(t_lexer));
-	if (!lexer)
+	l = malloc(sizeof(t_lexer));
+	if (!l)
 		return (NULL);
-	lexer->input = input;
-	lexer->position = 0;
-	lexer->read_position = 0;
-	return lexer;
+	l->input = input;
+	l->position = 0;
+	l->read_position = 0;
+	return l;
 }
 
 // token解析のための分岐処理
-t_token *next_token(t_lexer *lexer)
+t_token *next_token(t_lexer *l)
 {
 	t_token	*token;
 
-	token = skip_space(lexer);
+	token = skip_space(l);
 	if (token)
 		return (token);
-	if (lexer->ch == '|')
+	if (l->ch == '|')
 	{
-		if (lexer->input[lexer->read_position] == '|')
+		if (l->input[l->read_position] == '|')
 		{
-			token = new_token(OR_IF, lexer, 2);
-			read_char(lexer);
+			token = new_token(OR_IF, l, 2, l->position);
+			read_char(l);
 		}
 		else
-			token = new_token(PIPE, lexer, 1);
+			token = new_token(PIPE, l, 1, l->position);
 	}
-	else if (lexer->ch == '>')
+	else if (l->ch == '>')
 	{
-		if (lexer->input[lexer->read_position] == '>')
+		if (l->input[l->read_position] == '>')
 		{
-			token = new_token(REDIRECT_APPEND, lexer, 2);
-			read_char(lexer);
+			token = new_token(REDIRECT_APPEND, l, 2, l->position);
+			read_char(l);
 		}
 		else
-			token = new_token(REDIRECT_OUT, lexer, 1);
+			token = new_token(REDIRECT_OUT, l, 1, l->position);
 	}
-	else if (lexer->ch == '<')
+	else if (l->ch == '<')
 	{
-		if (lexer->input[lexer->read_position] == '<')
+		if (l->input[l->read_position] == '<')
 		{
-			token = new_token(HEREDOC, lexer, 2);
-			read_char(lexer);
+			token = new_token(HEREDOC, l, 2, l->position);
+			read_char(l);
 		}
 		else
-			token = new_token(REDIRECT_IN, lexer, 1);
+			token = new_token(REDIRECT_IN, l, 1, l->position);
 	}
-	else if (lexer->ch == '&')
+	else if (l->ch == '&')
 	{
-		if (lexer->input[lexer->read_position] == '&')
+		if (l->input[l->read_position] == '&')
 		{
-			token = new_token(AND_IF, lexer, 2);
-			read_char(lexer);
+			token = new_token(AND_IF, l, 2, l->position);
+			read_char(l);
 		}
 		else
-			token = new_token(ILLEGAL, lexer, 1);
+			token = new_token(ILLEGAL, l, 1, l->position);
 	}
-	else if (lexer->ch == '$')
+	else if (l->ch == '$')
 	{
-		if (!ft_strchr(DELIMITER, lexer->input[lexer->read_position]))
+		if (!ft_strchr(DELIMITER, l->input[l->read_position]))
 		{
-			token = new_token_environment(lexer);
+			token = new_token_environment(l);
 			return (token);
 		}
 		else
-			token = new_token(ILLEGAL, lexer, 1);
+			token = new_token(ILLEGAL, l, 1, l->position);
 	}
-	else if (lexer->ch == '(')
+	else if (l->ch == '(')
 	{
-		token = new_token(LPAREN, lexer, 1);
-		lexer->is_subshell = true;
+		token = new_token(LPAREN, l, 1, l->position);
+		l->is_subshell = true;
 	}
-	else if (lexer->ch == ')')
+	else if (l->ch == ')')
 	{
-		token = new_token(RPAREN, lexer, 1);
-		lexer->is_subshell = false;
+		token = new_token(RPAREN, l, 1, l->position);
+		l->is_subshell = false;
 	}
-	else if (is_digit(lexer->ch))
+	else if (is_digit(l->ch))
 	{
-		token = new_token_redirect_or_string(lexer);
+		token = new_token_redirect_or_string(l);
 		return (token);
 	}
+	else if (l->ch == '\0')
+		token = new_token(EOL, l, 1, l->position);
 	else
 	{
-		token = new_token_string(lexer);
+		token = new_token_string(l);
 		return (token);
 	}
-	read_char(lexer);
+	read_char(l);
 	return (token);
 }
 
 // token_listの先頭アドレスを返す
-t_token	*lexer_main(t_lexer *lexer)
+t_token	*lex(char *input)
 {
-	t_token		*token;
+	t_token	token;
+	t_token	*tmp;
+	t_lexer	*l;
 
-	token = NULL;
-	lexer->is_subshell = false;
-	read_char(lexer);
-	while (lexer->ch)
+	l = new_lexer(input);
+	if (!l)
+		return (NULL);
+	token.next = NULL;
+	tmp = &token;
+	l->is_subshell = false;
+	read_char(l);
+	while (1)
 	{
-		if (!token_lstadd_back(&token, next_token(lexer)))
+		tmp->next = next_token(l);
+		if (!tmp->next)
 		{
 			token_lstclear(&token);
 			return (NULL);
 		}
+		if (tmp->type == EOL)
+			break ;
+		tmp = tmp->next;
 	}
-	return (token);
+	free(l);
+	return (token.next);
 }
