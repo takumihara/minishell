@@ -47,3 +47,26 @@ void	token_lstclear(t_token **lst)
 	}
 	lst = NULL;
 }
+
+// t_token    *token_lstmap(t_token *token, t_token *(*f)(t_lexer *))
+// {
+//     t_token	rtn;
+//     t_token	*tmp;
+
+//     rtn.next = NULL;
+//     tmp = &rtn;
+//     if (!lst || !f)
+//         return (NULL);
+//     while (lst)
+//     {
+//         tmp->next = ft_lstnew(f(lst->content));
+//         if (!tmp->next)
+//         {
+//             ft_lstclear(&rtn.next, del);
+//             return (NULL);
+//         }
+//         tmp = tmp->next;
+//         lst = lst->next;
+//     }
+//     return (rtn.next);
+// }

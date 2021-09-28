@@ -59,13 +59,14 @@ int main()
 {
 	{
 		char input[] = "echo hello|cat";
-		struct test test[4] = {
+		struct test test[] = {
 				{STRING, "echo"},
 				{STRING, "hello"},
 				{PIPE, "|"},
 				{STRING, "cat"},
+				{EOL, "\0"},
 		};
-		compare_literal_and_type(input, debug_token_type, PIPE, test, 4);
+		compare_literal_and_type(input, debug_token_type, PIPE, test, 5);
 	}
   
 	{
@@ -460,8 +461,8 @@ int main()
 				{STRING, "echo"},
 				{SUBSHELL_NEWLINE, "\n"},
 				{ENVIRONMENT, "$PATH"},
-				{SUBSHELL_NEWLINE, "\n"},
 				{RPAREN, ")"},
+				{EOL, "\0"},
 		};
 		compare_literal_and_type(input, debug_token_type, LPAREN, test, 7);
 	}
@@ -487,8 +488,8 @@ int main()
 				{SUBSHELL_NEWLINE, "\n\n\n"},
 				{STRING, "echo"},
 				{STRING, "hello"},
-				{SUBSHELL_NEWLINE, "\n\n\n"},
 				{RPAREN, ")"},
+				{EOL, "\0"},
 		};
 		compare_literal_and_type(input, debug_token_type, LPAREN, test, 6);
 	}
@@ -502,12 +503,11 @@ void	compare_literal_and_type(char *input, char **debug_token_type, int expected
 	printf("---------------------------------\n");
 	printf("input:%s\n", input);
 
-	t_lexer *lexer = new_lexer(input);
 	t_token *token;
 	t_token *head_token;
 	char	*token_literal_str;
 
-	token = lexer_main(lexer);
+	token = lex(input);
 	head_token = token;
 
 	for (int i = 0; i < token_num; ++i) {
@@ -526,5 +526,4 @@ void	compare_literal_and_type(char *input, char **debug_token_type, int expected
 		token = token->next;
 	}
 	token_lstclear(&head_token);
-	free(lexer);
 }

@@ -35,7 +35,7 @@ typedef int	t_bool;
 // lexer.c
 t_lexer	*new_lexer(char *input);
 t_token	*next_token(t_lexer *lexer);
-t_token	*lexer_main(t_lexer *lexer);
+t_token	*lex(char *input);
 
 // lexer_utils.c
 void	read_char(t_lexer *lexer);

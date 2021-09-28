@@ -2,29 +2,34 @@
 #include "lexer.h"
 #include "../libft/libft.h"
 
-void	read_char(t_lexer *lexer)
+void	read_char(t_lexer *l)
 {
-	if (lexer->read_position == ft_strlen(lexer->input))
-		lexer->ch = 0;
-	else if (lexer->read_position > ft_strlen(lexer->input))
+	if (l->read_position == ft_strlen(l->input))
+		l->ch = 0;
+	else if (l->read_position > ft_strlen(l->input))
 		return ;
 	else
-		lexer->ch = lexer->input[lexer->read_position];
-	lexer->ch = lexer->input[lexer->read_position];
-	lexer->position = lexer->read_position;
-	lexer->read_position++;
+		l->ch = l->input[l->read_position];
+	l->ch = l->input[l->read_position];
+	l->position = l->read_position;
+	l->read_position++;
 }
 
-t_token	*skip_space(t_lexer *lexer)
+t_token	*skip_space(t_lexer *l)
 {
 	t_token	*token;
 
 	token = NULL;
-	while (ft_isspace(lexer->ch))
+	while (ft_isspace(l->ch))
 	{
-		if (lexer->is_subshell && lexer->ch == '\n')
-			token = new_token_newline(lexer);
-		read_char(lexer);
+		if (l->is_subshell && l->ch == '\n')
+			token = new_token_newline(l);
+		read_char(l);
+	}
+	if (l->ch == ')')
+	{
+		free(token);
+		token = NULL;
 	}
 	return (token);
 }
