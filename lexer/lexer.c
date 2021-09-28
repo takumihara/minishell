@@ -17,11 +17,13 @@ t_lexer *new_lexer(char *input)
 }
 
 // token解析のための分岐処理
-t_token *next_token(t_lexer *lexer, t_tokenizer *tokenizer)
+t_token *next_token(t_lexer *lexer)
 {
 	t_token	*token;
 
-	skip_space(lexer);
+	token = skip_space(lexer);
+	if (token)
+		return (token);
 	if (lexer->ch == '|')
 	{
 		if (lexer->input[lexer->read_position] == '|')
@@ -75,10 +77,13 @@ t_token *next_token(t_lexer *lexer, t_tokenizer *tokenizer)
 	else if (lexer->ch == '(')
 	{
 		token = new_token(LPAREN, lexer, 1);
-		tokenizer
+		lexer->is_subshell = true;
 	}
 	else if (lexer->ch == ')')
+	{
 		token = new_token(RPAREN, lexer, 1);
+		lexer->is_subshell = false;
+	}
 	else if (is_digit(lexer->ch))
 	{
 		token = new_token_redirect_or_string(lexer);
@@ -97,17 +102,13 @@ t_token *next_token(t_lexer *lexer, t_tokenizer *tokenizer)
 t_token	*lexer_main(t_lexer *lexer)
 {
 	t_token		*token;
-	t_tokenizer	*tokenizer;
 
-	tokenizer = (t_tokenizer *)malloc(sizeof(t_tokenizer));
-	if(!tokenizer)
-		return (NULL);
 	token = NULL;
-	init_tokenizer(tokenizer, token);
+	lexer->is_subshell = false;
 	read_char(lexer);
 	while (lexer->ch)
 	{
-		if (!token_lstadd_back(&token, next_token(lexer, tokenizer)))
+		if (!token_lstadd_back(&token, next_token(lexer)))
 		{
 			token_lstclear(&token);
 			return (NULL);

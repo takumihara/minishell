@@ -3,6 +3,7 @@
 
 
 # include <stdio.h>
+# include <stdbool.h>
 // AND_IF: &&
 // OR_IF: ||
 typedef enum e_token_type {

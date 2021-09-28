@@ -3,6 +3,9 @@
 #include "../../token/token.h"
 #include "../../libft/libft.h"
 
+#define RESET   "\033[0m"
+#define RED     "\033[31m"      /* Red */
+
 typedef struct test {
 	enum e_token_type expected_type;
 	char *expected_literal;
@@ -216,14 +219,14 @@ int main()
 		compare_literal_and_type(input, debug_token_type, LPAREN, test, 4);
 	}
 
-	// {
-	// 	char input[] = "export TEST=\"test\"";
-	// 	struct test test[2] = {
-	// 			{STRING, "export"},
-	// 			{STRING, "TEST=\"test\""},
-	// 	};
-	// 	compare_literal_and_type(input, debug_token_type, STRING, test, 2);
-	// }
+	{
+		char input[] = "export TEST=\"test\"";
+		struct test test[2] = {
+				{STRING, "export"},
+				{STRING, "TEST=\"test\""},
+		};
+		compare_literal_and_type(input, debug_token_type, STRING, test, 2);
+	}
 
 	{
 		char input[] = "e\"$TEST\"o hello";
@@ -449,16 +452,45 @@ int main()
 		compare_literal_and_type(input, debug_token_type, REDIRECT_APPEND, test, 5);
 	}
 
-
 	{
-		char input[] = "(\necho\n $PATH\n)";
-		struct test test[4] = {
+		char input[] = "(\n\necho\n $PATH\n)";
+		struct test test[7] = {
 				{LPAREN, "("},
+				{SUBSHELL_NEWLINE, "\n\n"},
 				{STRING, "echo"},
+				{SUBSHELL_NEWLINE, "\n"},
 				{ENVIRONMENT, "$PATH"},
+				{SUBSHELL_NEWLINE, "\n"},
 				{RPAREN, ")"},
 		};
-		compare_literal_and_type(input, debug_token_type, LPAREN, test, 4);
+		compare_literal_and_type(input, debug_token_type, LPAREN, test, 7);
+	}
+
+	{
+		char input[] = "(echo hello \n echo success)";
+		struct test test[7] = {
+				{LPAREN, "("},
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{SUBSHELL_NEWLINE, "\n"},
+				{STRING, "echo"},
+				{STRING, "success;"},
+				{RPAREN, ")"},
+		};
+		compare_literal_and_type(input, debug_token_type, LPAREN, test, 7);
+	}
+
+	{
+		char input[] = "(\n\n\n echo hello \n\n\n)";
+		struct test test[6] = {
+				{LPAREN, "("},
+				{SUBSHELL_NEWLINE, "\n\n\n"},
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{SUBSHELL_NEWLINE, "\n\n\n"},
+				{RPAREN, ")"},
+		};
+		compare_literal_and_type(input, debug_token_type, LPAREN, test, 6);
 	}
 
 }
@@ -487,9 +519,9 @@ void	compare_literal_and_type(char *input, char **debug_token_type, int expected
 
 		//todo: printf is used - make sure not to include _test.c in srcs when compiling
 		if (token->type != test[i].expected_type)
-			printf("test[%d] - token type wrong. expected=%s, got=%s\n", i, debug_token_type[test[i].expected_type], debug_token_type[token->type]);
+			fprintf(stderr, RED "test[%d] - token type wrong. expected=%s, got=%s\n" RESET, i, debug_token_type[test[i].expected_type], debug_token_type[token->type]);
 		if (ft_strncmp(token->literal.start, test[i].expected_literal, token->literal.len))
-			printf("test[%d] - token literal wrong. expected=%s, got=%s\n", i, test[i].expected_literal, token_literal_str);
+			fprintf(stderr, RED "test[%d] - token literal wrong. expected=%s, got=%s\n" RESET, i, test[i].expected_literal, token_literal_str);
 		free(token_literal_str);
 		token = token->next;
 	}
