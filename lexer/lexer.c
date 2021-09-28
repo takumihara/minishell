@@ -21,7 +21,9 @@ t_token *next_token(t_lexer *lexer)
 {
 	t_token	*token;
 
-	skip_space(lexer);
+	token = skip_space(lexer);
+	if (token)
+		return (token);
 	if (lexer->ch == '|')
 	{
 		if (lexer->input[lexer->read_position] == '|')
@@ -73,9 +75,15 @@ t_token *next_token(t_lexer *lexer)
 			token = new_token(ILLEGAL, lexer, 1);
 	}
 	else if (lexer->ch == '(')
+	{
 		token = new_token(LPAREN, lexer, 1);
+		lexer->is_subshell = true;
+	}
 	else if (lexer->ch == ')')
+	{
 		token = new_token(RPAREN, lexer, 1);
+		lexer->is_subshell = false;
+	}
 	else if (is_digit(lexer->ch))
 	{
 		token = new_token_redirect_or_string(lexer);
@@ -93,9 +101,10 @@ t_token *next_token(t_lexer *lexer)
 // token_listの先頭アドレスを返す
 t_token	*lexer_main(t_lexer *lexer)
 {
-	t_token	*token;
+	t_token		*token;
 
 	token = NULL;
+	lexer->is_subshell = false;
 	read_char(lexer);
 	while (lexer->ch)
 	{

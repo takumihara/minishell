@@ -3,6 +3,7 @@
 
 
 # include <stdio.h>
+# include <stdbool.h>
 // AND_IF: &&
 // OR_IF: ||
 typedef enum e_token_type {
@@ -28,6 +29,7 @@ typedef enum e_token_type {
 	ENVIRONMENT,
 	NOT_CLOSED,
 	REDIRECT_MODIFIER,
+	SUBSHELL_NEWLINE,
 }	t_token_type;
 
 typedef struct s_string {

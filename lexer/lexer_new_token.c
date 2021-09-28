@@ -39,6 +39,8 @@ t_token	*new_token_string(t_lexer *lexer)
 				read_char(lexer);
 		}
 		read_char(lexer);
+		if (lexer->is_subshell && lexer->ch == '\n')
+			break ;
 	}
 	token->type = STRING;
 	token->literal.len = lexer->position - len_start;
@@ -61,7 +63,11 @@ t_token	*new_token_environment(t_lexer *lexer)
 	len_start = lexer->position;
 	read_char(lexer);
 	while (!ft_strchr(DELIMITER, lexer->ch))
+	{
 		read_char(lexer);
+		if (lexer->is_subshell && lexer->ch == '\n')
+			break ;
+	}
 	token->type = ENVIRONMENT;
 	token->literal.len = lexer->position - len_start;
 	token->literal.start = str_start;
@@ -96,5 +102,26 @@ t_token	*new_token_redirect_or_string(t_lexer *lexer)
 		lexer->ch = lexer->input[lexer->position];
 		token = new_token_string(lexer);
 	}
+	return (token);
+}
+
+t_token	*new_token_newline(t_lexer *lexer)
+{
+	t_token	*token;
+	size_t	len_start;
+	size_t	newline_num;
+
+	newline_num = 0;
+	len_start = lexer->position;
+	while (lexer->ch != '\n')
+	{
+		read_char(lexer);
+		newline_num++;
+	}
+	lexer->position = len_start;
+	lexer->read_position = len_start + 1;
+	token = new_token(SUBSHELL_NEWLINE, lexer, newline_num);
+	while (newline_num-- > 0)
+		read_char(lexer);
 	return (token);
 }

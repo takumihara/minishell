@@ -15,13 +15,22 @@ void	read_char(t_lexer *lexer)
 	lexer->read_position++;
 }
 
-void	skip_space(t_lexer *lexer)
+t_token	*skip_space(t_lexer *lexer)
 {
+	t_token	*token;
+
+	token = NULL;
 	while (ft_isspace(lexer->ch))
+	{
+		if (lexer->is_subshell && lexer->ch == '\n')
+			token = new_token_newline(lexer);
 		read_char(lexer);
+	}
+	return (token);
 }
 
 int	is_digit(char c)
 {
 	return ('0' <= c && c <= '9');
 }
+
