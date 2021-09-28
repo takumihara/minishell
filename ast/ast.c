@@ -31,3 +31,19 @@ bool	new_ast_node(t_ast_node **node)
 	(*node)->type = UNSET_NODE;
 	return (true);
 }
+
+bool	assign_ast_node(t_ast_node **dst, t_ast_node *src)
+{
+	if (!src)
+		return (false);
+	*dst = src;
+	return (true);
+}
+
+void	attach_ast_nodes(t_ast_node *root, t_ast_node *left, t_ast_node *right)
+{
+	if (left)
+		root->left = left;
+	if (right)
+		root->right = right;
+}

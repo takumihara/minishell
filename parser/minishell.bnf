@@ -20,11 +20,35 @@ TODO:
                     |	<number>　'>>' <word>
                     |	<number>　'<<' <word>
 
+<redirection_list> ::= <redirection>
+                    |  <redirection_list> <redirection>
+
+<list1> ::=   <list1> '&&' <newline_list> <list1>
+           |  <list1> '||' <newline_list> <list1>
+           |  <list1> '&' <newline_list> <list1>
+           |  <list1> ';' <newline_list> <list1>
+           |  <list1> '\n' <newline_list> <list1>
+           |  <pipeline>
+<list0> ::=   <list1> '\n' <newline_list>
+           |  <list1> '&' <newline_list>
+           |  <list1> ';' <newline_list>
+<list> ::=   <newline_list> <list0>
+
+<compound_list>     ::=  <list>
+                    |  <newline_list> <list1>
+<subshell>          ::=  '(' <compound_list> ')'
+<shell_command>     ::= <subshell>
+
+
 <simple_command_element>	::= <word>
 							|	<redirection>
 <simple_command>			::= <simple_command_element>
                             |   <simple_command> <simple_command_element>
-<command>					::= <simple_command>
+
+
+<command>   ::= <simple_command>
+            |   <shell_command>
+            |   <shell_command> <redirection_list>
 
 <newline_list> ::=  <newline_list> '\n'
                 |   (empty)
@@ -35,6 +59,10 @@ TODO:
 <simple_list>  ::= <simple_list> '&&' <newline_list> <simple_list>
                 |   <simple_list> '||' <newline_list> <simple_list>
                 |   <pipeline>
+
+--------------------------
+
+
 
 --------------------------
 

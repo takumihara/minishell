@@ -19,6 +19,8 @@ typedef enum e_node_type {
 	REDIRECT_APPEND_NODE,
 	HEREDOC_NODE,
 	REDIRECT_OPERAND_NODE,
+	SUBSHELL_NODE,
+	SUBSHELL_NEWLINE_NODE,
 }	t_node_type;
 
 struct s_tokens {
@@ -35,5 +37,7 @@ struct s_ast_node {
 void	set_ast_nodes(t_ast_node *root, t_ast_node *left, t_ast_node *right);
 void	*delete_ast_nodes(t_ast_node *node1, t_ast_node *node2);
 bool	new_ast_node(t_ast_node **node);
+bool	assign_ast_node(t_ast_node **dst, t_ast_node *src);
+void	attach_ast_nodes(t_ast_node *root, t_ast_node *left, t_ast_node *right);
 
 #endif //MINISHELL_AST_H
