@@ -1,4 +1,4 @@
-#include "libft.h"
+#include "../libft/libft.h"
 
 bool	assign_mem(void **dst, void *src)
 {

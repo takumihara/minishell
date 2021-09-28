@@ -1,6 +1,9 @@
 #include <string.h>
 #include "../parser.h"
 
+#define RESET   "\033[0m"
+#define RED     "\033[31m"      /* Red */
+
 char *debug_node_type[20] = {
 		"UNSET_NODE",
 		"PIPE_NODE",
@@ -93,20 +96,20 @@ int main() {
 	{
 		char input[] = "(cd ..)";
 		test expected[16] = {
-				{SUBSHELL_NODE,         0, ""},
-				{COMMAND_ARG_NODE,            1, "cd"},
-				{COMMAND_ARG_NODE,      2, ".."},
+				{SUBSHELL_NODE,    0, ""},
+				{COMMAND_ARG_NODE, 1, "cd"},
+				{COMMAND_ARG_NODE, 2, ".."},
 		};
 		test_parser(input, expected, SUBSHELL_NODE);
 	}
 	{
 		char input[] = "(echo success || echo failure)";
 		test expected[16] = {
-				{SUBSHELL_NODE,         0, ""},
-				{OR_IF_NODE,            1, ""},
-				{COMMAND_ARG_NODE,      2, "echo"},
-				{COMMAND_ARG_NODE,      3, "success"},
-				{COMMAND_ARG_NODE,  2, "echo"},
+				{SUBSHELL_NODE,    0, ""},
+				{OR_IF_NODE,       1, ""},
+				{COMMAND_ARG_NODE, 2, "echo"},
+				{COMMAND_ARG_NODE, 3, "success"},
+				{COMMAND_ARG_NODE, 2, "echo"},
 				{COMMAND_ARG_NODE, 3, "failure"},
 		};
 		test_parser(input, expected, SUBSHELL_NODE);
@@ -114,17 +117,50 @@ int main() {
 	{
 		char input[] = "echo hoge && (echo success || echo failure)";
 		test expected[16] = {
-				{AND_IF_NODE,           0, ""},
-				{COMMAND_ARG_NODE,      1, "echo"},
-				{COMMAND_ARG_NODE,      2, "hoge"},
-				{SUBSHELL_NODE,         1, ""},
-				{OR_IF_NODE,            2, ""},
-				{COMMAND_ARG_NODE,      3, "echo"},
-				{COMMAND_ARG_NODE,      4, "success"},
-				{COMMAND_ARG_NODE,      3, "echo"},
-				{COMMAND_ARG_NODE,  4, "failure"},
+				{AND_IF_NODE,      0, ""},
+				{COMMAND_ARG_NODE, 1, "echo"},
+				{COMMAND_ARG_NODE, 2, "hoge"},
+				{SUBSHELL_NODE,    1, ""},
+				{OR_IF_NODE,       2, ""},
+				{COMMAND_ARG_NODE, 3, "echo"},
+				{COMMAND_ARG_NODE, 4, "success"},
+				{COMMAND_ARG_NODE, 3, "echo"},
+				{COMMAND_ARG_NODE, 4, "failure"},
 		};
 		test_parser(input, expected, SUBSHELL_NODE);
+	}
+	{
+		char input[] = "(echo success) < input 2> res >> res1 << EOL";
+		test expected[16] = {
+				{SUBSHELL_NODE,         0, ""},
+				{COMMAND_ARG_NODE,      1, "echo"},
+				{COMMAND_ARG_NODE,      2, "success"},
+				{REDIRECT_IN_NODE,      1, ""},
+				{REDIRECT_OPERAND_NODE, 2, "input"},
+				{REDIRECT_OUT_NODE,     2, "2"},
+				{REDIRECT_OPERAND_NODE, 3, "res"},
+				{REDIRECT_APPEND_NODE,  3, ""},
+				{REDIRECT_OPERAND_NODE, 4, "res1"},
+				{HEREDOC_NODE,          4, ""},
+				{REDIRECT_OPERAND_NODE, 5, "EOL"},
+		};
+		test_parser(input, expected, SUBSHELL_NODE);
+	}
+	{
+		char input[] = "echo \"hello\"";
+		test expected[2] = {
+				{COMMAND_ARG_NODE, 0, "echo"},
+				{COMMAND_ARG_NODE, 1, "\"hello\""},
+		};
+		test_parser(input, expected, COMMAND_ARG_NODE);
+	}
+	{
+		char input[] = "echo \'hello\'";
+		test expected[2] = {
+				{COMMAND_ARG_NODE, 0, "echo"},
+				{COMMAND_ARG_NODE, 1, "\'hello\'"},
+		};
+		test_parser(input, expected, COMMAND_ARG_NODE);
 	}
 }
 
@@ -158,14 +194,16 @@ void test_ast_nodes(t_ast_node *node, int level, test *expected) {
 	} else
 		literal = strdup("");
 	if (node->type != expected[ast_index].expected_type)
-		printf("test[%d] - node type wrong. expected=%s, got=%s\n", ast_index,
-			   debug_node_type[expected[ast_index].expected_type], debug_node_type[node->type]);
+		fprintf(stderr, RED "test[%d] - node type wrong. expected=%s, got=%s\n" RESET, ast_index,
+				debug_node_type[expected[ast_index].expected_type], debug_node_type[node->type]);
 	if (level != expected[ast_index].expected_level)
-		printf("test[%d] - node level wrong. expected=%d, got=%d\n", ast_index, expected[ast_index].expected_level,
-			   level);
+		fprintf(stderr, RED "test[%d] - node level wrong. expected=%d, got=%d\n" RESET, ast_index,
+				expected[ast_index].expected_level,
+				level);
 	if (ft_strcmp(literal, expected[ast_index].expected_literal))
-		printf("test[%d] - node literal wrong. expected=%s, got=%s\n", ast_index, expected[ast_index].expected_literal,
-			   literal);
+		fprintf(stderr, RED "test[%d] - node literal wrong. expected=%s, got=%s\n" RESET, ast_index,
+				expected[ast_index].expected_literal,
+				literal);
 	ast_index++;
 	free(literal);
 	test_ast_nodes(node->left, level + 1, expected);
