@@ -15,7 +15,6 @@ int	token_lstadd_back(t_token **lst, t_token *new)
 	}
 	last = token_lstlast(*lst);
 	last->next = new;
-	new->prev = last;
 	return (1);
 }
 

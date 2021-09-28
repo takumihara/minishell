@@ -2,7 +2,7 @@
 #include "lexer.h"
 #include "../libft/libft.h"
 
-t_token	*new_token(t_token_type token_type, t_lexer *l, size_t len)
+t_token	*new_token(t_token_type token_type, t_lexer *l, size_t len, size_t len_start)
 {
 	t_token	 *token;
 
@@ -10,25 +10,21 @@ t_token	*new_token(t_token_type token_type, t_lexer *l, size_t len)
 	if (!token)
 		return (NULL);
 	token->type = token_type;
-	token->literal.start = &l->input[l->position];
+	token->literal.start = &(l->input[len_start]);
 	token->literal.len = len;
-	token->prev = NULL;
 	token->next = NULL;
 	return (token);
 }
 
 t_token	*new_token_string(t_lexer *l)
 {
-	t_token	*token;
-	char	*str_start;
-	size_t	len_start;
-	char	quote_type;
+	t_token			*token;
+	const size_t	len_start = l->position;
+	char			quote_type;
 
 	token = (t_token *)malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
-	str_start = &(l->input[l->position]);
-	len_start = l->position;
 	while (!ft_strchr(DELIMITER, l->ch))
 	{
 		if (l->ch == '\'' || l->ch == '\"')
@@ -44,23 +40,19 @@ t_token	*new_token_string(t_lexer *l)
 	}
 	token->type = STRING;
 	token->literal.len = l->position - len_start;
-	token->literal.start = str_start;
-	token->prev = NULL;
+	token->literal.start = &(l->input[len_start]);
 	token->next = NULL;
 	return (token);
 }
 
 t_token	*new_token_environment(t_lexer *l)
 {
-	t_token	*token;
-	char	*str_start;
-	size_t	len_start;
+	t_token			*token;
+	const size_t	len_start = l->position;
 
 	token = (t_token *)malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
-	str_start = &(l->input[l->position]);
-	len_start = l->position;
 	read_char(l);
 	while (!ft_strchr(DELIMITER, l->ch))
 	{
@@ -70,36 +62,30 @@ t_token	*new_token_environment(t_lexer *l)
 	}
 	token->type = ENVIRONMENT;
 	token->literal.len = l->position - len_start;
-	token->literal.start = str_start;
-	token->prev = NULL;
+	token->literal.start = &(l->input[len_start]);
 	token->next = NULL;
 	return (token);
 }
 
 t_token	*new_token_redirect_or_string(t_lexer *l)
 {
-	t_token	*token;
-	size_t	len_start;
-	size_t	digits;
+	t_token			*token;
+	const size_t	len_start = l->position;
+	size_t			digits;
 
 	digits = 0;
-	len_start = l->position;
 	while (is_digit(l->ch))
 	{
 		read_char(l);
 		digits++;
 	}
-	l->position = len_start;
-	l->read_position = len_start + 1;
 	if (l->ch == '<' || l->ch == '>')
-	{
-		token = new_token(REDIRECT_MODIFIER, l, digits);
-		while (digits-- > 0)
-			read_char(l);
-	}
+		token = new_token(REDIRECT_MODIFIER, l, digits, len_start);
 	else
 	{
-		l->ch = l->input[l->position];
+		l->position = len_start;
+		l->read_position = len_start + 1;
+		l->ch = l->input[len_start];
 		token = new_token_string(l);
 	}
 	return (token);
@@ -107,21 +93,16 @@ t_token	*new_token_redirect_or_string(t_lexer *l)
 
 t_token	*new_token_newline(t_lexer *l)
 {
-	t_token	*token;
-	size_t	len_start;
-	size_t	newline_num;
+	t_token			*token;
+	const size_t	len_start = l->position;
+	size_t			newline_num;
 
 	newline_num = 0;
-	len_start = l->position;
 	while (l->ch != '\n')
 	{
 		read_char(l);
 		newline_num++;
 	}
-	l->position = len_start;
-	l->read_position = len_start + 1;
-	token = new_token(SUBSHELL_NEWLINE, l, newline_num);
-	while (newline_num-- > 0)
-		read_char(l);
+	token = new_token(SUBSHELL_NEWLINE, l, newline_num, len_start);
 	return (token);
 }
