@@ -1,6 +1,9 @@
 #ifndef LEXER_H
 # define LEXER_H
 
+# define RESET   "\033[0m"
+# define RED     "\033[31m"      /* Red */
+
 # include "../token/token.h"
 # include <stdlib.h>
 # include <stdio.h>
