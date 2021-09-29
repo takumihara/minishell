@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 //#include "/usr/local/opt/readline/include/readline/readline.h"
@@ -41,7 +42,7 @@ int	main(void)
 		if (!line || ft_strncmp(line, "exit", 4) == 0)
 		{
 			free(line);
-			write(STDOUT_FILENO, "exit\n", 5);
+			ft_putendl_fd("exit", STDOUT_FILENO);
 			break ;
 		}
 		printf("line is '%s'\n", line);
@@ -50,5 +51,3 @@ int	main(void)
 	}
 	return (0);
 }
-
-
