@@ -2,6 +2,7 @@
 # define LIBFT_H
 
 # include <stdlib.h>
+# include <stdbool.h>
 
 typedef struct s_list
 {
@@ -70,5 +71,8 @@ t_list			*ft_lstmap(t_list *lst,
 					 void *(*f)(void *), void (*del)(void *));
 
 // Original
+
+int				ft_isspace(char c);
+int				ft_strcmp(const char *s1, const char *s2);
 
 #endif
