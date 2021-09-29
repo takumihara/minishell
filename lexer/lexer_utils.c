@@ -2,23 +2,37 @@
 #include "lexer.h"
 #include "../libft/libft.h"
 
-void	read_char(t_lexer *lexer)
+void	read_char(t_lexer *l)
 {
-	if (lexer->read_position == ft_strlen(lexer->input))
-		lexer->ch = 0;
-	else if (lexer->read_position > ft_strlen(lexer->input))
+	if (l->read_position == ft_strlen(l->input))
+		l->ch = 0;
+	else if (l->read_position > ft_strlen(l->input))
 		return ;
 	else
-		lexer->ch = lexer->input[lexer->read_position];
-	lexer->ch = lexer->input[lexer->read_position];
-	lexer->position = lexer->read_position;
-	lexer->read_position++;
+		l->ch = l->input[l->read_position];
+	l->ch = l->input[l->read_position];
+	l->position = l->read_position;
+	l->read_position++;
 }
 
-void	skip_space(t_lexer *lexer)
+t_token	*skip_space(t_lexer *l)
 {
-	while (ft_isspace(lexer->ch))
-		read_char(lexer);
+	t_token	*token;
+
+	token = NULL;
+	while (ft_isspace(l->ch))
+	{
+		if ((l->is_subshell || l->is_redirect) && l->ch == '\n')
+			token = new_token_newline(l);
+		read_char(l);
+	}
+	l->is_redirect = false;
+	if (l->ch == ')')
+	{
+		free(token);
+		token = NULL;
+	}
+	return (token);
 }
 
 int	is_digit(char c)
