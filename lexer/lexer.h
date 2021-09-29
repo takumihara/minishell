@@ -29,6 +29,7 @@ typedef struct s_lexer
 	size_t	read_position;
 	char	ch;
 	bool	is_subshell;
+	bool	is_redirect;
 }	t_lexer;
 
 typedef int	t_bool;
@@ -54,6 +55,5 @@ t_token	*new_token_newline(t_lexer *lexer);
 
 // lexer_list.c
 void	token_lstclear(t_token *lst);
-
 
 #endif //LEXER_H

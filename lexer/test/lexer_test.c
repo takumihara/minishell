@@ -52,6 +52,7 @@ char *debug_token_type[30] = {
 		"NOT_CLOSED",
 		"REDIRECT_MODIFIER",
 		"SUBSHELL_NEWLINE",
+		"NEWLINE",
 };
 
 void	compare_literal_and_type(char *input, char **debug_token_type, int expected_type, t_test *test);
@@ -568,6 +569,66 @@ int main()
 				{TEST_EOL, ""},
 		};
 		compare_literal_and_type(input, debug_token_type, LPAREN, test);
+	}
+
+	{
+		char input[] = "echo hello >\n cd ..";
+		struct test test[] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{REDIRECT_OUT, ">"},
+				{NEWLINE, "\n"},
+				{STRING, "cd"},
+				{STRING, ".."},
+				{EOL, "\0"},
+				{TEST_EOL, ""},
+		};
+		compare_literal_and_type(input, debug_token_type, NEWLINE, test);
+	}
+
+	{
+		char input[] = "echo hello <\n cd ..";
+		struct test test[] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{REDIRECT_IN, "<"},
+				{NEWLINE, "\n"},
+				{STRING, "cd"},
+				{STRING, ".."},
+				{EOL, "\0"},
+				{TEST_EOL, ""},
+		};
+		compare_literal_and_type(input, debug_token_type, NEWLINE, test);
+	}
+	{
+		char input[] = "echo hello >>\n\n cd ..";
+		struct test test[] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{REDIRECT_APPEND, ">>"},
+				{NEWLINE, "\n"},
+				{STRING, "cd"},
+				{STRING, ".."},
+				{EOL, "\0"},
+				{TEST_EOL, ""},
+		};
+		compare_literal_and_type(input, debug_token_type, NEWLINE, test);
+	}
+	{
+		char input[] = "echo hello <<\n end ||\n cd ..";
+		struct test test[] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{HEREDOC, "<<"},
+				{NEWLINE, "\n"},
+				{STRING, "end"},
+				{OR_IF, "||"},
+				{STRING, "cd"},
+				{STRING, ".."},
+				{EOL, "\0"},
+				{TEST_EOL, ""},
+		};
+		compare_literal_and_type(input, debug_token_type, NEWLINE, test);
 	}
 
 }
