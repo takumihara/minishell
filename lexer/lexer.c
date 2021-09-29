@@ -13,6 +13,8 @@ t_lexer *new_lexer(char *input)
 	l->input = input;
 	l->position = 0;
 	l->read_position = 0;
+	l->is_subshell = false;
+	l->is_redirect = false;
 	return l;
 }
 
@@ -112,7 +114,6 @@ t_token	*lex(char *input)
 		return (NULL);
 	token.next = NULL;
 	tmp = &token;
-	l->is_subshell = false;
 	read_char(l);
 	while (1)
 	{

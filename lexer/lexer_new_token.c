@@ -13,6 +13,9 @@ t_token	*new_token(t_token_type token_type, t_lexer *l, size_t len, size_t len_s
 	token->literal.start = &(l->input[len_start]);
 	token->literal.len = len;
 	token->next = NULL;
+	if (token_type == REDIRECT_IN || token_type == REDIRECT_OUT
+		|| token_type == HEREDOC || token_type == REDIRECT_APPEND)
+		l->is_redirect = true;
 	return (token);
 }
 
@@ -96,13 +99,19 @@ t_token	*new_token_newline(t_lexer *l)
 	t_token			*token;
 	const size_t	len_start = l->position;
 	size_t			newline_num;
+	t_token_type	newline_type;
 
 	newline_num = 0;
+	newline_type = ILLEGAL;
 	while (l->ch != '\n')
 	{
 		read_char(l);
 		newline_num++;
 	}
-	token = new_token(SUBSHELL_NEWLINE, l, newline_num, len_start);
+	if (l->is_subshell)
+		newline_type = SUBSHELL_NEWLINE;
+	else if (l->is_redirect)
+		newline_type = NEWLINE;
+	token = new_token(newline_type, l, newline_num, len_start);
 	return (token);
 }
