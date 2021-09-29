@@ -4,6 +4,8 @@
 #define GENERAL_CASE -1
 #define ERROR_CASE -2
 
+#define BLUE    "\033[34m"      /* Blue */
+
 char *debug_node_type[20] = {
 		"UNSET_NODE",
 		"PIPE_NODE",
@@ -26,12 +28,12 @@ typedef struct s_test {
 } test;
 
 void print_ast_nodes(t_ast_node *node, int level);
-
 void test_parser(char input[], test *expected, int test_type);
-
 void test_ast_nodes(t_ast_node *node, int level, test *expected);
+void print_err_cnt();
 
 int ast_index;
+int err_cnt;
 
 int main() {
 	{
@@ -246,6 +248,8 @@ int main() {
 		};
 		test_parser(input, expected, ERROR_CASE);
 	}
+
+	print_err_cnt();
 }
 
 void test_parser(char input[], test *expected, int test_type) {
@@ -266,8 +270,10 @@ void test_parser(char input[], test *expected, int test_type) {
 		char *err_msg = (char *)res;
 		printf("expected:\n\t%s", expected[0].expected_literal);
 		printf("actual:\n\t%s", err_msg);
-		if (ft_strcmp(err_msg, expected[0].expected_literal) != 0)
+		if (ft_strcmp(err_msg, expected[0].expected_literal) != 0) {
 			fprintf(stderr, RED "error message wrong!\n" RESET);
+			err_cnt++;
+		}
 	} else {
 		t_ast_node *node = (t_ast_node *)res;
 		ast_index = 0;
@@ -288,17 +294,23 @@ void test_ast_nodes(t_ast_node *node, int level, test *expected) {
 		ft_memmove(literal, node->data->start, node->data->len);
 	} else
 		literal = strdup("");
-	if (node->type != expected[ast_index].expected_type)
+	if (node->type != expected[ast_index].expected_type) {
 		fprintf(stderr, RED "test[%d] - node type wrong. expected=%s, got=%s\n" RESET, ast_index,
 				debug_node_type[expected[ast_index].expected_type], debug_node_type[node->type]);
-	if (level != expected[ast_index].expected_level)
+		err_cnt++;
+	}
+	if (level != expected[ast_index].expected_level) {
 		fprintf(stderr, RED "test[%d] - node level wrong. expected=%d, got=%d\n" RESET, ast_index,
 				expected[ast_index].expected_level,
 				level);
-	if (ft_strcmp(literal, expected[ast_index].expected_literal))
+		err_cnt++;
+	}
+	if (ft_strcmp(literal, expected[ast_index].expected_literal)) {
 		fprintf(stderr, RED "test[%d] - node literal wrong. expected=%s, got=%s\n" RESET, ast_index,
 				expected[ast_index].expected_literal,
 				literal);
+		err_cnt++;
+	}
 	ast_index++;
 	free(literal);
 	test_ast_nodes(node->left, level + 1, expected);
@@ -319,4 +331,12 @@ void print_ast_nodes(t_ast_node *node, int level) {
 	ast_index++;
 	print_ast_nodes(node->left, level + 1);
 	print_ast_nodes(node->right, level + 1);
+}
+
+void print_err_cnt()
+{
+	if (err_cnt == 0)
+		printf(BLUE "TOTAL ERROR COUNT: 0 \n" RESET);
+	else
+		printf(RED "TOTAL ERROR COUNT: %d \n" RESET, err_cnt);
 }

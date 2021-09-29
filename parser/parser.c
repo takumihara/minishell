@@ -1,6 +1,5 @@
 #include "parser.h"
 #include <stdio.h>
-#include <unistd.h>
 
 //<pipeline> '&&' <newline> <command_line>
 //<pipeline> '||' <newline> <command_line>
@@ -304,7 +303,6 @@ t_ast_node *redirection(t_parser *p)
 		return (delete_ast_nodes(redirection, NULL));
 	if (!new_ast_node(&operand))
 		return (delete_ast_nodes(redirection, NULL));
-	// error
 	if (!consume_token(p, STRING, operand))
 	{
 		p->err = ERR_UNEXPECTED_TOKEN;
