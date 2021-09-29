@@ -6,6 +6,7 @@
 
 #define BLUE    "\033[34m"      /* Blue */
 
+
 char *debug_node_type[20] = {
 		"UNSET_NODE",
 		"PIPE_NODE",
@@ -186,6 +187,17 @@ int main() {
 		test_parser(input, expected, SUBSHELL_NODE);
 	}
 	{
+		char input[] = "echo hello && echo success";
+		test expected[] = {
+				{AND_IF_NODE,         0, ""},
+				{COMMAND_ARG_NODE,      1, "echo"},
+				{COMMAND_ARG_NODE,      2, "hello"},
+				{COMMAND_ARG_NODE,      1, "echo"},
+				{COMMAND_ARG_NODE,      2, "success"},
+		};
+		test_parser(input, expected, AND_IF_NODE);
+	}
+	{
 		char input[] = "(echo hello";
 		test expected[] = {
 				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
@@ -193,9 +205,30 @@ int main() {
 		test_parser(input, expected, ERROR_CASE);
 	}
 	{
+		char input[] = "echo hello)";
+		test expected[] = {
+				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `)'\n"},
+		};
+		test_parser(input, expected, ERROR_CASE);
+	}
+	{
 		char input[] = "(echo success) && ";
 		test expected[] = {
 				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
+		};
+		test_parser(input, expected, ERROR_CASE);
+	}
+	{
+		char input[] = "( && )";
+		test expected[] = {
+				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `&&'\n"},
+		};
+		test_parser(input, expected, ERROR_CASE);
+	}
+	{
+		char input[] = "( \n )";
+		test expected[] = {
+				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `)'\n"},
 		};
 		test_parser(input, expected, ERROR_CASE);
 	}
@@ -228,19 +261,26 @@ int main() {
 		test_parser(input, expected, ERROR_CASE);
 	}
 	{
+		char input[] = "echo hello |)";
+		test expected[] = {
+				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
+		};
+		test_parser(input, expected, ERROR_CASE);
+	}
+	{
 		char input[] = "echo hello | echo hello | echo hello |";
 		test expected[] = {
 				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
 		};
 		test_parser(input, expected, ERROR_CASE);
 	}
-//	{
-//		char input[] = "(echo hello > res1 << \n";
-//		test expected[] = {
-//				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `newline'\n"},
-//		};
-//		test_parser(input, expected, ERROR_CASE);
-//	}
+	// {
+	// 	char input[] = "(echo hello > res1 << \n";
+	// 	test expected[] = {
+	// 			{UNSET_NODE, 0, "minishell: syntax error near unexpected token `newline'\n"},
+	// 	};
+	// 	test_parser(input, expected, ERROR_CASE);
+	// }
 	{
 		char input[] = "(echo hello > res1 \n";
 		test expected[] = {
@@ -248,6 +288,7 @@ int main() {
 		};
 		test_parser(input, expected, ERROR_CASE);
 	}
+
 
 	print_err_cnt();
 }
