@@ -119,10 +119,10 @@ t_token	*lex(char *input)
 		tmp->next = next_token(l);
 		if (!tmp->next)
 		{
-			token_lstclear(&token);
+			token_lstclear(token.next);
 			return (NULL);
 		}
-		if (tmp->type == EOL)
+		if (tmp->next->type == EOL)
 			break ;
 		tmp = tmp->next;
 	}
