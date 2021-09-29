@@ -6,6 +6,7 @@
 
 #define BLUE    "\033[34m"      /* Blue */
 
+
 char *debug_node_type[20] = {
 		"UNSET_NODE",
 		"PIPE_NODE",
