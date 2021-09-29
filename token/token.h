@@ -30,6 +30,7 @@ typedef enum e_token_type {
 	NOT_CLOSED,
 	REDIRECT_MODIFIER,
 	SUBSHELL_NEWLINE,
+	NEWLINE,
 }	t_token_type;
 
 typedef struct s_string {
