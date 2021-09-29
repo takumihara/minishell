@@ -11,7 +11,7 @@ OBJDIR  = ./obj
 OBJS    = $(addprefix $(OBJDIR)/, $(notdir $(SRCS:%.c=%.o)))
 
 CC		= gcc
-CFLAG	= -Wall -Wextra -Werror -fsanitize=address
+CFLAG	= -Wall -Wextra -Werror -fsanitize=address -DTEST
 
 LIBFT_PATH = ../../libft
 #INCLUDE		= -I../../lexer -I../../token -I../../ast -I../../parser

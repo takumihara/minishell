@@ -1,6 +1,9 @@
 #include <string.h>
 #include "../parser.h"
 
+#define GENERAL_CASE -1
+#define ERROR_CASE -2
+
 char *debug_node_type[20] = {
 		"UNSET_NODE",
 		"PIPE_NODE",
@@ -19,7 +22,7 @@ char *debug_node_type[20] = {
 typedef struct s_test {
 	t_node_type expected_type;
 	int expected_level;
-	char expected_literal[10];
+	char expected_literal[52];
 } test;
 
 void print_ast_nodes(t_ast_node *node, int level);
@@ -48,7 +51,7 @@ int main() {
 				{COMMAND_ARG_NODE,      2, "echo"},
 				{COMMAND_ARG_NODE,      3, "failure"},
 		};
-		test_parser(input, expected, -1);
+		test_parser(input, expected, GENERAL_CASE);
 	}
 	{
 		char input[] = "cat << EOS hello | ls -l | wc -l >> 1.txt || echo failure";
@@ -180,46 +183,98 @@ int main() {
 		};
 		test_parser(input, expected, SUBSHELL_NODE);
 	}
+	{
+		char input[] = "(echo hello";
+		test expected[] = {
+				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
+		};
+		test_parser(input, expected, ERROR_CASE);
+	}
+	{
+		char input[] = "(echo success) && ";
+		test expected[] = {
+				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
+		};
+		test_parser(input, expected, ERROR_CASE);
+	}
+	{
+		char input[] = "echo success > &&";
+		test expected[] = {
+				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `&&'\n"},
+		};
+		test_parser(input, expected, ERROR_CASE);
+	}
+	{
+		char input[] = "(echo hello > res1 2>> ||";
+		test expected[] = {
+				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `||'\n"},
+		};
+		test_parser(input, expected, ERROR_CASE);
+	}
+	{
+		char input[] = "echo hello ||";
+		test expected[] = {
+				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
+		};
+		test_parser(input, expected, ERROR_CASE);
+	}
+	{
+		char input[] = "echo hello |";
+		test expected[] = {
+				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
+		};
+		test_parser(input, expected, ERROR_CASE);
+	}
+	{
+		char input[] = "echo hello | echo hello | echo hello |";
+		test expected[] = {
+				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
+		};
+		test_parser(input, expected, ERROR_CASE);
+	}
 //	{
-//		char input[] = "(echo hello";
+//		char input[] = "(echo hello > res1 << \n";
 //		test expected[] = {
-//				{SUBSHELL_NODE,         0, ""},
-//				{SUBSHELL_NEWLINE_NODE, 1, ""},
-//				{COMMAND_ARG_NODE,      2, "echo"},
-//				{COMMAND_ARG_NODE,      3, "hello"},
-//				{COMMAND_ARG_NODE,      2, "echo"},
-//				{COMMAND_ARG_NODE,      3, "success"},
+//				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `newline'\n"},
 //		};
-//		test_parser(input, expected, SUBSHELL_NODE);
+//		test_parser(input, expected, ERROR_CASE);
 //	}
-//	{
-//		char input[] = "(echo success) && ";
-//		test expected[4] = {
-//				{AND_IF_NODE,      0, ""},
-//				{SUBSHELL_NODE,    1, ""},
-//				{COMMAND_ARG_NODE, 2, "echo"},
-//				{COMMAND_ARG_NODE, 3, "success"},
-//		};
-//		test_parser(input, expected, COMMAND_ARG_NODE);
-//	}
+	{
+		char input[] = "(echo hello > res1 \n";
+		test expected[] = {
+				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
+		};
+		test_parser(input, expected, ERROR_CASE);
+	}
 }
 
 void test_parser(char input[], test *expected, int test_type) {
 	printf("\n---------------------------------\n");
-	if (test_type == -1)
+	if (test_type == GENERAL_CASE)
 		printf("	 [GENERAL] TEST\n");
+	else if (test_type == ERROR_CASE)
+		printf("	 [ERROR] TEST\n");
 	else
 		printf("	 [%s] TEST\n", debug_node_type[test_type]);
 	printf("---------------------------------\n");
 	printf("input:%s\n", input);
 
-	t_lexer *lexer = new_lexer(input);
-	t_token *token = lexer_main(lexer);
-	t_ast_node *node = parse(token);
-	ast_index = 0;
-	print_ast_nodes(node, 0);
-	ast_index = 0;
-	test_ast_nodes(node, 0, expected);
+	t_token *token = lex(input);
+	void *res = parse(token);
+
+	if (test_type == ERROR_CASE) {
+		char *err_msg = (char *)res;
+		printf("expected:\n\t%s", expected[0].expected_literal);
+		printf("actual:\n\t%s", err_msg);
+		if (ft_strcmp(err_msg, expected[0].expected_literal) != 0)
+			fprintf(stderr, RED "error message wrong!\n" RESET);
+	} else {
+		t_ast_node *node = (t_ast_node *)res;
+		ast_index = 0;
+		print_ast_nodes(node, 0);
+		ast_index = 0;
+		test_ast_nodes(node, 0, expected);
+	}
 
 	printf("\n---------------------------------\n");
 }
