@@ -1,108 +1,227 @@
+#include <string.h>
 #include "../parser.h"
 
-char *join_tokens(t_tokens *tokens);
+#define RESET   "\033[0m"
+#define RED     "\033[31m"      /* Red */
 
 char *debug_node_type[20] = {
-		"PROGRAM",
-		"BUILTIN",
+		"UNSET_NODE",
+		"PIPE_NODE",
+		"AND_IF_NODE",
+		"OR_IF_NODE",
+		"COMMAND_ARG_NODE",
+		"REDIRECT_OUT_NODE",
+		"REDIRECT_IN_NODE",
+		"REDIRECT_APPEND_NODE",
+		"HEREDOC_NODE",
+		"REDIRECT_OPERAND_NODE",
+		"SUBSHELL_NODE",
+		"SUBSHELL_NEWLINE_NODE",
 };
 
-int main()
-{
-	struct test {
-		char input[30];
-		t_node_type expected_type;
-		char expected_literal[30];
-	};
-	// test builtin
+typedef struct s_test {
+	t_node_type expected_type;
+	int expected_level;
+	char expected_literal[10];
+} test;
+
+void print_ast_nodes(t_ast_node *node, int level);
+
+void test_parser(char input[], test *expected, int test_type);
+
+void test_ast_nodes(t_ast_node *node, int level, test *expected);
+
+int ast_index;
+
+int main() {
 	{
-		struct test test[2] = {
-				{"echo -n hello", BUILTIN, "echo -n hello"},
-				{"echo     -n    hello", BUILTIN, "echo -n hello"},
+		char input[] = "echo -n hello > res | cat && echo success || echo failure";
+		test expected[15] = {
+				{AND_IF_NODE,           0, ""},
+				{PIPE_NODE,             1, ""},
+				{COMMAND_ARG_NODE,      2, "echo"},
+				{COMMAND_ARG_NODE,      3, "-n"},
+				{COMMAND_ARG_NODE,      4, "hello"},
+				{REDIRECT_OUT_NODE,     5, ""},
+				{REDIRECT_OPERAND_NODE, 6, "res"},
+				{COMMAND_ARG_NODE,      2, "cat"},
+				{OR_IF_NODE,            1, ""},
+				{COMMAND_ARG_NODE,      2, "echo"},
+				{COMMAND_ARG_NODE,      3, "success"},
+				{COMMAND_ARG_NODE,      2, "echo"},
+				{COMMAND_ARG_NODE,      3, "failure"},
 		};
-
-		for (int i = 0; i < 2; ++i) {
-			printf("\n---------------------------------\n");
-			printf("input:%s\n", test[i].input);
-
-			t_lexer *lexer = new_lexer(test[i].input);
-			t_token *token = lexer_main(lexer);
-			t_node *node = parse(token);
-
-			char *literal = join_tokens(node->tokens);
-			if (!literal) {
-				printf("test[%d] - join_tokens returned NULL", i);
-				continue;
-			}
-
-			printf("{Type:%s, Literal:'%s'}\n", debug_node_type[node->type], literal);
-
-			if (node->type != test[i].expected_type)
-				printf("test[%d] - token type wrong. expected=%s, got=%s\n", i, debug_node_type[test[i].expected_type], debug_node_type[node->type]);
-			if (ft_strcmp(literal, test[i].expected_literal))
-				printf("test[%d] - token literal wrong. expected=%s, got=%s\n", i, test[i].expected_literal, literal);
-			free(literal);
-			free(lexer);
-			// todo: free token in node->tokens
-			free(node->tokens);
-			free(node);
-		}
-		printf("---------------------------------\n");
+		test_parser(input, expected, -1);
 	}
-
-	// test program
 	{
-		struct test test[2] = {
-				{"cat -n hello.txt", PROGRAM, "cat -n hello.txt"},
-				{"cat     -n    hello.txt", PROGRAM, "cat -n hello.txt"},
+		char input[] = "cat << EOS hello | ls -l | wc -l >> 1.txt || echo failure";
+		test expected[16] = {
+				{OR_IF_NODE,            0, ""},
+				{PIPE_NODE,             1, ""},
+				{COMMAND_ARG_NODE,      2, "cat"},
+				{HEREDOC_NODE,          3, ""},
+				{REDIRECT_OPERAND_NODE, 4, "EOS"},
+				{COMMAND_ARG_NODE,      4, "hello"},
+				{PIPE_NODE,             2, ""},
+				{COMMAND_ARG_NODE,      3, "ls"},
+				{COMMAND_ARG_NODE,      4, "-l"},
+				{COMMAND_ARG_NODE,      3, "wc"},
+				{COMMAND_ARG_NODE,      4, "-l"},
+				{REDIRECT_APPEND_NODE,  5, ""},
+				{REDIRECT_OPERAND_NODE, 6, "1.txt"},
+				{COMMAND_ARG_NODE,      1, "echo"},
+				{COMMAND_ARG_NODE,      2, "failure"},
 		};
-
-		for (int i = 0; i < 2; ++i) {
-			printf("\n---------------------------------\n");
-			printf("input:%s\n", test[i].input);
-
-			t_lexer *lexer = new_lexer(test[i].input);
-			t_token *token = lexer_main(lexer);
-			t_node *node = parse(token);
-
-			char *literal = join_tokens(node->tokens);
-			if (!literal) {
-				printf("test[%d] - join_tokens returned NULL", i);
-				continue;
-			}
-
-			printf("{Type:%s, Literal:'%s'}\n", debug_node_type[node->type], literal);
-
-			if (node->type != test[i].expected_type)
-				printf("test[%d] - token type wrong. expected=%s, got=%s\n", i, debug_node_type[test[i].expected_type], debug_node_type[node->type]);
-			if (ft_strcmp(literal, test[i].expected_literal))
-				printf("test[%d] - token literal wrong. expected=%s, got=%s\n", i, test[i].expected_literal, literal);
-			free(literal);
-			free(lexer);
-			free(node->tokens);
-			free(node);
-		}
-		printf("---------------------------------\n");
+		test_parser(input, expected, HEREDOC_NODE);
+	}
+	{
+		char input[] = "cat | ls -l | wc -l 12>> 1.txt hello || echo failure";
+		test expected[16] = {
+				{OR_IF_NODE,            0, ""},
+				{PIPE_NODE,             1, ""},
+				{COMMAND_ARG_NODE,      2, "cat"},
+				{PIPE_NODE,             2, ""},
+				{COMMAND_ARG_NODE,      3, "ls"},
+				{COMMAND_ARG_NODE,      4, "-l"},
+				{COMMAND_ARG_NODE,      3, "wc"},
+				{COMMAND_ARG_NODE,      4, "-l"},
+				{REDIRECT_APPEND_NODE,  5, "12"},
+				{REDIRECT_OPERAND_NODE, 6, "1.txt"},
+				{COMMAND_ARG_NODE,      6, "hello"},
+				{COMMAND_ARG_NODE,      1, "echo"},
+				{COMMAND_ARG_NODE,      2, "failure"},
+		};
+		test_parser(input, expected, REDIRECT_APPEND_NODE);
+	}
+	{
+		char input[] = "(cd ..)";
+		test expected[16] = {
+				{SUBSHELL_NODE,    0, ""},
+				{COMMAND_ARG_NODE, 1, "cd"},
+				{COMMAND_ARG_NODE, 2, ".."},
+		};
+		test_parser(input, expected, SUBSHELL_NODE);
+	}
+	{
+		char input[] = "(echo success || echo failure)";
+		test expected[16] = {
+				{SUBSHELL_NODE,    0, ""},
+				{OR_IF_NODE,       1, ""},
+				{COMMAND_ARG_NODE, 2, "echo"},
+				{COMMAND_ARG_NODE, 3, "success"},
+				{COMMAND_ARG_NODE, 2, "echo"},
+				{COMMAND_ARG_NODE, 3, "failure"},
+		};
+		test_parser(input, expected, SUBSHELL_NODE);
+	}
+	{
+		char input[] = "echo hoge && (echo success || echo failure)";
+		test expected[16] = {
+				{AND_IF_NODE,      0, ""},
+				{COMMAND_ARG_NODE, 1, "echo"},
+				{COMMAND_ARG_NODE, 2, "hoge"},
+				{SUBSHELL_NODE,    1, ""},
+				{OR_IF_NODE,       2, ""},
+				{COMMAND_ARG_NODE, 3, "echo"},
+				{COMMAND_ARG_NODE, 4, "success"},
+				{COMMAND_ARG_NODE, 3, "echo"},
+				{COMMAND_ARG_NODE, 4, "failure"},
+		};
+		test_parser(input, expected, SUBSHELL_NODE);
+	}
+	{
+		char input[] = "(echo success) < input 2> res >> res1 << EOL";
+		test expected[16] = {
+				{SUBSHELL_NODE,         0, ""},
+				{COMMAND_ARG_NODE,      1, "echo"},
+				{COMMAND_ARG_NODE,      2, "success"},
+				{REDIRECT_IN_NODE,      1, ""},
+				{REDIRECT_OPERAND_NODE, 2, "input"},
+				{REDIRECT_OUT_NODE,     2, "2"},
+				{REDIRECT_OPERAND_NODE, 3, "res"},
+				{REDIRECT_APPEND_NODE,  3, ""},
+				{REDIRECT_OPERAND_NODE, 4, "res1"},
+				{HEREDOC_NODE,          4, ""},
+				{REDIRECT_OPERAND_NODE, 5, "EOL"},
+		};
+		test_parser(input, expected, SUBSHELL_NODE);
+	}
+	{
+		char input[] = "echo \"hello\"";
+		test expected[2] = {
+				{COMMAND_ARG_NODE, 0, "echo"},
+				{COMMAND_ARG_NODE, 1, "\"hello\""},
+		};
+		test_parser(input, expected, COMMAND_ARG_NODE);
+	}
+	{
+		char input[] = "echo \'hello\'";
+		test expected[2] = {
+				{COMMAND_ARG_NODE, 0, "echo"},
+				{COMMAND_ARG_NODE, 1, "\'hello\'"},
+		};
+		test_parser(input, expected, COMMAND_ARG_NODE);
 	}
 }
 
-char *join_tokens(t_tokens *tokens)
-{
-	size_t	i;
-	char	*rtn;
-	t_token	*itr;
+void test_parser(char input[], test *expected, int test_type) {
+	printf("\n---------------------------------\n");
+	if (test_type == -1)
+		printf("	 [GENERAL] TEST\n");
+	else
+		printf("	 [%s] TEST\n", debug_node_type[test_type]);
+	printf("---------------------------------\n");
+	printf("input:%s\n", input);
 
-	rtn = NULL;
-	i = 0;
-	itr = tokens->head;
-	while (1)
-	{
-		rtn = st_append(rtn, &itr->literal);
-		if (!rtn)
-			return (NULL);
-		if (++i == tokens->len)
-			return (rtn);
-		rtn = ft_strappend(rtn, " ", 1);
-		itr = itr->next;
-	}
+	t_lexer *lexer = new_lexer(input);
+	t_token *token = lexer_main(lexer);
+	t_ast_node *node = parse(token);
+	ast_index = 0;
+	print_ast_nodes(node, 0);
+	ast_index = 0;
+	test_ast_nodes(node, 0, expected);
+
+	printf("\n---------------------------------\n");
+}
+
+void test_ast_nodes(t_ast_node *node, int level, test *expected) {
+	if (!node)
+		return;
+	char *literal;
+	if (node->data) {
+		literal = (char *) calloc(node->data->len + 1, sizeof(char));
+		ft_memmove(literal, node->data->start, node->data->len);
+	} else
+		literal = strdup("");
+	if (node->type != expected[ast_index].expected_type)
+		fprintf(stderr, RED "test[%d] - node type wrong. expected=%s, got=%s\n" RESET, ast_index,
+				debug_node_type[expected[ast_index].expected_type], debug_node_type[node->type]);
+	if (level != expected[ast_index].expected_level)
+		fprintf(stderr, RED "test[%d] - node level wrong. expected=%d, got=%d\n" RESET, ast_index,
+				expected[ast_index].expected_level,
+				level);
+	if (ft_strcmp(literal, expected[ast_index].expected_literal))
+		fprintf(stderr, RED "test[%d] - node literal wrong. expected=%s, got=%s\n" RESET, ast_index,
+				expected[ast_index].expected_literal,
+				literal);
+	ast_index++;
+	free(literal);
+	test_ast_nodes(node->left, level + 1, expected);
+	test_ast_nodes(node->right, level + 1, expected);
+}
+
+void print_ast_nodes(t_ast_node *node, int level) {
+	if (!node)
+		return;
+	char *literal;
+	if (node->data) {
+		literal = (char *) calloc(node->data->len + 1, sizeof(char));
+		ft_memmove(literal, node->data->start, node->data->len);
+	} else
+		literal = strdup("");
+	printf("{Index: %d, Level: %d, Type:%s, Literal:'%s'}\n", ast_index, level, debug_node_type[node->type], literal);
+	free(literal);
+	ast_index++;
+	print_ast_nodes(node->left, level + 1);
+	print_ast_nodes(node->right, level + 1);
 }
