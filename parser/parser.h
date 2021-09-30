@@ -20,6 +20,7 @@
 typedef struct t_parser {
 	t_token *token;
 	int		err;
+	t_bool	is_subshell;
 }	t_parser;
 
 // parser.c

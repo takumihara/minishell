@@ -10,8 +10,8 @@ static t_ast_node *command_line(t_parser *p);
 //<command>
 static t_ast_node *pipeline(t_parser *p);
 
-//<simple_command>
 //<subshell>
+//<simple_command>
 static t_ast_node *command(t_parser *p);
 
 //'(' <compound_list> ')' <redirection_list>
@@ -52,8 +52,8 @@ static t_ast_node *redirection(t_parser *p);
 //<pipeline>	::=  <command> '|' <newline> <pipeline>
 //				|   <command>
 
-//<command>		::= <simple_command>
-//				|	<subshell>
+//<command>		::= <subshell>
+//				|	<simple_command>
 
 //<subshell>	::=	'(' <compound_list> ')' <redirection_list>
 //				|	'(' <compound_list> ')'
@@ -167,12 +167,12 @@ t_ast_node *command(t_parser *p)
 	const t_token	*tmp = p->token;
 	t_ast_node		*node;
 
-	if (assign_ast_node(&node, simple_command(p)))
+	if (assign_ast_node(&node, subshell(p)))
 		return (node);
 	if (p->err)
 		return (NULL);
 	p->token = (t_token *)tmp;
-	if (assign_ast_node(&node, subshell(p)))
+	if (assign_ast_node(&node, simple_command(p)))
 		return (node);
 	return (NULL);
 }
@@ -185,21 +185,26 @@ t_ast_node *subshell(t_parser *p)
 
 	if (!consume_token(p, LPAREN, NULL))
 		return (NULL);
+	p->is_subshell = true;
 	consume_token(p, SUBSHELL_NEWLINE, NULL);
 	if (!assign_ast_node(&compound_list_, compound_list(p)))
+	{
+		if (!p->err)
+			p->err = ERR_UNEXPECTED_TOKEN;
 		return (NULL);
+	}
 	if (!consume_token(p, RPAREN, NULL))
 	{
 		p->err = ERR_UNEXPECTED_EOF;
 		return (delete_ast_nodes(compound_list_, NULL));
 	}
+	p->is_subshell = false;
 	if (!new_ast_node(&result))
 		return (delete_ast_nodes(compound_list_, NULL));
 	result->type = SUBSHELL_NODE;
 	redirection_list_ = redirection_list(p);
 	if (p->err)
 		return (delete_ast_nodes(result, compound_list_));
-	// if redirection_list return NULL, NULL will be set for the right node
 	set_ast_nodes(result, compound_list_, redirection_list_);
 	return (result);
 }
@@ -250,21 +255,33 @@ t_ast_node *simple_command(t_parser *p)
 
 t_ast_node *simple_command_element(t_parser *p)
 {
-	t_ast_node	*(*f[2])(t_parser *);
+	const t_token	*tmp = p->token;
+	t_ast_node		*node;
 
-	f[0] = word;
-	f[1] = redirection;
-	return (route_expressions(p, f, 2));
+	if (assign_ast_node(&node, word(p)))
+		return (node);
+	if (p->err)
+		return (NULL);
+	p->token = (t_token *)tmp;
+	if (assign_ast_node(&node, redirection(p)))
+		return (node);
+	return (NULL);
 }
 
 t_ast_node *word(t_parser *p)
 {
-	t_ast_node	*simple_command_element;
+	t_ast_node		*simple_command_element;
+	t_token_type	type;
 
 	if (!new_ast_node(&simple_command_element))
 		return (NULL);
 	if (!consume_token(p, STRING, simple_command_element))
+	{
+		type = p->token->type;
+		if (type == LPAREN || (type == RPAREN && !p->is_subshell))
+			p->err = ERR_UNEXPECTED_TOKEN;
 		return (delete_ast_nodes(simple_command_element, NULL));
+	}
 	simple_command_element->type = COMMAND_ARG_NODE;
 	return (simple_command_element);
 }
