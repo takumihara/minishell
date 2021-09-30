@@ -49,6 +49,17 @@ int main(int ac, char **av, char **envp) {
 		};
 		test_expansioner(input, expected, GENERAL_CASE);
 	}
+	{
+		char	env_var[] = "TEST";
+		char	env_value[] = "ch";
+		setenv(env_var, env_value, 1);
+		char input[] = "e$TESTo hello";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "hello"},
+		};
+		test_expansioner(input, expected, GENERAL_CASE);
+	}
 }
 
 void test_expansioner(char input[], t_test *expected, int test_type) {
@@ -65,8 +76,6 @@ void test_expansioner(char input[], t_test *expected, int test_type) {
 	(void)expected;
 	t_token		*token = lex(input);
 	t_ast_node	*root = parse(token);
-	printf("<root_node> start:%s, len:%zu\n", root->data->start, root->data->len);
-	printf("<root->right_node> start:%s, len:%zu\n", root->right->data->start, root->right->data->len);
 				root = expansion(root, NULL);
 	// if (!res) {
 	// 	fprintf(stderr, RED "parse() returned NULL!\n" RESET);

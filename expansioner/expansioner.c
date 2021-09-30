@@ -56,5 +56,6 @@ t_string	*expand_environment_variable(t_string *data, size_t replace_start)
 	if (!env_value)
 		return (data);
 	data = str_insert(data, env_var, env_value, replace_start);
+	free(env_var);
 	return (data);
 }
