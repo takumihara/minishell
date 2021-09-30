@@ -25,7 +25,7 @@ char *debug_node_type[20] = {
 typedef struct s_test {
 	t_node_type expected_type;
 	int expected_level;
-	char expected_literal[52];
+	char expected_literal[57];
 } test;
 
 void print_ast_nodes(t_ast_node *node, int level);
@@ -212,6 +212,13 @@ int main() {
 		test_parser(input, expected, ERROR_CASE);
 	}
 	{
+		char input[] = "echo hello(";
+		test expected[] = {
+				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `('\n"},
+		};
+		test_parser(input, expected, ERROR_CASE);
+	}
+	{
 		char input[] = "(echo success) && ";
 		test expected[] = {
 				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
@@ -274,13 +281,13 @@ int main() {
 		};
 		test_parser(input, expected, ERROR_CASE);
 	}
-	// {
-	// 	char input[] = "(echo hello > res1 << \n";
-	// 	test expected[] = {
-	// 			{UNSET_NODE, 0, "minishell: syntax error near unexpected token `newline'\n"},
-	// 	};
-	// 	test_parser(input, expected, ERROR_CASE);
-	// }
+	 {
+	 	char input[] = "(echo hello > res1 << \n";
+	 	test expected[] = {
+	 			{UNSET_NODE, 0, "minishell: syntax error near unexpected token `newline'\n"},
+	 	};
+	 	test_parser(input, expected, ERROR_CASE);
+	 }
 	{
 		char input[] = "(echo hello > res1 \n";
 		test expected[] = {
@@ -306,6 +313,11 @@ void test_parser(char input[], test *expected, int test_type) {
 
 	t_token *token = lex(input);
 	void *res = parse(token);
+	if (!res) {
+		fprintf(stderr, RED "parse() returned NULL!\n" RESET);
+		err_cnt++;
+		return;
+	}
 
 	if (test_type == ERROR_CASE) {
 		char *err_msg = (char *)res;
