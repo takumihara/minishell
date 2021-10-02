@@ -5,7 +5,6 @@
 
 #include "../token/token.h"
 
-typedef struct s_tokens t_tokens;
 typedef struct s_ast_node t_ast_node;
 
 typedef enum e_node_type {
@@ -22,11 +21,6 @@ typedef enum e_node_type {
 	SUBSHELL_NODE,
 	SUBSHELL_NEWLINE_NODE,
 }	t_node_type;
-
-struct s_tokens {
-	t_token *head;
-	size_t len;
-};
 
 struct s_ast_node {
 	t_node_type	type;
