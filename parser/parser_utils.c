@@ -92,7 +92,11 @@ void	handle_err(t_parser *p)
 	else if (p->err == ERR_UNEXPECTED_EOF)
 		write(STDERR_FILENO, "minishell: syntax error: unexpected end of file\n", 48);
 	else if (p->err == ERR_MALLOC)
+	{
 		perror("malloc"); // todo: is the exit status the same?
+		free(p);
+		exit(EXIT_FAILURE);
+	}
 	if (p->err)
 	{
 		free(p);
