@@ -106,6 +106,7 @@ t_ast_node *parse(t_token *token)
 		return (NULL);
 	root = command_line(p);
 	handle_err(p);
+	token_lstclear(p->token);
 	free(p);
 	return (root);
 }

@@ -354,7 +354,6 @@ void test_parser(char input[], test *expected, int test_type, int expected_token
 		err_cnt++;
 		return;
 	}
-	token_lstclear(token);
 
 	if (test_type == ERROR_CASE) {
 		char *err_msg = (char *) res;
