@@ -34,8 +34,3 @@ t_token	*skip_space(t_lexer *l)
 	}
 	return (token);
 }
-
-int	is_digit(char c)
-{
-	return ('0' <= c && c <= '9');
-}

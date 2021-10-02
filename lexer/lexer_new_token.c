@@ -48,30 +48,6 @@ t_token	*new_token_string(t_lexer *l)
 	return (token);
 }
 
-t_token	*new_token_redirect_or_string(t_lexer *l)
-{
-	t_token			*token;
-	const size_t	len_start = l->position;
-	size_t			digits;
-
-	digits = 0;
-	while (is_digit(l->ch))
-	{
-		read_char(l);
-		digits++;
-	}
-	if (l->ch == '<' || l->ch == '>')
-		token = new_token(REDIRECT_MODIFIER, l, digits, len_start);
-	else
-	{
-		l->position = len_start;
-		l->read_position = len_start + 1;
-		l->ch = l->input[len_start];
-		token = new_token_string(l);
-	}
-	return (token);
-}
-
 t_token	*new_token_newline(t_lexer *l)
 {
 	t_token			*token;

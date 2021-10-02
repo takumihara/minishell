@@ -166,8 +166,7 @@ int main()
 	{
 		char input[] = "echo$HELLO";
 		struct test test[] = {
-				{STRING, "echo"},
-				{ENVIRONMENT, "$HELLO"},
+				{STRING, "echo$HELLO"},
 				{EOL, "\0"},
 				{TEST_EOL, ""},
 		};
@@ -245,7 +244,7 @@ int main()
 		struct test test[] = {
 				{LPAREN, "("},
 				{STRING, "echo"},
-				{ENVIRONMENT, "$PATH"},
+				{STRING, "$PATH"},
 				{RPAREN, ")"},
 				{EOL, "\0"},
 				{TEST_EOL, ""},
@@ -307,7 +306,7 @@ int main()
 		struct test test[] = {
 				{STRING, "echo"},
 				{STRING, "hello"},
-				{REDIRECT_MODIFIER, "1"},
+				{STRING, "1"},
 				{REDIRECT_OUT, ">"},
 				{STRING, "res"},
 				{EOL, "\0"},
@@ -321,7 +320,7 @@ int main()
 		struct test test[] = {
 				{STRING, "echo"},
 				{STRING, "hello"},
-				{REDIRECT_MODIFIER, "100"},
+				{STRING, "100"},
 				{REDIRECT_OUT, ">"},
 				{STRING, "res"},
 				{EOL, "\0"},
@@ -364,7 +363,7 @@ int main()
 		struct test test[] = {
 				{STRING, "echo"},
 				{STRING, "hello"},
-				{REDIRECT_MODIFIER, "2"},
+				{STRING, "2"},
 				{REDIRECT_IN, "<"},
 				{STRING, "res"},
 				{EOL, "\0"},
@@ -378,7 +377,7 @@ int main()
 		struct test test[] = {
 				{STRING, "echo"},
 				{STRING, "hello"},
-				{REDIRECT_MODIFIER, "200"},
+				{STRING, "200"},
 				{REDIRECT_IN, "<"},
 				{STRING, "res"},
 				{EOL, "\0"},
@@ -420,7 +419,7 @@ int main()
 		struct test test[] = {
 				{STRING, "echo"},
 				{STRING, "hello"},
-				{REDIRECT_MODIFIER, "3"},
+				{STRING, "3"},
 				{HEREDOC, "<<"},
 				{STRING, "res"},
 				{EOL, "\0"},
@@ -462,7 +461,7 @@ int main()
 		struct test test[] = {
 				{STRING, "echo"},
 				{STRING, "hello"},
-				{REDIRECT_MODIFIER, "4"},
+				{STRING, "4"},
 				{REDIRECT_APPEND, ">>"},
 				{STRING, "res"},
 				{EOL, "\0"},
@@ -533,7 +532,7 @@ int main()
 				{SUBSHELL_NEWLINE, "\n\n"},
 				{STRING, "echo"},
 				{SUBSHELL_NEWLINE, "\n"},
-				{ENVIRONMENT, "$PATH"},
+				{STRING, "$PATH"},
 				{RPAREN, ")"},
 				{EOL, "\0"},
 				{TEST_EOL, ""},
