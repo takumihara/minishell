@@ -198,6 +198,22 @@ int main() {
 		test_parser(input, expected, AND_IF_NODE);
 	}
 	{
+		char input[] = "echo $TEST";
+		test expected[] = {
+				{COMMAND_ARG_NODE,      0, "echo"},
+				{COMMAND_ARG_NODE,      1, "$TEST"},
+		};
+		test_parser(input, expected, COMMAND_ARG_NODE);
+	}
+	{
+		char input[] = "e$TESTo hello";
+		test expected[] = {
+				{COMMAND_ARG_NODE,      0, "e$TESTo"},
+				{COMMAND_ARG_NODE,      1, "hello"},
+		};
+		test_parser(input, expected, COMMAND_ARG_NODE);
+	}
+	{
 		char input[] = "(echo hello";
 		test expected[] = {
 				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},

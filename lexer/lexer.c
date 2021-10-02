@@ -66,16 +66,6 @@ t_token *next_token(t_lexer *l)
 		else
 			token = new_token(ILLEGAL, l, 1, l->position);
 	}
-	else if (l->ch == '$')
-	{
-		if (!ft_strchr(DELIMITER, l->input[l->read_position]))
-		{
-			token = new_token_environment(l);
-			return (token);
-		}
-		else
-			token = new_token(ILLEGAL, l, 1, l->position);
-	}
 	else if (l->ch == '(')
 	{
 		token = new_token(LPAREN, l, 1, l->position);
