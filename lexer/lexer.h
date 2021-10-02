@@ -15,7 +15,7 @@
 // todo: remove this
 # include "printf.h"
 
-# define DELIMITER "|&<>$() "
+# define DELIMITER "|&<>() "
 
 // todo: need to discuss if read_position is actually needed?
 // todo: type of positions are different from the book
@@ -49,7 +49,6 @@ int		is_digit(char c);
 // lexer_new_token.c
 t_token	*new_token(t_token_type token_type, t_lexer *l, size_t len, size_t start);
 t_token	*new_token_string(t_lexer *lexer);
-t_token	*new_token_environment(t_lexer *lexer);
 t_token	*new_token_redirect_or_string(t_lexer *lexer);
 t_token	*new_token_newline(t_lexer *lexer);
 

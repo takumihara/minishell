@@ -48,28 +48,6 @@ t_token	*new_token_string(t_lexer *l)
 	return (token);
 }
 
-t_token	*new_token_environment(t_lexer *l)
-{
-	t_token			*token;
-	const size_t	len_start = l->position;
-
-	token = (t_token *)malloc(sizeof(t_token));
-	if (!token)
-		return (NULL);
-	read_char(l);
-	while (!ft_strchr(DELIMITER, l->ch))
-	{
-		read_char(l);
-		if (l->is_subshell && l->ch == '\n')
-			break ;
-	}
-	token->type = ENVIRONMENT;
-	token->literal.len = l->position - len_start;
-	token->literal.start = &(l->input[len_start]);
-	token->next = NULL;
-	return (token);
-}
-
 t_token	*new_token_redirect_or_string(t_lexer *l)
 {
 	t_token			*token;
