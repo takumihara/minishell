@@ -271,14 +271,12 @@ t_ast_node *simple_command_element(t_parser *p)
 t_ast_node *word(t_parser *p)
 {
 	t_ast_node		*simple_command_element;
-	t_token_type	type;
 
 	if (!new_ast_node(&simple_command_element))
 		return (NULL);
 	if (!consume_token(p, STRING, simple_command_element))
 	{
-		type = p->token->type;
-		if (type == LPAREN || (type == RPAREN && !p->is_subshell))
+		if (!p->err && (p->token->type == LPAREN || (p->token->type == RPAREN && !p->is_subshell)))
 			p->err = ERR_UNEXPECTED_TOKEN;
 		return (delete_ast_nodes(simple_command_element, NULL));
 	}
@@ -308,6 +306,8 @@ t_ast_node *redirection(t_parser *p)
 	if (!new_ast_node(&redirection))
 		return (NULL);
 	consume_token(p, REDIRECT_MODIFIER, redirection);
+	if (p->err)
+		return (NULL);
 	if (consume_token(p, REDIRECT_IN, NULL))
 		redirection->type = REDIRECT_IN_NODE;
 	else if (consume_token(p, REDIRECT_OUT, NULL))
@@ -322,7 +322,8 @@ t_ast_node *redirection(t_parser *p)
 		return (delete_ast_nodes(redirection, NULL));
 	if (!consume_token(p, STRING, operand))
 	{
-		p->err = ERR_UNEXPECTED_TOKEN;
+		if (!p->err)
+			p->err = ERR_UNEXPECTED_TOKEN;
 		return (delete_ast_nodes(redirection, operand));
 	}
 	operand->type = REDIRECT_OPERAND_NODE;
