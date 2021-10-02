@@ -29,8 +29,11 @@ typedef struct s_test {
 } test;
 
 void print_ast_nodes(t_ast_node *node, int level);
+
 void test_parser(char input[], test *expected, int test_type);
+
 void test_ast_nodes(t_ast_node *node, int level, test *expected);
+
 void print_err_cnt();
 
 int ast_index;
@@ -189,27 +192,27 @@ int main() {
 	{
 		char input[] = "echo hello && echo success";
 		test expected[] = {
-				{AND_IF_NODE,         0, ""},
-				{COMMAND_ARG_NODE,      1, "echo"},
-				{COMMAND_ARG_NODE,      2, "hello"},
-				{COMMAND_ARG_NODE,      1, "echo"},
-				{COMMAND_ARG_NODE,      2, "success"},
+				{AND_IF_NODE,      0, ""},
+				{COMMAND_ARG_NODE, 1, "echo"},
+				{COMMAND_ARG_NODE, 2, "hello"},
+				{COMMAND_ARG_NODE, 1, "echo"},
+				{COMMAND_ARG_NODE, 2, "success"},
 		};
 		test_parser(input, expected, AND_IF_NODE);
 	}
 	{
 		char input[] = "echo $TEST";
 		test expected[] = {
-				{COMMAND_ARG_NODE,      0, "echo"},
-				{COMMAND_ARG_NODE,      1, "$TEST"},
+				{COMMAND_ARG_NODE, 0, "echo"},
+				{COMMAND_ARG_NODE, 1, "$TEST"},
 		};
 		test_parser(input, expected, COMMAND_ARG_NODE);
 	}
 	{
 		char input[] = "e$TESTo hello";
 		test expected[] = {
-				{COMMAND_ARG_NODE,      0, "e$TESTo"},
-				{COMMAND_ARG_NODE,      1, "hello"},
+				{COMMAND_ARG_NODE, 0, "e$TESTo"},
+				{COMMAND_ARG_NODE, 1, "hello"},
 		};
 		test_parser(input, expected, COMMAND_ARG_NODE);
 	}
@@ -297,13 +300,13 @@ int main() {
 		};
 		test_parser(input, expected, ERROR_CASE);
 	}
-	 {
-	 	char input[] = "(echo hello > res1 << \n";
-	 	test expected[] = {
-	 			{UNSET_NODE, 0, "minishell: syntax error near unexpected token `newline'\n"},
-	 	};
-	 	test_parser(input, expected, ERROR_CASE);
-	 }
+	{
+		char input[] = "(echo hello > res1 << \n";
+		test expected[] = {
+				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `newline'\n"},
+		};
+		test_parser(input, expected, ERROR_CASE);
+	}
 	{
 		char input[] = "(echo hello > res1 \n";
 		test expected[] = {
@@ -336,7 +339,7 @@ void test_parser(char input[], test *expected, int test_type) {
 	}
 
 	if (test_type == ERROR_CASE) {
-		char *err_msg = (char *)res;
+		char *err_msg = (char *) res;
 		printf("expected:\n\t%s", expected[0].expected_literal);
 		printf("actual:\n\t%s", err_msg);
 		if (ft_strcmp(err_msg, expected[0].expected_literal) != 0) {
@@ -344,11 +347,12 @@ void test_parser(char input[], test *expected, int test_type) {
 			err_cnt++;
 		}
 	} else {
-		t_ast_node *node = (t_ast_node *)res;
+		t_ast_node *node = (t_ast_node *) res;
 		ast_index = 0;
 		print_ast_nodes(node, 0);
 		ast_index = 0;
 		test_ast_nodes(node, 0, expected);
+		delete_ast_nodes(node, NULL);
 	}
 
 	printf("\n---------------------------------\n");
@@ -357,12 +361,8 @@ void test_parser(char input[], test *expected, int test_type) {
 void test_ast_nodes(t_ast_node *node, int level, test *expected) {
 	if (!node)
 		return;
-	char *literal;
-	if (node->data) {
-		literal = (char *) calloc(node->data->len + 1, sizeof(char));
-		ft_memmove(literal, node->data->start, node->data->len);
-	} else
-		literal = strdup("");
+	if (!node->data)
+		node->data = strdup("");
 	if (node->type != expected[ast_index].expected_type) {
 		fprintf(stderr, RED "test[%d] - node type wrong. expected=%s, got=%s\n" RESET, ast_index,
 				debug_node_type[expected[ast_index].expected_type], debug_node_type[node->type]);
@@ -374,14 +374,13 @@ void test_ast_nodes(t_ast_node *node, int level, test *expected) {
 				level);
 		err_cnt++;
 	}
-	if (ft_strcmp(literal, expected[ast_index].expected_literal)) {
+	if (ft_strcmp(node->data, expected[ast_index].expected_literal)) {
 		fprintf(stderr, RED "test[%d] - node literal wrong. expected=%s, got=%s\n" RESET, ast_index,
 				expected[ast_index].expected_literal,
-				literal);
+				node->data);
 		err_cnt++;
 	}
 	ast_index++;
-	free(literal);
 	test_ast_nodes(node->left, level + 1, expected);
 	test_ast_nodes(node->right, level + 1, expected);
 }
@@ -389,21 +388,16 @@ void test_ast_nodes(t_ast_node *node, int level, test *expected) {
 void print_ast_nodes(t_ast_node *node, int level) {
 	if (!node)
 		return;
-	char *literal;
-	if (node->data) {
-		literal = (char *) calloc(node->data->len + 1, sizeof(char));
-		ft_memmove(literal, node->data->start, node->data->len);
-	} else
-		literal = strdup("");
-	printf("{Index: %d, Level: %d, Type:%s, Literal:'%s'}\n", ast_index, level, debug_node_type[node->type], literal);
-	free(literal);
+	if (!node->data)
+		node->data = strdup("");
+	printf("{Index: %d, Level: %d, Type:%s, Literal:'%s'}\n", ast_index, level, debug_node_type[node->type],
+		   node->data);
 	ast_index++;
 	print_ast_nodes(node->left, level + 1);
 	print_ast_nodes(node->right, level + 1);
 }
 
-void print_err_cnt()
-{
+void print_err_cnt() {
 	if (err_cnt == 0)
 		printf(BLUE "TOTAL ERROR COUNT: 0 \n" RESET);
 	else
