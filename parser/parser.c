@@ -301,11 +301,9 @@ t_ast_node *redirection_list(t_parser *p)
 t_ast_node *redirection(t_parser *p)
 {
 	t_ast_node	*redirection;
-	t_ast_node	*operand;
 
 	if (!new_ast_node(&redirection))
 		return (NULL);
-	consume_token(p, REDIRECT_MODIFIER, redirection);
 	if (p->err)
 		return (NULL);
 	if (consume_token(p, REDIRECT_IN, NULL))
@@ -318,15 +316,11 @@ t_ast_node *redirection(t_parser *p)
 		redirection->type = HEREDOC_NODE;
 	else
 		return (delete_ast_nodes(redirection, NULL));
-	if (!new_ast_node(&operand))
-		return (delete_ast_nodes(redirection, NULL));
-	if (!consume_token(p, STRING, operand))
+	if (!consume_token(p, STRING, redirection))
 	{
 		if (!p->err)
 			p->err = ERR_UNEXPECTED_TOKEN;
-		return (delete_ast_nodes(redirection, operand));
+		return (delete_ast_nodes(redirection, NULL));
 	}
-	operand->type = REDIRECT_OPERAND_NODE;
-	set_ast_nodes(redirection, operand, NULL);
 	return (redirection);
 }

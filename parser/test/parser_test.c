@@ -30,7 +30,7 @@ typedef struct s_test {
 
 void print_ast_nodes(t_ast_node *node, int level);
 
-void test_parser(char input[], test *expected, int test_type);
+void test_parser(char input[], test *expected, int test_type, int expected_token_num);
 
 void test_ast_nodes(t_ast_node *node, int level, test *expected);
 
@@ -43,61 +43,57 @@ int main() {
 	{
 		char input[] = "echo -n hello > res | cat && echo success || echo failure";
 		test expected[] = {
-				{AND_IF_NODE,           0, ""},
-				{PIPE_NODE,             1, ""},
-				{COMMAND_ARG_NODE,      2, "echo"},
-				{COMMAND_ARG_NODE,      3, "-n"},
-				{COMMAND_ARG_NODE,      4, "hello"},
-				{REDIRECT_OUT_NODE,     5, ""},
-				{REDIRECT_OPERAND_NODE, 6, "res"},
-				{COMMAND_ARG_NODE,      2, "cat"},
-				{OR_IF_NODE,            1, ""},
-				{COMMAND_ARG_NODE,      2, "echo"},
-				{COMMAND_ARG_NODE,      3, "success"},
-				{COMMAND_ARG_NODE,      2, "echo"},
-				{COMMAND_ARG_NODE,      3, "failure"},
+				{AND_IF_NODE,       0, ""},
+				{PIPE_NODE,         1, ""},
+				{COMMAND_ARG_NODE,  2, "echo"},
+				{COMMAND_ARG_NODE,  3, "-n"},
+				{COMMAND_ARG_NODE,  4, "hello"},
+				{REDIRECT_OUT_NODE, 5, "res"},
+				{COMMAND_ARG_NODE,  2, "cat"},
+				{OR_IF_NODE,        1, ""},
+				{COMMAND_ARG_NODE,  2, "echo"},
+				{COMMAND_ARG_NODE,  3, "success"},
+				{COMMAND_ARG_NODE,  2, "echo"},
+				{COMMAND_ARG_NODE,  3, "failure"},
 		};
-		test_parser(input, expected, GENERAL_CASE);
+		test_parser(input, expected, GENERAL_CASE, sizeof(expected) / sizeof(test));
 	}
 	{
 		char input[] = "cat << EOS hello | ls -l | wc -l >> 1.txt || echo failure";
 		test expected[] = {
-				{OR_IF_NODE,            0, ""},
-				{PIPE_NODE,             1, ""},
-				{COMMAND_ARG_NODE,      2, "cat"},
-				{HEREDOC_NODE,          3, ""},
-				{REDIRECT_OPERAND_NODE, 4, "EOS"},
-				{COMMAND_ARG_NODE,      4, "hello"},
-				{PIPE_NODE,             2, ""},
-				{COMMAND_ARG_NODE,      3, "ls"},
-				{COMMAND_ARG_NODE,      4, "-l"},
-				{COMMAND_ARG_NODE,      3, "wc"},
-				{COMMAND_ARG_NODE,      4, "-l"},
-				{REDIRECT_APPEND_NODE,  5, ""},
-				{REDIRECT_OPERAND_NODE, 6, "1.txt"},
-				{COMMAND_ARG_NODE,      1, "echo"},
-				{COMMAND_ARG_NODE,      2, "failure"},
+				{OR_IF_NODE,           0, ""},
+				{PIPE_NODE,            1, ""},
+				{COMMAND_ARG_NODE,     2, "cat"},
+				{HEREDOC_NODE,         3, "EOS"},
+				{COMMAND_ARG_NODE,     4, "hello"},
+				{PIPE_NODE,            2, ""},
+				{COMMAND_ARG_NODE,     3, "ls"},
+				{COMMAND_ARG_NODE,     4, "-l"},
+				{COMMAND_ARG_NODE,     3, "wc"},
+				{COMMAND_ARG_NODE,     4, "-l"},
+				{REDIRECT_APPEND_NODE, 5, "1.txt"},
+				{COMMAND_ARG_NODE,     1, "echo"},
+				{COMMAND_ARG_NODE,     2, "failure"},
 		};
-		test_parser(input, expected, HEREDOC_NODE);
+		test_parser(input, expected, HEREDOC_NODE, sizeof(expected) / sizeof(test));
 	}
 	{
-		char input[] = "cat | ls -l | wc -l 12>> 1.txt hello || echo failure";
+		char input[] = "cat | ls -l | wc -l >> 1.txt hello || echo failure";
 		test expected[] = {
-				{OR_IF_NODE,            0, ""},
-				{PIPE_NODE,             1, ""},
-				{COMMAND_ARG_NODE,      2, "cat"},
-				{PIPE_NODE,             2, ""},
-				{COMMAND_ARG_NODE,      3, "ls"},
-				{COMMAND_ARG_NODE,      4, "-l"},
-				{COMMAND_ARG_NODE,      3, "wc"},
-				{COMMAND_ARG_NODE,      4, "-l"},
-				{REDIRECT_APPEND_NODE,  5, "12"},
-				{REDIRECT_OPERAND_NODE, 6, "1.txt"},
-				{COMMAND_ARG_NODE,      6, "hello"},
-				{COMMAND_ARG_NODE,      1, "echo"},
-				{COMMAND_ARG_NODE,      2, "failure"},
+				{OR_IF_NODE,           0, ""},
+				{PIPE_NODE,            1, ""},
+				{COMMAND_ARG_NODE,     2, "cat"},
+				{PIPE_NODE,            2, ""},
+				{COMMAND_ARG_NODE,     3, "ls"},
+				{COMMAND_ARG_NODE,     4, "-l"},
+				{COMMAND_ARG_NODE,     3, "wc"},
+				{COMMAND_ARG_NODE,     4, "-l"},
+				{REDIRECT_APPEND_NODE, 5, "1.txt"},
+				{COMMAND_ARG_NODE,     6, "hello"},
+				{COMMAND_ARG_NODE,     1, "echo"},
+				{COMMAND_ARG_NODE,     2, "failure"},
 		};
-		test_parser(input, expected, REDIRECT_APPEND_NODE);
+		test_parser(input, expected, REDIRECT_APPEND_NODE, sizeof(expected) / sizeof(test));
 	}
 	{
 		char input[] = "(cd ..)";
@@ -106,7 +102,7 @@ int main() {
 				{COMMAND_ARG_NODE, 1, "cd"},
 				{COMMAND_ARG_NODE, 2, ".."},
 		};
-		test_parser(input, expected, SUBSHELL_NODE);
+		test_parser(input, expected, SUBSHELL_NODE, sizeof(expected) / sizeof(test));
 	}
 	{
 		char input[] = "(echo success || echo failure)";
@@ -118,7 +114,7 @@ int main() {
 				{COMMAND_ARG_NODE, 2, "echo"},
 				{COMMAND_ARG_NODE, 3, "failure"},
 		};
-		test_parser(input, expected, SUBSHELL_NODE);
+		test_parser(input, expected, SUBSHELL_NODE, sizeof(expected) / sizeof(test));
 	}
 	{
 		char input[] = "echo hoge && (echo success || echo failure)";
@@ -133,24 +129,20 @@ int main() {
 				{COMMAND_ARG_NODE, 3, "echo"},
 				{COMMAND_ARG_NODE, 4, "failure"},
 		};
-		test_parser(input, expected, SUBSHELL_NODE);
+		test_parser(input, expected, SUBSHELL_NODE, sizeof(expected) / sizeof(test));
 	}
 	{
-		char input[] = "(echo success) < input 2> res >> res1 << EOL";
+		char input[] = "(echo success) < input > res >> res1 << EOL";
 		test expected[] = {
-				{SUBSHELL_NODE,         0, ""},
-				{COMMAND_ARG_NODE,      1, "echo"},
-				{COMMAND_ARG_NODE,      2, "success"},
-				{REDIRECT_IN_NODE,      1, ""},
-				{REDIRECT_OPERAND_NODE, 2, "input"},
-				{REDIRECT_OUT_NODE,     2, "2"},
-				{REDIRECT_OPERAND_NODE, 3, "res"},
-				{REDIRECT_APPEND_NODE,  3, ""},
-				{REDIRECT_OPERAND_NODE, 4, "res1"},
-				{HEREDOC_NODE,          4, ""},
-				{REDIRECT_OPERAND_NODE, 5, "EOL"},
+				{SUBSHELL_NODE,        0, ""},
+				{COMMAND_ARG_NODE,     1, "echo"},
+				{COMMAND_ARG_NODE,     2, "success"},
+				{REDIRECT_IN_NODE,     1, "input"},
+				{REDIRECT_OUT_NODE,    2, "res"},
+				{REDIRECT_APPEND_NODE, 3, "res1"},
+				{HEREDOC_NODE,         4, "EOL"},
 		};
-		test_parser(input, expected, SUBSHELL_NODE);
+		test_parser(input, expected, SUBSHELL_NODE, sizeof(expected) / sizeof(test));
 	}
 	{
 		char input[] = "echo \"hello\"";
@@ -158,7 +150,7 @@ int main() {
 				{COMMAND_ARG_NODE, 0, "echo"},
 				{COMMAND_ARG_NODE, 1, "\"hello\""},
 		};
-		test_parser(input, expected, COMMAND_ARG_NODE);
+		test_parser(input, expected, COMMAND_ARG_NODE, sizeof(expected) / sizeof(test));
 	}
 	{
 		char input[] = "echo \'hello\'";
@@ -166,7 +158,7 @@ int main() {
 				{COMMAND_ARG_NODE, 0, "echo"},
 				{COMMAND_ARG_NODE, 1, "\'hello\'"},
 		};
-		test_parser(input, expected, COMMAND_ARG_NODE);
+		test_parser(input, expected, COMMAND_ARG_NODE, sizeof(expected) / sizeof(test));
 	}
 	{
 		char input[] = "(\n\n\n echo hello \n\n\n)";
@@ -175,7 +167,7 @@ int main() {
 				{COMMAND_ARG_NODE, 1, "echo"},
 				{COMMAND_ARG_NODE, 2, "hello"},
 		};
-		test_parser(input, expected, SUBSHELL_NODE);
+		test_parser(input, expected, SUBSHELL_NODE, sizeof(expected) / sizeof(test));
 	}
 	{
 		char input[] = "(echo hello \n echo success)";
@@ -187,7 +179,7 @@ int main() {
 				{COMMAND_ARG_NODE,      2, "echo"},
 				{COMMAND_ARG_NODE,      3, "success"},
 		};
-		test_parser(input, expected, SUBSHELL_NODE);
+		test_parser(input, expected, SUBSHELL_NODE, sizeof(expected) / sizeof(test));
 	}
 	{
 		char input[] = "echo hello && echo success";
@@ -198,7 +190,7 @@ int main() {
 				{COMMAND_ARG_NODE, 1, "echo"},
 				{COMMAND_ARG_NODE, 2, "success"},
 		};
-		test_parser(input, expected, AND_IF_NODE);
+		test_parser(input, expected, AND_IF_NODE, sizeof(expected) / sizeof(test));
 	}
 	{
 		char input[] = "echo $TEST";
@@ -206,7 +198,7 @@ int main() {
 				{COMMAND_ARG_NODE, 0, "echo"},
 				{COMMAND_ARG_NODE, 1, "$TEST"},
 		};
-		test_parser(input, expected, COMMAND_ARG_NODE);
+		test_parser(input, expected, COMMAND_ARG_NODE, sizeof(expected) / sizeof(test));
 	}
 	{
 		char input[] = "e$TESTo hello";
@@ -214,112 +206,137 @@ int main() {
 				{COMMAND_ARG_NODE, 0, "e$TESTo"},
 				{COMMAND_ARG_NODE, 1, "hello"},
 		};
-		test_parser(input, expected, COMMAND_ARG_NODE);
+		test_parser(input, expected, COMMAND_ARG_NODE, sizeof(expected) / sizeof(test));
 	}
 	{
 		char input[] = "(echo hello";
 		test expected[] = {
 				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
 		};
-		test_parser(input, expected, ERROR_CASE);
+		test_parser(input, expected, ERROR_CASE, 0);
 	}
 	{
 		char input[] = "echo hello)";
 		test expected[] = {
 				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `)'\n"},
 		};
-		test_parser(input, expected, ERROR_CASE);
+		test_parser(input, expected, ERROR_CASE, 0);
 	}
 	{
 		char input[] = "echo hello(";
 		test expected[] = {
 				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `('\n"},
 		};
-		test_parser(input, expected, ERROR_CASE);
+		test_parser(input, expected, ERROR_CASE, 0);
 	}
 	{
 		char input[] = "(echo success) && ";
 		test expected[] = {
 				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
 		};
-		test_parser(input, expected, ERROR_CASE);
+		test_parser(input, expected, ERROR_CASE, 0);
 	}
 	{
 		char input[] = "( && )";
 		test expected[] = {
 				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `&&'\n"},
 		};
-		test_parser(input, expected, ERROR_CASE);
+		test_parser(input, expected, ERROR_CASE, 0);
 	}
 	{
 		char input[] = "( \n )";
 		test expected[] = {
 				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `)'\n"},
 		};
-		test_parser(input, expected, ERROR_CASE);
+		test_parser(input, expected, ERROR_CASE, 0);
 	}
 	{
 		char input[] = "echo success > &&";
 		test expected[] = {
 				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `&&'\n"},
 		};
-		test_parser(input, expected, ERROR_CASE);
+		test_parser(input, expected, ERROR_CASE, 0);
 	}
 	{
-		char input[] = "(echo hello > res1 2>> ||";
+		char input[] = "(echo hello > res1 >> ||";
 		test expected[] = {
 				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `||'\n"},
 		};
-		test_parser(input, expected, ERROR_CASE);
+		test_parser(input, expected, ERROR_CASE, 0);
 	}
 	{
 		char input[] = "echo hello ||";
 		test expected[] = {
 				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
 		};
-		test_parser(input, expected, ERROR_CASE);
+		test_parser(input, expected, ERROR_CASE, 0);
 	}
 	{
 		char input[] = "echo hello |";
 		test expected[] = {
 				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
 		};
-		test_parser(input, expected, ERROR_CASE);
+		test_parser(input, expected, ERROR_CASE, 0);
 	}
 	{
 		char input[] = "echo hello |)";
 		test expected[] = {
 				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
 		};
-		test_parser(input, expected, ERROR_CASE);
+		test_parser(input, expected, ERROR_CASE, 0);
 	}
 	{
 		char input[] = "echo hello | echo hello | echo hello |";
 		test expected[] = {
 				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
 		};
-		test_parser(input, expected, ERROR_CASE);
+		test_parser(input, expected, ERROR_CASE, 0);
 	}
 	{
 		char input[] = "(echo hello > res1 << \n";
 		test expected[] = {
 				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `newline'\n"},
 		};
-		test_parser(input, expected, ERROR_CASE);
+		test_parser(input, expected, ERROR_CASE, 0);
 	}
 	{
 		char input[] = "(echo hello > res1 \n";
 		test expected[] = {
 				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
 		};
-		test_parser(input, expected, ERROR_CASE);
+		test_parser(input, expected, ERROR_CASE, 0);
 	}
-
+//	{
+//		char input[] = "echo hello 2>res";
+//		test expected[] = {
+//				{COMMAND_ARG_NODE,  0, "echo"},
+//				{COMMAND_ARG_NODE,  1, "hello"},
+//				{COMMAND_ARG_NODE,  2, "2"},
+//				{REDIRECT_OUT_NODE, 3, "res"},
+//		};
+//		test_parser(input, expected, REDIRECT_OUT_NODE, sizeof(expected) / sizeof(test));
+//	}
+//	{
+//		char input[] = "cat 1<1";
+//		test expected[] = {
+//				{COMMAND_ARG_NODE, 0, "cat"},
+//				{COMMAND_ARG_NODE, 1, "1"},
+//				{REDIRECT_IN_NODE, 2, "1"},
+//		};
+//		test_parser(input, expected, REDIRECT_IN, sizeof(expected) / sizeof(test));
+//	}
+//	{
+//		char input[] = "(echo hello) 3>>res";
+//		test expected[] = {
+//				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `3'\n"},
+//		};
+//		test_parser(input, expected, ERROR_CASE, 0);
+//	}
 
 	print_err_cnt();
 }
 
-void test_parser(char input[], test *expected, int test_type) {
+void test_parser(char input[], test *expected, int test_type, int expected_token_num) {
 	printf("\n---------------------------------\n");
 	if (test_type == GENERAL_CASE)
 		printf("	 [GENERAL] TEST\n");
@@ -353,6 +370,10 @@ void test_parser(char input[], test *expected, int test_type) {
 		print_ast_nodes(node, 0);
 		ast_index = 0;
 		test_ast_nodes(node, 0, expected);
+		if (ast_index != expected_token_num) {
+			fprintf(stderr, RED "returned token num wrong!\n" RESET);
+			err_cnt++;
+		}
 		delete_ast_nodes(node, NULL);
 	}
 
