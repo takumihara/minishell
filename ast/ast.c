@@ -11,7 +11,7 @@ void	*delete_ast_nodes(t_ast_node *node1, t_ast_node *node2)
 {
 	if (!node1)
 		return (NULL);
-	//todo: free data?
+	free(node1->data);
 	if (node2)
 		delete_ast_nodes(node2, NULL);
 	delete_ast_nodes(node1->left, NULL);

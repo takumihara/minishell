@@ -12,6 +12,7 @@
 
 # define ERR_UNEXPECTED_TOKEN 1
 # define ERR_UNEXPECTED_EOF 2
+# define ERR_MALLOC 3
 
 # define EXIT_STATUS_PARSER 258
 

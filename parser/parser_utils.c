@@ -19,7 +19,15 @@ bool	consume_token(t_parser *p, t_token_type expected_type, t_ast_node *node)
 	if (p->token->type != expected_type)
 		return (false);
 	if (node)
-		node->data = &p->token->literal;
+	{
+		// todo: FREE REQUIRED!
+		node->data = strldup(p->token->literal.start, p->token->literal.len);
+		if (!node->data)
+		{
+			p->err = ERR_MALLOC;
+			return (false);
+		}
+	}
 	p->token = p->token->next;
 	return (true);
 }
@@ -83,6 +91,8 @@ void	handle_err(t_parser *p)
 	}
 	else if (p->err == ERR_UNEXPECTED_EOF)
 		write(STDERR_FILENO, "minishell: syntax error: unexpected end of file\n", 48);
+	else if (p->err == ERR_MALLOC)
+		perror("malloc"); // todo: is the exit status the same?
 	if (p->err)
 	{
 		free(p);
