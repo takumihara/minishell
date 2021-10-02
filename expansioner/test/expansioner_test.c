@@ -27,42 +27,50 @@ typedef struct s_test {
 } t_test;
 
 void print_ast_nodes(t_ast_node *node, int level);
-void test_expansioner(char input[], t_test *expected, int test_type);
+void test_expansioner(char input[], t_test *expected, int test_type, char **envp);
 void test_ast_nodes(t_ast_node *node, int level, t_test *expected);
 void print_err_cnt();
 
 int ast_index;
 int err_cnt;
 
+extern char	**environ;
+
 int main(int ac, char **av, char **envp) {
 	(void)ac;
 	(void)av;
 	(void)envp;
 	{
-		char	env_var[] = "TEST";
-		char	env_value[] = "hello";
-		setenv(env_var, env_value, 1);
+		if (setenv("TEST", "hello", 1) != 0)
+			perror("setenv");
 		char input[] = "echo $TEST";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
 				{COMMAND_ARG_NODE, "hello"},
 		};
-		test_expansioner(input, expected, GENERAL_CASE);
+		test_expansioner(input, expected, GENERAL_CASE, environ);
 	}
 	{
-		char	env_var[] = "TEST";
-		char	env_value[] = "ch";
-		setenv(env_var, env_value, 1);
-		char input[] = "e$TESTo hello";
+		setenv("TEST", "ho", 1);
+		char input[] = "ec$TEST hello";
 		t_test expected[] = {
-				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "ech"},
 				{COMMAND_ARG_NODE, "hello"},
 		};
-		test_expansioner(input, expected, GENERAL_CASE);
+		test_expansioner(input, expected, GENERAL_CASE, environ);
+	}
+	{
+		setenv("TEST", "hoge", 1);
+		char input[] = "echo aaa$TEST$TEST";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "aaahogehoge"},
+		};
+		test_expansioner(input, expected, GENERAL_CASE, environ);
 	}
 }
 
-void test_expansioner(char input[], t_test *expected, int test_type) {
+void test_expansioner(char input[], t_test *expected, int test_type, char **envp) {
 	printf("\n---------------------------------\n");
 	if (test_type == GENERAL_CASE)
 		printf("	 [GENERAL] TEST\n");
@@ -76,7 +84,7 @@ void test_expansioner(char input[], t_test *expected, int test_type) {
 	(void)expected;
 	t_token		*token = lex(input);
 	t_ast_node	*root = parse(token);
-				root = expansion(root, NULL);
+				root = expansion(root, envp);
 	// if (!res) {
 	// 	fprintf(stderr, RED "parse() returned NULL!\n" RESET);
 	// 	err_cnt++;
@@ -145,7 +153,7 @@ void print_ast_nodes(t_ast_node *node, int level) {
 		printf("expansioner returns NULL\n");
 		literal = strdup("");
 	}
-	printf("{Index: %d, Level: %d, Type:%s, Literal:'%s'}\n", ast_index, level, debug_node_type[node->type], literal);
+	printf("{Index: %d, Level: %d, Literal:'%s', Size:%zu}\n", ast_index, level, literal, node->data->len);
 	free(literal);
 	ast_index++;
 	print_ast_nodes(node->left, level + 1);

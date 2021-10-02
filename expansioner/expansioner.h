@@ -11,14 +11,32 @@
 # include <stdlib.h>
 
 # define EXPANDABLE "\"\'$"
-# define EXPANSION_DELIMITER "\"\'$|&<>$() \t\n"
+# define EXPANSION_DELIMITER "\"\'$|&<>() =\t\n"
+
+typedef struct s_env_var t_env_var;
+
+struct s_env_var {
+	char	*key;
+	char	*value;
+	t_env_var	*next;
+};
 
 // expansioner.c
 t_ast_node	*expansion(t_ast_node *node, char **envp);
 
 // expansioner_utils.c
-bool		is_expandable_string(char *str);
-char		*cut_environment_variable(char *var_start);
-t_string	*str_insert(t_string *data, char *env_var, char *env_value, size_t replace_start);
+bool		is_expandable_string(char *str, size_t len);
+size_t		var_len(const char *str);	
+char		*search_env_vars(t_string *data, size_t var_start, t_env_var *vars);
+t_string	*str_insert(t_string *data, char *env_value, size_t replace_start);
+
+// expansioner_list.c
+t_env_var	*split_environment_vars(char **envp);
+void		env_lstclear(t_env_var *lst);
+void		set_key_value(char *envp, t_env_var *vars);
+
+void		print_env_lst(t_env_var *vars);
+
+
 
 #endif
