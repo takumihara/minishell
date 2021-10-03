@@ -1,59 +1,94 @@
 #include "execute.h"
 
-static int command_line(t_executor *e, t_ast_node *node);
-static int pipeline(t_executor *e, t_ast_node *node);
-static int command(t_executor *e, t_ast_node *node);
-static int subshell(t_executor *e, t_ast_node *node);
-static int compound_list(t_executor *e, t_ast_node *node);
-static int simple_command(t_executor *e, t_ast_node *node);
-static int simple_command_element(t_executor *e, t_ast_node *node);
-static int word(t_executor *e, t_ast_node *node);
-static int redirection_list(t_executor *e, t_ast_node *node);
-static int redirection(t_executor *e, t_ast_node *node);
+int execute_simple_command(t_executor *e, t_simple_command *sc);
+int execute_command(t_executor *e, void *command, int type);
 
-void	execute(t_ast_node *root)
+int execute_pipeline(t_executor *e, t_pipeline *pl)
 {
-	t_executor	*e;
+	int	res;
+	int	orig_stdfd[2];
+	int	pipefd[2];
+	int	child_process_cnt;
 
-	if (new_executor(&e, root))
-		return ;
-	command_line(e, root);
-}
-
-int command_line(t_executor *e, t_ast_node *node)
-{
-	if (e->exit_status == e->condition)
-		e->exit_status = pipeline(e, node->left);
-	if (node->type == AND_IF_NODE)
+	orig_stdfd[READ] = dup(0);
+	orig_stdfd[WRITE] = dup(1);
+	pipefd[READ] = 0;
+	child_process_cnt = 0;
+	e->exit_status = -1;
+	while (pl)
 	{
-		e->condition = CONDITION_AND_IF;
-		return (command_line(e, node->right));
+		dup2(pipefd[READ], 0);
+		if (pipefd[READ])
+			close(pipefd[READ]);
+		if (pl->next)
+		{
+			pipe(pipefd);
+			dup2(pipefd[WRITE], 1);
+			close(pipefd[WRITE]);
+		}
+		res = execute_command(e, pl->command, pl->type);
+		if (res == CHILD_PROCESS_CREATED)
+			child_process_cnt++;
+		else if (!pl->next)
+			e->exit_status = res;
+		pl = pl->next;
 	}
-	else if (node->type == OR_IF_NODE)
+	delete_list((void *)e->pipeline, T_PIPELINE);
+	dup2(orig_stdfd[READ], STDIN_FILENO);
+	dup2(orig_stdfd[WRITE], STDOUT_FILENO);
+	close(orig_stdfd[READ]);
+	close(orig_stdfd[WRITE]);
+	while (child_process_cnt--)
+		wait(&res);
+	if (e->exit_status == -1)
+		e->exit_status = res;
+	return (res);
+}
+
+int execute_command(t_executor *e, void *command, int type)
+{
+	if (type == T_SIMPLE_COMMAND)
+		return (execute_simple_command(e, (t_simple_command *)command));
+	// todo: subshell
+	return (1);
+}
+
+int execute_simple_command(t_executor *e, t_simple_command *sc)
+{
+	pid_t	pid;
+	void	*tmp;
+	//todo: builtin check
+
+	// assume there are no several redirect in
+	// process redirect in
+	tmp = sc->r_in;
+	while (sc->r_in && sc->r_in->next)
+		sc->r_in = sc->r_in->next;
+	if (sc->r_in)
+		dup2(sc->r_in->fd, STDIN_FILENO);
+	delete_list(tmp, T_REDIRECT_IN); //todo: does the fd have to be closed here?
+	// process redirect out
+	sc->r_out = NULL;
+	tmp = sc->r_out;
+	while (sc->r_out && sc->r_out->next)
+		sc->r_out = sc->r_out->next;
+	if (sc->r_out)
+		dup2(sc->r_out->fd, STDIN_FILENO);
+	delete_list(tmp, T_REDIRECT_OUT);
+	// actual execution
+	sc->r_out = NULL;
+	pid = fork();
+	if (pid == 0) //child process
 	{
-		e->condition = CONDITION_OR_IF;
-		return (command_line(e, node->right));
+		if (execvp(sc->argv[0], sc->argv) == -1)
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(sc->argv[0], 2);
+			ft_putstr_fd(": command not found\n", 2);
+			return (127);
+		}
 	}
-	return (e->exit_status);
-}
-
-int pipeline(t_executor *e, t_ast_node *node)
-{
-	// expected node type == COMMAND_ARG_NODE, REDIRECT*, PIPE_NODE, SUBSHELL
-	if (node->type != PIPE_NODE)
-		return (command(e, node));
-
-}
-
-int command(t_executor *e, t_ast_node *node)
-{
-	if (node->type == SUBSHELL_NODE)
-		return (subshell(e, node));
-	else
-		return (simple_command(e, node));
-}
-
-int subshell(t_executor *e, t_ast_node *node)
-{
-
+	else if (pid < 0)
+		exit(ms_perror(e, "fork"));
+	return (CHILD_PROCESS_CREATED);
 }

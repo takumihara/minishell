@@ -5,7 +5,7 @@ PARSER_PATH		= ../../parser
 LEXER_PATH		= ../../lexer
 AST_PATH		= ../../ast
 UTILS_PATH		= ../../utils
-SRC_PATHS		= . $(EXECUTE) $(PARSER_PATH) $(LEXER_PATH) $(AST_PATH) $(UTILS_PATH)
+SRC_PATHS		= . $(EXECUTE_PATH) $(PARSER_PATH) $(LEXER_PATH) $(AST_PATH) $(UTILS_PATH)
 SRCS			= $(foreach path, $(SRC_PATHS), $(wildcard $(path)/*.c))
 
 OBJDIR  = ./obj
