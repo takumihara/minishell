@@ -306,31 +306,34 @@ int main() {
 		};
 		test_parser(input, expected, ERROR_CASE, 0);
 	}
-//	{
-//		char input[] = "echo hello 2>res";
-//		test expected[] = {
-//				{COMMAND_ARG_NODE,  0, "echo"},
-//				{COMMAND_ARG_NODE,  1, "hello"},
-//				{COMMAND_ARG_NODE,  2, "2"},
-//				{REDIRECT_OUT_NODE, 3, "res"},
-//		};
-//		test_parser(input, expected, REDIRECT_OUT_NODE, sizeof(expected) / sizeof(test));
-//	}
-//	{
-//		char input[] = "cat 1<1";
-//		test expected[] = {
-//				{COMMAND_ARG_NODE, 0, "cat"},
-//				{COMMAND_ARG_NODE, 1, "1"},
-//				{REDIRECT_IN_NODE, 2, "1"},
-//		};
-//		test_parser(input, expected, REDIRECT_IN, sizeof(expected) / sizeof(test));
-//	}
+	{
+		char input[] = "echo hello 2>res";
+		test expected[] = {
+				{COMMAND_ARG_NODE,  0, "echo"},
+				{COMMAND_ARG_NODE,  1, "hello"},
+				{COMMAND_ARG_NODE,  2, "2"},
+				{REDIRECT_OUT_NODE, 3, "res"},
+		};
+		test_parser(input, expected, REDIRECT_OUT_NODE, sizeof(expected) / sizeof(test));
+	}
+	{
+		char input[] = "cat 1<1";
+		test expected[] = {
+				{COMMAND_ARG_NODE, 0, "cat"},
+				{COMMAND_ARG_NODE, 1, "1"},
+				{REDIRECT_IN_NODE, 2, "1"},
+		};
+		test_parser(input, expected, REDIRECT_IN, sizeof(expected) / sizeof(test));
+	}
 //	{
 //		char input[] = "(echo hello) 3>>res";
 //		test expected[] = {
-//				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `3'\n"},
+//				{SUBSHELL_NODE, 0, ""},
+//				{COMMAND_ARG_NODE, 1, "echo"},
+//				{REDIRECT_IN_NODE, 2, "hello"},
+//				{REDIRECT_IN_NODE, 2, "hello"},
 //		};
-//		test_parser(input, expected, ERROR_CASE, 0);
+//		test_parser(input, expected, SUBSHELL_NODE, 0);
 //	}
 
 	print_err_cnt();

@@ -1,37 +1,28 @@
-NAME    	= minishell
+NAME = a.out
 
-EXECUTE_PATH	= execute
-PARSER_PATH		= parser
-LEXER_PATH		= lexer
-AST_PATH		= ast
-UTILS_PATH		= utils
+EXECUTE_PATH	= ..
+PARSER_PATH		= ../../parser
+LEXER_PATH		= ../../lexer
+AST_PATH		= ../../ast
+UTILS_PATH		= ../../utils
 SRC_PATHS		= . $(EXECUTE_PATH) $(PARSER_PATH) $(LEXER_PATH) $(AST_PATH) $(UTILS_PATH)
 SRCS			= $(foreach path, $(SRC_PATHS), $(wildcard $(path)/*.c))
 
-OBJDIR  	= ./obj
-OBJS    	= $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.c=.o)))
-LIBFT_PATH	= libft
+OBJDIR  = ./obj
+OBJS    = $(addprefix $(OBJDIR)/, $(notdir $(SRCS:%.c=%.o)))
 
-CC      	= gcc
-CFLAG   	= -Wall -Wextra -Werror -fsanitize=address
+CC		= gcc
+CFLAG	= -Wall -Wextra -Werror -fsanitize=address -DTEST
 
-LIB			= -L$(LIBFT_PATH) -lft
-INCLUDE		=
+LIBFT_PATH = ../../libft
+#INCLUDE		= -I../../lexer -I../../token -I../../ast -I../../parser
 
-ifeq ($(shell uname), Darwin)
-	INCLUDE += -I$(shell brew --prefix readline)/include
-	LIB += -L$(shell brew --prefix readline)/lib -lreadline
-else
-	 LIB += -lreadline
-endif
-
-all: $(NAME) run
+#all: $(NAME)
+all: run
 
 $(NAME): $(OBJS)
 	@make -C $(LIBFT_PATH)
-	$(CC) $(CFLAG) $^ -o $@ $(INCLUDE) $(LIB)
-
-bonus: $(NAME)
+	$(CC) $(CFLAG) $(INCLUDE) $^ -o $@ -L$(LIBFT_PATH) -lft
 
 $(OBJDIR)/%.o: %.c
 	@mkdir -p $(dir $@)
@@ -58,16 +49,18 @@ $(OBJDIR)/%.o: $(UTILS_PATH)/%.c
 	$(CC) $(CFLAG) -o $@ -c $<
 
 clean:
-	@make clean -C $(LIBFT_PATH)
-	@rm -rf $(OBJDIR)
+	@make fclean -C $(LIBFT_PATH)
+	$(RM) -r $(OBJDIR)
+	$(RM) -r $(PARSER_OBJDIR)
+	$(RM) -r $(LEXER_OBJDIR)
 
 fclean: clean
 	@make fclean -C $(LIBFT_PATH)
-	@rm -f $(NAME) $(CHECKER)
+	$(RM) $(NAME)
 
 re: fclean all
 
-run:
+run: $(NAME)
 	./$(NAME)
 
-.PHONY: all bonus clean fclean re run
+.PHONY: all re clean fclean run

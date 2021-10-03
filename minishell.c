@@ -4,9 +4,13 @@
 #include <readline/history.h>
 //#include "/usr/local/opt/readline/include/readline/readline.h"
 //#include "/usr/local/opt/readline/include/readline/history.h"
-
 #include <signal.h>
+
 #include "libft/libft.h"
+#include "parser/parser.h"
+#include "lexer/lexer.h"
+#include "execute/execute.h"
+
 
 //	rl_on_new_line();
 //	rl_replace_line("", 0); // <- 現状、何故かこの関数だけがコンパイルエラーとなり動かない
@@ -45,7 +49,15 @@ int	main(void)
 			ft_putendl_fd("exit", STDOUT_FILENO);
 			break ;
 		}
-		printf("line is '%s'\n", line);
+		t_token *token = lex(line);
+		t_ast_node *node = parse(token);
+		if (!node)
+		{
+			fprintf(stderr, RED "parse() returned NULL!\n" RESET);
+			free(line);
+			continue;
+		}
+		execute(node);
 		add_history(line);
 		free(line);
 	}
