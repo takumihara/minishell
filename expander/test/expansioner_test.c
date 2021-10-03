@@ -6,19 +6,16 @@
 #define GENERAL_CASE -1
 #define ERROR_CASE -2
 
+typedef enum e_expand_type {
+	ENV_VARS,
+	QUOTES,
+	WILDCARD,
+}	t_expand_type;
+
 char *debug_node_type[20] = {
-		"UNSET_NODE",
-		"PIPE_NODE",
-		"AND_IF_NODE",
-		"OR_IF_NODE",
-		"COMMAND_ARG_NODE",
-		"REDIRECT_OUT_NODE",
-		"REDIRECT_IN_NODE",
-		"REDIRECT_APPEND_NODE",
-		"HEREDOC_NODE",
-		"REDIRECT_OPERAND_NODE",
-		"SUBSHELL_NODE",
-		"SUBSHELL_NEWLINE_NODE",
+	"ENV_VARS",
+	"QUOTES",
+	"WILDCARD",
 };
 
 typedef struct s_test {
@@ -48,7 +45,7 @@ int main(int ac, char **av, char **envp) {
 				{COMMAND_ARG_NODE, "echo"},
 				{COMMAND_ARG_NODE, "hello"},
 		};
-		test_expander(input, expected, GENERAL_CASE, environ);
+		test_expander(input, expected, ENV_VARS, environ);
 	}
 	{
 		setenv("TEST", "ho", 1);
@@ -57,7 +54,7 @@ int main(int ac, char **av, char **envp) {
 				{COMMAND_ARG_NODE, "ech"},
 				{COMMAND_ARG_NODE, "hello"},
 		};
-		test_expander(input, expected, GENERAL_CASE, environ);
+		test_expander(input, expected, ENV_VARS, environ);
 	}
 	{
 		setenv("TEST", "hoge", 1);
@@ -66,7 +63,41 @@ int main(int ac, char **av, char **envp) {
 				{COMMAND_ARG_NODE, "echo"},
 				{COMMAND_ARG_NODE, "aaahogehoge"},
 		};
-		test_expander(input, expected, GENERAL_CASE, environ);
+		test_expander(input, expected, ENV_VARS, environ);
+	}
+	{
+		setenv("TEST", "echo hello", 1);
+		char input[] = "$TEST";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo hello"},
+		};
+		test_expander(input, expected, ENV_VARS, environ);
+	}
+	{
+		char input[] = "echo \"hoge\"";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "hoge"},
+		};
+		test_expander(input, expected, QUOTES, environ);
+	}
+	{
+		setenv("TEST", "example", 1);
+		char input[] = "echo \"$TEST\"";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "example"},
+		};
+		test_expander(input, expected, QUOTES, environ);
+	}
+	{
+		setenv("TEST", "example", 1);
+		char input[] = "echo \'$TEST\'";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "$TEST"},
+		};
+		test_expander(input, expected, QUOTES, environ);
 	}
 }
 

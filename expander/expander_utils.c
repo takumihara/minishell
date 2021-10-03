@@ -1,12 +1,9 @@
 #include "expander.h"
 
-bool	is_expandable_string(char *str)
+bool	is_expandable_string(char *str, char delimiter)
 {
-	while (*str)
-	{
-		if (ft_strchr(EXPANDABLE, *str++))
-			return (true);
-	}
+	if (ft_strchr(str, delimiter))
+		return (true);
 	return (false);
 }
 
@@ -53,4 +50,11 @@ char	*str_insert(char *data, size_t replace_start, char *env_value, size_t env_v
 	free(prev_data);
 	expanded_str[expansion_len] = '\0';
 	return (data);
+}
+
+bool		is_closed_quotes(char *data, size_t replace_start, char quote_type)
+{
+	if (ft_strchr(&data[replace_start + 1], quote_type))
+		return (true);
+	return (false);
 }

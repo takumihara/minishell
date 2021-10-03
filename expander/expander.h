@@ -27,10 +27,11 @@ struct s_env_var {
 t_ast_node	*expand(t_ast_node *node, char **envp);
 
 // expander_utils.c
-bool		is_expandable_string(char *str);
+bool		is_expandable_string(char *str, char delimiter);
 size_t		var_len(const char *str);	
 char		*search_env_vars(char *data, size_t var_start, t_env_var *vars);
 char		*str_insert(char *data, size_t replace_start, char *env_value, size_t env_value_len);
+bool		is_closed_quotes(char *data, size_t replace_start, char quote_type);
 
 // expander_list.c
 t_env_var	*split_environment_vars(char **envp);
