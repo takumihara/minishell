@@ -34,7 +34,7 @@ void	search_command_arg_node(t_ast_node *node, t_env_var *vars)
 	// if (!ft_strcmp(node->data, "export"))
 	// 	export_env_var();
 	node->data = expand_word(node->data, vars, '$', &expand_environment_variable);
-	node->data = expand_word(node->data, vars, '*', &expand_wildcard);
+	// node->data = expand_word(node->data, vars, '*', &expand_wildcard);
 	// todo: remove quotes
 	// data = remove_quotes();
 }
@@ -79,7 +79,7 @@ char	*expand_environment_variable(char *data, size_t replace_start, t_env_var *v
 	return (data);
 }
 
-char	*expand_wildcard(char *data, size_t replace_start, t_env_var *vars)
-{
+// char	*expand_wildcard(char *data, size_t replace_start, t_env_var *vars)
+// {
 
-}
+// }

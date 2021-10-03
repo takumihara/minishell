@@ -99,6 +99,24 @@ int main(int ac, char **av, char **envp) {
 		};
 		test_expander(input, expected, QUOTES, environ);
 	}
+	{
+		setenv("USER", "user42", 1);
+		char input[] = "echo \"\'$USER\'\"";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "\'user42\'"},
+		};
+		test_expander(input, expected, QUOTES, environ);
+	}
+	{
+		setenv("USER", "user42", 1);
+		char input[] = "echo \'\"$USER\"\'";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "\"$USER\""},
+		};
+		test_expander(input, expected, QUOTES, environ);
+	}
 }
 
 void test_expander(char input[], t_test *expected, int test_type, char **envp) {
