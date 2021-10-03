@@ -53,7 +53,7 @@ t_ast_node	*route_expressions(t_parser *p, t_ast_node *(*f[])(t_parser *), int e
 
 #ifdef TEST
 
-char	*handle_err(t_parser *p)
+char	*handle_err(t_parser *p, t_ast_node *root)
 {
 	char	*rtn;
 
@@ -71,6 +71,7 @@ char	*handle_err(t_parser *p)
 	if (p->err)
 	{
 		free(p);
+		delete_ast_nodes(root, NULL);
 		return (rtn);
 	}
 	return (NULL);
@@ -78,7 +79,7 @@ char	*handle_err(t_parser *p)
 
 #else
 
-void	handle_err(t_parser *p)
+bool	handle_err(t_parser *p, t_ast_node *root)
 {
 	if (p->err == ERR_UNEXPECTED_TOKEN)
 	{
@@ -96,14 +97,15 @@ void	handle_err(t_parser *p)
 		perror("malloc");
 		token_lstclear(p->token);
 		free(p);
+		delete_ast_nodes(root, NULL);
 		exit(EXIT_FAILURE);
 	}
 	if (p->err)
 	{
-		token_lstclear(p->token);
-		free(p);
-		exit(EXIT_STATUS_PARSER);
+		//todo: change exit status `EXIT_STATUS_PARSER`
+		return (true);
 	}
+	return (false);
 }
 
 #endif
