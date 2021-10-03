@@ -88,7 +88,7 @@ void	*parse(t_token *token)
 	if (!assign_mem((void **) &p, new_parser(token)))
 		return (NULL);
 	node = command_line(p);
-	err_msg = handle_err(p);
+	err_msg = handle_err(p, node);
 	if (err_msg)
 		return ((void *)err_msg);
 	free(p);
@@ -105,7 +105,11 @@ t_ast_node *parse(t_token *token)
 	if (!assign_mem((void **) &p, new_parser(token)))
 		return (NULL);
 	root = command_line(p);
-	handle_err(p);
+	if (handle_err(p, root))
+	{
+		delete_ast_nodes(root, NULL);
+		root = NULL;
+	}
 	token_lstclear(p->token);
 	free(p);
 	return (root);
