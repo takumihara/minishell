@@ -44,12 +44,10 @@ t_token	*lex(char *input);
 // lexer_utils.c
 void	read_char(t_lexer *lexer);
 t_token	*skip_space(t_lexer *lexer);
-int		is_digit(char c);
 
 // lexer_new_token.c
 t_token	*new_token(t_token_type token_type, t_lexer *l, size_t len, size_t start);
 t_token	*new_token_string(t_lexer *lexer);
-t_token	*new_token_redirect_or_string(t_lexer *lexer);
 t_token	*new_token_newline(t_lexer *lexer);
 
 // lexer_list.c

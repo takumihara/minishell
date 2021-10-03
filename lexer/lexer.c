@@ -76,11 +76,6 @@ t_token *next_token(t_lexer *l)
 		token = new_token(RPAREN, l, 1, l->position);
 		l->is_subshell = false;
 	}
-	else if (is_digit(l->ch))
-	{
-		token = new_token_redirect_or_string(l);
-		return (token);
-	}
 	else if (l->ch == '\0')
 		token = new_token(EOL, l, 1, l->position);
 	else
