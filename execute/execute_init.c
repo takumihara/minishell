@@ -52,7 +52,7 @@ t_pipeline	*pipeline(t_executor *e, t_ast_node *node)
 	if (node->type == PIPE_NODE)
 	{
 		pipeline_next = pipeline(e, node->right);
-		node = node->right;
+		node = node->left;
 	}
 	if (node->type == SUBSHELL_NODE)
 	{
