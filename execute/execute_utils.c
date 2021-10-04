@@ -43,10 +43,13 @@ void	delete_list(void *element, t_list_type type)
 	free(element);
 }
 
-int	ms_perror(t_executor *e, const char *s)
+int	ex_perror(t_executor *e, const char *s)
 {
 	perror(s);
-	delete_ast_nodes(e->root, NULL);
-	delete_list((void *)e->pipeline, T_PIPELINE);
+	if (e)
+	{
+		delete_ast_nodes(e->root, NULL);
+		delete_list((void *)e->pipeline, T_PIPELINE);
+	}
 	return (EXIT_FAILURE);
 }

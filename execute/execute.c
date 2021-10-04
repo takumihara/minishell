@@ -92,6 +92,6 @@ int execute_simple_command(t_executor *e, t_simple_command *sc)
 		}
 	}
 	else if (pid < 0)
-		exit(ms_perror(e, "fork"));
+		exit(ex_perror(e, "fork"));
 	return (CHILD_PROCESS_CREATED);
 }
