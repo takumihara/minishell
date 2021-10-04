@@ -9,22 +9,29 @@ int execute_pipeline(t_executor *e, t_pipeline *pl)
 	int	orig_stdfd[2];
 	int	pipefd[2];
 	int	child_process_cnt;
+	int tmpfd;
 
-	orig_stdfd[READ] = dup(0);
-	orig_stdfd[WRITE] = dup(1);
-	pipefd[READ] = 0;
+	orig_stdfd[READ] = dup(STDIN_FILENO);
+	orig_stdfd[WRITE] = dup(STDOUT_FILENO);
+	pipefd[READ] = STDIN_FILENO;
 	child_process_cnt = 0;
 	e->exit_status = -1;
 	while (pl)
 	{
-		dup2(pipefd[READ], 0);
+		dup2(pipefd[READ], STDIN_FILENO);
 		if (pipefd[READ])
 			close(pipefd[READ]);
 		if (pl->next)
 		{
 			pipe(pipefd);
-			dup2(pipefd[WRITE], 1);
+			dup2(pipefd[WRITE], STDOUT_FILENO);
 			close(pipefd[WRITE]);
+		}
+		else
+		{
+			tmpfd = dup(orig_stdfd[WRITE]);
+			dup2(tmpfd, STDOUT_FILENO);
+			close(tmpfd);
 		}
 		res = execute_command(e, pl->command, pl->type);
 		if (res == CHILD_PROCESS_CREATED)
@@ -35,8 +42,8 @@ int execute_pipeline(t_executor *e, t_pipeline *pl)
 	}
 	delete_list((void *)e->pipeline, T_PIPELINE);
 	dup2(orig_stdfd[READ], STDIN_FILENO);
-	dup2(orig_stdfd[WRITE], STDOUT_FILENO);
 	close(orig_stdfd[READ]);
+	dup2(orig_stdfd[WRITE], STDOUT_FILENO);
 	close(orig_stdfd[WRITE]);
 	while (child_process_cnt--)
 		wait(&res);
@@ -68,12 +75,13 @@ int execute_simple_command(t_executor *e, t_simple_command *sc)
 		dup2(sc->r_in->fd, STDIN_FILENO);
 	delete_list(tmp, T_REDIRECT_IN); //todo: does the fd have to be closed here?
 	// process redirect out
-	sc->r_out = NULL;
+	sc->r_in = NULL;
 	tmp = sc->r_out;
 	while (sc->r_out && sc->r_out->next)
 		sc->r_out = sc->r_out->next;
-	if (sc->r_out)
-		dup2(sc->r_out->fd, STDIN_FILENO);
+	if (sc->r_out) {
+		dup2(sc->r_out->fd, STDOUT_FILENO);
+	}
 	delete_list(tmp, T_REDIRECT_OUT);
 	// actual execution
 	sc->r_out = NULL;
