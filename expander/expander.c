@@ -86,7 +86,7 @@ char	*expand_wildcard(char *data, size_t pre_len, t_env_var *vars)
 	DIR				*dir;
 	struct dirent	*dp;
 	const char		*post_start = &data[pre_len + 1];
-	const size_t	post_len = not_quoted_strlen(post_start);
+	const size_t	post_len = unquoted_strlen(post_start);
 	char			*rtn;
 
 	(void)vars;

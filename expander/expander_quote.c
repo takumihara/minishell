@@ -2,12 +2,10 @@
 
 bool	is_quoted(const char *str)
 {
-	if (ft_strchr(str, '\'') || ft_strchr(str, '\"'))
-		return (true);
-	return (false);
+	return (ft_strchr(str, '\'') || ft_strchr(str, '\"'));
 }
 
-size_t	not_quoted_strlen(const char *str)
+size_t	unquoted_strlen(const char *str)
 {
 	size_t	len;
 

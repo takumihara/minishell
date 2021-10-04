@@ -47,7 +47,7 @@ bool		is_match_pattern(const char *data, size_t len, char *name);
 
 // expander_quote.c
 bool		is_quoted(const char *str);
-size_t		not_quoted_strlen(const char *str);
+size_t		unquoted_strlen(const char *str);
 
 #endif
 

@@ -3,10 +3,7 @@
 char	*append_wildcard_strings(char *dst, const char *src, const char *data)
 {
 	if (dst == data)
-	{
-		dst = ft_strdup(src);
-		return (dst);
-	}
+		return (ft_strdup(src));
 	else
 	{
 		dst = strappend(dst, " ", 1);
