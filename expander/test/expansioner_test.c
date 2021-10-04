@@ -159,6 +159,14 @@ int main(int ac, char **av, char **envp) {
 		};
 		test_expander(input, expected, WILDCARD, environ);
 	}
+	{
+		char input[] = "echo o*";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "obj"},
+		};
+		test_expander(input, expected, WILDCARD, environ);
+	}
 }
 
 void test_expander(char input[], t_test *expected, int test_type, char **envp) {
