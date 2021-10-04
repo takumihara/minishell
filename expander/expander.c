@@ -100,7 +100,7 @@ char	*expand_wildcard(char *data, size_t pre_len, t_env_var *vars)
 		if (!rtn || !dp)
 			break ;
 		if (is_match_pattern(rtn, pre_len, dp->d_name)
-			&& is_match_pattern(post_start, post_len, &dp->d_name[ft_strlen(dp->d_name) - post_len]))
+			&& is_match_pattern(post_start, post_len, ft_strchr(dp->d_name, 0) - post_len))
 			rtn = append_wildcard_strings(rtn, dp->d_name, data);
 	}
 	closedir(dir);
