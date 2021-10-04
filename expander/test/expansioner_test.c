@@ -128,10 +128,34 @@ int main(int ac, char **av, char **envp) {
 		test_expander(input, expected, WILDCARD, environ);
 	}
 	{
+		char input[] = "echo *.c";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "expansion_test.c expansion_wildcard_test.c"},
+		};
+		test_expander(input, expected, WILDCARD, environ);
+	}
+	{
+		char input[] = "echo expa*";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "expansion_test.c expansion_wildcard_test.c"},
+		};
+		test_expander(input, expected, WILDCARD, environ);
+	}
+	{
 		char input[] = "echo \"ex\"p*.\'c\'";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
-				{COMMAND_ARG_NODE, "expansion_test.c"},
+				{COMMAND_ARG_NODE, "expansion_test.c expansion_wildcard_test.c"},
+		};
+		test_expander(input, expected, WILDCARD, environ);
+	}
+	{
+		char input[] = "echo *";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "expansion_test.c expansion_wildcard_test.c"},
 		};
 		test_expander(input, expected, WILDCARD, environ);
 	}
