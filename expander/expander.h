@@ -49,6 +49,9 @@ bool		is_match_pattern(const char *data, size_t len, char *name);
 bool		is_quoted(const char *str);
 size_t		unquoted_strlen(const char *str);
 
+// expander_sort.c
+char		*sort_strings(char *src);
+
 #endif
 
 
