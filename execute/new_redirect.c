@@ -8,9 +8,9 @@ bool	new_t_redirect_out(t_redirect_out **r_out, char *filename, bool append)
 	if (!*r_out)
 		return (false);
 	if (append)
-		(*r_out)->fd = open(filename, O_APPEND | O_CREAT, 00644);
+		(*r_out)->fd = open(filename, O_WRONLY | O_APPEND | O_CREAT, 00644);
 	else
-		(*r_out)->fd = open(filename, O_RDWR | O_CREAT | O_TRUNC, 00644);
+		(*r_out)->fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 00644);
 	if ((*r_out)->fd == -1)
 		perror("open"); //todo: check when to print error
 	(*r_out)->append = append;
