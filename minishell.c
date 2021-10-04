@@ -33,12 +33,11 @@ void	set_signal_handler(void)
 	// signal(SIGQUIT, &signal_handler);
 }
 
-int	main(void)
+int minishell(char *line)
 {
-	char	*line;
-
+	if (line)
+		return (execute(parse(lex(line))));
 	set_signal_handler();
-	line = NULL;
 	while (1)
 	{
 		line = readline("minishell> ");
@@ -62,4 +61,11 @@ int	main(void)
 		free(line);
 	}
 	return (0);
+}
+
+int	main(int argc, char **argv)
+{
+	if (argc == 3 && !ft_strcmp(argv[1], "-c"))
+		return (minishell(argv[2]));
+	return (minishell(NULL));
 }
