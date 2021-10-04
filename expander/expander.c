@@ -75,10 +75,10 @@ char	*expand_environment_variable(char *data, size_t replace_start, t_env_var *v
 	char	*env_value;
 
 	env_value = search_env_vars(data, replace_start + 1, vars);
-	if (!env_value)
-		return (data);
-	data = str_insert(data, replace_start, env_value, ft_strlen(env_value));
-	return (data);
+	if (env_value)
+		return (str_insert(data, replace_start, env_value, ft_strlen(env_value)));
+	else
+		return (str_insert(data, replace_start, "", 0));
 }
 
 char	*expand_wildcard(char *data, size_t pre_len, t_env_var *vars)
