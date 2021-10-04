@@ -10,12 +10,14 @@ typedef enum e_expand_type {
 	ENV_VARS,
 	QUOTES,
 	WILDCARD,
+	WORD_SPLIT,
 }	t_expand_type;
 
 char *debug_node_type[20] = {
 	"ENV_VARS",
 	"QUOTES",
 	"WILDCARD",
+	"WORD_SPLIT",
 };
 
 typedef struct s_test {
@@ -116,6 +118,54 @@ int main(int ac, char **av, char **envp) {
 				{COMMAND_ARG_NODE, "\"$USER\""},
 		};
 		test_expander(input, expected, QUOTES, environ);
+	}
+	{
+		char input[] = "echo exp*.c";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "expansion_test.c"},
+		};
+		test_expander(input, expected, WILDCARD, environ);
+	}
+	{
+		char input[] = "echo *.c";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "expansion_test.c expansion_wildcard_test.c"},
+		};
+		test_expander(input, expected, WILDCARD, environ);
+	}
+	{
+		char input[] = "echo expa*";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "expansion_test.c expansion_wildcard_test.c"},
+		};
+		test_expander(input, expected, WILDCARD, environ);
+	}
+	{
+		char input[] = "echo \"ex\"p*.\'c\'";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "expansion_test.c expansion_wildcard_test.c"},
+		};
+		test_expander(input, expected, WILDCARD, environ);
+	}
+	{
+		char input[] = "echo *";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "expansion_test.c expansion_wildcard_test.c"},
+		};
+		test_expander(input, expected, WILDCARD, environ);
+	}
+	{
+		char input[] = "echo o*";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "obj"},
+		};
+		test_expander(input, expected, WILDCARD, environ);
 	}
 }
 

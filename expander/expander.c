@@ -81,32 +81,32 @@ char	*expand_environment_variable(char *data, size_t replace_start, t_env_var *v
 	return (data);
 }
 
-// char	*expand_wildcard(char *data, size_t pre_len, t_env_var *vars)
-// {
-// 	DIR				*dir;
-// 	struct dirent	*dp;
-// 	const char		*post_start = &data[pre_len + 1];
-// 	const size_t	post_len = ft_strlen(post_start);
-// 	size_t			count;
-// 	char			*rtn;
+char	*expand_wildcard(char *data, size_t pre_len, t_env_var *vars)
+{
+	DIR				*dir;
+	struct dirent	*dp;
+	const char		*post_start = &data[pre_len + 1];
+	const size_t	post_len = unquoted_strlen(post_start);
+	char			*rtn;
 
-// 	(void)vars;
-// 	dir = opendir(".");
-// 	if (!dir)
-// 		return (NULL);
-// 	count = 0;
-// 	rtn = data;
-// 	while (1)
-// 	{
-// 		dp = readdir(dir);
-// 		if (!rtn || !dp)
-// 			break ;
-// 		if (is_match_pattern(rtn, pre_len, dp->d_name)
-// 			&& is_match_pattern(post_start, post_len, &dp->d_name[ft_strlen(dp->d_name) - post_len]))
-// 			rtn = append_wildcard_strings(rtn, dp->d_name, count++);
-// 	}
-// 	closedir(dir);
-// 	if (rtn != data)
-// 		free(data);
-// 	return (rtn);
-// }
+	(void)vars;
+	dir = opendir(".");
+	if (!dir)
+		return (NULL);
+	rtn = data;
+	while (1)
+	{
+		dp = readdir(dir);
+		if (!rtn || !dp)
+			break ;
+		if (!ft_strncmp(dp->d_name, ".", 1))
+			continue ;
+		if (is_match_pattern(rtn, pre_len, dp->d_name)
+			&& is_match_pattern(post_start, post_len, ft_strchr(dp->d_name, 0) - post_len))
+			rtn = append_wildcard_strings(rtn, dp->d_name, data);
+	}
+	closedir(dir);
+	if (rtn != data)
+		free(data);
+	return (rtn);
+}
