@@ -9,7 +9,6 @@ int execute_pipeline(t_executor *e, t_pipeline *pl)
 	int	orig_stdfd[2];
 	int	pipefd[2];
 	int	child_process_cnt;
-	int tmpfd;
 
 	orig_stdfd[READ] = dup(STDIN_FILENO);
 	orig_stdfd[WRITE] = dup(STDOUT_FILENO);
@@ -28,11 +27,7 @@ int execute_pipeline(t_executor *e, t_pipeline *pl)
 			close(pipefd[WRITE]);
 		}
 		else
-		{
-			tmpfd = dup(orig_stdfd[WRITE]);
-			dup2(tmpfd, STDOUT_FILENO);
-			close(tmpfd);
-		}
+			dup2(orig_stdfd[WRITE], STDOUT_FILENO);
 		res = execute_command(e, pl->command, pl->type);
 		if (res == CHILD_PROCESS_CREATED)
 			child_process_cnt++;
