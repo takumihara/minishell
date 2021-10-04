@@ -1,8 +1,8 @@
 #include "expander.h"
 
-char	*append_wildcard_strings(char *dst, const char *src, size_t count)
+char	*append_wildcard_strings(char *dst, const char *src, const char *data)
 {
-	if (count == 0)
+	if (dst == data)
 	{
 		dst = ft_strdup(src);
 		return (dst);
