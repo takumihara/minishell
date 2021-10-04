@@ -7,11 +7,10 @@ bool	new_t_redirect_out(t_redirect_out **r_out, char *filename, bool append)
 	*r_out = malloc(sizeof(**r_out));
 	if (!*r_out)
 		return (false);
-	printf("filename: %s\n", filename);
 	if (append)
 		(*r_out)->fd = open(filename, O_APPEND | O_CREAT);
 	else
-		(*r_out)->fd = open(filename, O_WRONLY | O_CREAT);
+		(*r_out)->fd = open(filename, O_RDWR | O_CREAT | O_TRUNC);
 	if ((*r_out)->fd == -1)
 		perror("open"); //todo: check when to print error
 	(*r_out)->append = append;

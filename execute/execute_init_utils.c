@@ -36,7 +36,7 @@ bool	new_argv(t_simple_command *sc)
 	if (!sc->argv)
 		return (false);
 	i = 0;
-	while (node != NULL && node->type != EOL)
+	while (node != NULL)
 	{
 		if (node->type == COMMAND_ARG_NODE)
 			sc->argv[i++] = node->data;
