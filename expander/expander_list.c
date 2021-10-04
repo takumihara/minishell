@@ -10,12 +10,12 @@ t_env_var	*split_environment_vars(char **envp)
 	while (*envp)
 	{
 		tmp->next = (t_env_var *)malloc(sizeof(t_env_var));
-		tmp->next->next = NULL;
 		if (!tmp->next)
 		{
 			env_lstclear(vars.next);
 			return (NULL);
 		}
+		tmp->next->next = NULL;
 		set_key_value(*envp, tmp->next);
 		tmp = tmp->next;
 		envp++;

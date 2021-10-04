@@ -4,7 +4,7 @@ void	search_command_arg_node(t_ast_node *node, t_env_var *vars);
 char	*expand_word(char *data, t_env_var *vars, char delimiter, char *(*f)(char *, size_t, t_env_var *));
 char	*expand_quotes_string(char *data, size_t replace_start, t_env_var *vars, char quote_type);
 char	*expand_environment_variable(char *data, size_t replace_start, t_env_var *vars);
-char	*expand_wildcard(char *data, size_t replace_start, t_env_var *vars);
+char	*expand_wildcard(char *data, size_t pre_len, t_env_var *vars);
 
 t_ast_node	*expand(t_ast_node *node, char **envp)
 {
@@ -34,7 +34,7 @@ void	search_command_arg_node(t_ast_node *node, t_env_var *vars)
 	// if (!ft_strcmp(node->data, "export"))
 	// 	export_env_var();
 	node->data = expand_word(node->data, vars, '$', &expand_environment_variable);
-	// node->data = expand_word(node->data, vars, '*', &expand_wildcard);
+	node->data = expand_word(node->data, vars, '*', &expand_wildcard);
 	// todo: remove quotes
 	// data = remove_quotes();
 }
@@ -45,6 +45,8 @@ char	*expand_word(char *data, t_env_var *vars, char delimiter, char *(*f)(char *
 	size_t	double_quote;
 	size_t	single_quote;
 
+	if (!data)
+		return (NULL);
 	if (!is_expandable_string(data, delimiter))
 		return (data);
 	i = 0;
@@ -54,9 +56,9 @@ char	*expand_word(char *data, t_env_var *vars, char delimiter, char *(*f)(char *
 	{
 		if (data[i] == '\"' && single_quote % 2 == 0)
 			double_quote++;
-		if (data[i] == '\'' && double_quote % 2 == 0)
+		else if (data[i] == '\'' && double_quote % 2 == 0)
 			single_quote++;
-		if (data[i] == delimiter && single_quote % 2 == 0)
+		else if (data[i] == delimiter && single_quote % 2 == 0)
 			data = f(data, i, vars);
 		if (!data)
 			return (NULL);
@@ -79,7 +81,32 @@ char	*expand_environment_variable(char *data, size_t replace_start, t_env_var *v
 	return (data);
 }
 
-// char	*expand_wildcard(char *data, size_t replace_start, t_env_var *vars)
+// char	*expand_wildcard(char *data, size_t pre_len, t_env_var *vars)
 // {
+// 	DIR				*dir;
+// 	struct dirent	*dp;
+// 	const char		*post_start = &data[pre_len + 1];
+// 	const size_t	post_len = ft_strlen(post_start);
+// 	size_t			count;
+// 	char			*rtn;
 
+// 	(void)vars;
+// 	dir = opendir(".");
+// 	if (!dir)
+// 		return (NULL);
+// 	count = 0;
+// 	rtn = data;
+// 	while (1)
+// 	{
+// 		dp = readdir(dir);
+// 		if (!rtn || !dp)
+// 			break ;
+// 		if (is_match_pattern(rtn, pre_len, dp->d_name)
+// 			&& is_match_pattern(post_start, post_len, &dp->d_name[ft_strlen(dp->d_name) - post_len]))
+// 			rtn = append_wildcard_strings(rtn, dp->d_name, count++);
+// 	}
+// 	closedir(dir);
+// 	if (rtn != data)
+// 		free(data);
+// 	return (rtn);
 // }
