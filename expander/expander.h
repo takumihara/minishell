@@ -41,7 +41,12 @@ void		set_key_value(char *envp, t_env_var *vars);
 // todo: remove this
 void		print_env_lst(t_env_var *vars);
 
+// expander_wildcard.c
+char		*append_wildcard_strings(char *dst, const char *src, size_t count);
+bool		is_match_pattern(const char *data, size_t len, char *name);
 
+// expander_quote.c
+bool		is_quoted(const char *str);
 
 #endif
 
