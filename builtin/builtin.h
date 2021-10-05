@@ -1,8 +1,11 @@
-//
-// Created by Takumi Hara on 2021/10/05.
-//
+#ifndef BUILTIN_H
+#define BUILTIN_H
 
-#ifndef MINISHELL_BUILTIN_H
-#define MINISHELL_BUILTIN_H
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "../../libft/libft.h"
 
-#endif //MINISHELL_BUILTIN_H
+void	cd(int argc, char **argv);
+
+#endif //BUILTIN_H
