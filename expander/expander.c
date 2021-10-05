@@ -1,10 +1,11 @@
 #include "expander.h"
 
-void	search_command_arg_node(t_ast_node *node, t_env_var *vars);
-char	*expand_word(char *data, t_env_var *vars, char delimiter, char *(*f)(char *, size_t, t_env_var *));
-char	*expand_quotes_string(char *data, size_t replace_start, t_env_var *vars, char quote_type);
-char	*expand_environment_variable(char *data, size_t replace_start, t_env_var *vars);
-char	*expand_wildcard(char *data, size_t pre_len, t_env_var *vars);
+void		search_command_arg_node(t_ast_node *node, t_env_var *vars);
+char		*expand_word(char *data, t_env_var *vars, char delimiter, char *(*f)(char *, size_t, t_env_var *));
+char		*expand_quotes_string(char *data, size_t replace_start, t_env_var *vars, char quote_type);
+char		*expand_environment_variable(char *data, size_t replace_start, t_env_var *vars);
+char		*expand_wildcard(char *data, size_t pre_len, t_env_var *vars);
+t_ast_node	*word_splitting(t_ast_node *node);
 
 t_ast_node	*expand(t_ast_node *node, char **envp)
 {
@@ -35,6 +36,7 @@ void	search_command_arg_node(t_ast_node *node, t_env_var *vars)
 	// 	export_env_var();
 	node->data = expand_word(node->data, vars, '$', &expand_environment_variable);
 	node->data = expand_word(node->data, vars, '*', &expand_wildcard);
+	node = word_splitting(node);
 	// todo: remove quotes
 	// data = remove_quotes();
 }
@@ -112,4 +114,39 @@ char	*expand_wildcard(char *data, size_t pre_len, t_env_var *vars)
 		rtn = sort_strings(rtn);
 	}
 	return (rtn);
+}
+
+t_ast_node	*word_splitting(t_ast_node *node)
+{
+	char		**split;
+	size_t		i;
+	t_ast_node	*root;
+	t_ast_node	*result;
+
+	if (!node->data)
+		return (NULL);
+	if (!*node->data)
+		return (node);
+	split = word_split(node->data, " \t\n");
+	if (!split)
+		return (NULL);
+	free(node->data);
+	i = 0;
+	root = node;
+	while (split[i])
+	{
+		if (i == 0)
+			node->data = split[i];
+		else
+		{
+			if (!new_ast_node(&result))
+				return (delete_ast_nodes(node, NULL));
+			result->data = split[i];
+			result->type = COMMAND_ARG_NODE;
+			node->right = result;
+			node = node->right;
+		}
+		i++;
+	}
+	return (root);
 }

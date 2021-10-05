@@ -50,6 +50,8 @@ char		*sort_strings(char *src);
 bool		is_quoted(const char *str);
 size_t		unquoted_strlen(const char *str);
 
+// expander_splitting.c
+char	**word_split(char const *s, const char *set);
 
 #endif
 
