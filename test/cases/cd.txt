@@ -1,0 +1,2 @@
+mkdir dir && cd dir && pwd
+mkdir dir || cd dir && pwd
