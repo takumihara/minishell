@@ -30,16 +30,16 @@ t_ast_node	*expand(t_ast_node *node, char **envp);
 bool		is_expandable_string(char *str, char delimiter);
 
 // expander_env.c
-size_t		var_len(const char *str);	
-char		*search_env_vars(char *data, size_t var_start, t_env_var *vars);
+size_t		var_strlen(const char *str);
+char		*search_env_vars(char *data, size_t var_start);
 char		*str_insert(char *data, size_t replace_start, char *env_value, size_t env_value_len);
 
 // expander_list.c
-t_env_var	*split_environment_vars(char **envp);
-void		env_lstclear(t_env_var *lst);
-void		set_key_value(char *envp, t_env_var *vars);
-// todo: remove this
-void		print_env_lst(t_env_var *vars);
+// t_env_var	*split_environment_vars(char **envp);
+// void		env_lstclear(t_env_var *lst);
+// void		set_key_value(char *envp, t_env_var *vars);
+// // todo: remove this
+// void		print_env_lst(t_env_var *vars);
 
 // expander_wildcard.c
 char		*append_wildcard_strings(char *dst, const char *src, const char *data);

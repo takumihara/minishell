@@ -1,6 +1,6 @@
 #include "expander.h"
 
-size_t	var_len(const char *str)
+size_t	var_strlen(const char *str)
 {
 	size_t	len;
 
@@ -10,23 +10,23 @@ size_t	var_len(const char *str)
 	return (len);
 }
 
-char	*search_env_vars(char *data, size_t var_start, t_env_var *vars)
-{
-	const char		*start = &data[var_start];
-	const size_t	len = var_len(start);
+// char	*search_env_vars(char *data, size_t var_start)
+// {
+// 	const char		*start = &data[var_start];
+// 	const size_t	len = var_len(start);
 
-	while (vars && ft_strncmp(vars->key, start, len))
-		vars = vars->next;
-	if (vars)
-		return (vars->value);
-	else
-		return (NULL);
-}
+// 	while (vars && ft_strncmp(vars->key, start, len))
+// 		vars = vars->next;
+// 	if (vars)
+// 		return (vars->value);
+// 	else
+// 		return (NULL);
+// }
 
 char	*str_insert(char *data, size_t replace_start, char *env_value, size_t env_value_len)
 {
 	const size_t	origin_len = ft_strlen(data);
-	const size_t	env_var_len = var_len(&data[replace_start + 1]) + 1;
+	const size_t	env_var_len = var_strlen(&data[replace_start + 1]) + 1;
 	const size_t	expansion_len = origin_len - env_var_len + env_value_len;
 	char			*prev_data;
 	char			*expanded_str;
