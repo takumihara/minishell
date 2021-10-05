@@ -8,6 +8,7 @@
 
 # include "../ast/ast.h"
 # include "../libft/libft.h"
+# include "../builtin/builtin.h"
 
 # define SUCCESS 0
 # define FAILURE 1
@@ -16,12 +17,14 @@
 # define CONDITION_OR_IF 1
 # define CONDITION_NL 2
 
+# define NOTFOUND 126
+# define INEXECUTABLE 127
 
 # define READ 0
 # define WRITE 1
 
-# define CHILD_PROCESS_CREATED 0
-
+# define CHILD_PROCESS_CREATED (-1)
+# define NOT_BUILTIN (-1)
 
 typedef struct s_pipeline		t_pipeline;
 typedef struct s_subshell		t_subshell;
@@ -109,6 +112,7 @@ bool	new_argv(t_simple_command *sc);
 bool	new_executor(t_executor **e, t_ast_node *root);
 int		ex_perror(t_executor *e, const char *s);
 void	delete_list(void *element, t_list_type type);
+int		execute_builtin(int argc, char **argv);
 
 // new_redirect.c
 bool	new_t_redirect_out(t_redirect_out **r_out, char *filename, bool append);
