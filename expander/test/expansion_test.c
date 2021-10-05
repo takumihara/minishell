@@ -71,7 +71,8 @@ int main(int ac, char **av, char **envp) {
 		setenv("TEST", "echo hello", 1);
 		char input[] = "$TEST";
 		t_test expected[] = {
-				{COMMAND_ARG_NODE, "echo hello"},
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "hello"},
 		};
 		test_expander(input, expected, ENV_VARS, environ);
 	}
@@ -139,7 +140,8 @@ int main(int ac, char **av, char **envp) {
 		char input[] = "echo exp*.c";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
-				{COMMAND_ARG_NODE, "expansion_wildcard_test.c expansion_test.c"},
+				{COMMAND_ARG_NODE, "expansion_test.c"},
+				{COMMAND_ARG_NODE, "expansion_wildcard_test.c"},
 		};
 		test_expander(input, expected, WILDCARD, environ);
 	}
@@ -147,7 +149,8 @@ int main(int ac, char **av, char **envp) {
 		char input[] = "echo *.c";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
-				{COMMAND_ARG_NODE, "expansion_wildcard_test.c expansion_test.c"},
+				{COMMAND_ARG_NODE, "expansion_test.c"},
+				{COMMAND_ARG_NODE, "expansion_wildcard_test.c"},
 		};
 		test_expander(input, expected, WILDCARD, environ);
 	}
@@ -155,7 +158,8 @@ int main(int ac, char **av, char **envp) {
 		char input[] = "echo expa*";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
-				{COMMAND_ARG_NODE, "expansion_wildcard_test.c expansion_test.c"},
+				{COMMAND_ARG_NODE, "expansion_test.c"},
+				{COMMAND_ARG_NODE, "expansion_wildcard_test.c"},
 		};
 		test_expander(input, expected, WILDCARD, environ);
 	}
@@ -163,7 +167,8 @@ int main(int ac, char **av, char **envp) {
 		char input[] = "echo \"ex\"p*.\'c\'";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
-				{COMMAND_ARG_NODE, "expansion_wildcard_test.c expansion_test.c"},
+				{COMMAND_ARG_NODE, "expansion_test.c"},
+				{COMMAND_ARG_NODE, "expansion_wildcard_test.c"},
 		};
 		test_expander(input, expected, WILDCARD, environ);
 	}
@@ -171,7 +176,11 @@ int main(int ac, char **av, char **envp) {
 		char input[] = "echo *";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
-				{COMMAND_ARG_NODE, "obj expansion_wildcard_test.c Makefile expansion_test.c a.out"},
+				{COMMAND_ARG_NODE, "Makefile"},
+				{COMMAND_ARG_NODE, "a.out"},
+				{COMMAND_ARG_NODE, "expansion_test.c"},
+				{COMMAND_ARG_NODE, "expansion_wildcard_test.c"},
+				{COMMAND_ARG_NODE, "obj"},
 		};
 		test_expander(input, expected, WILDCARD, environ);
 	}
@@ -182,6 +191,24 @@ int main(int ac, char **av, char **envp) {
 				{COMMAND_ARG_NODE, "obj"},
 		};
 		test_expander(input, expected, WILDCARD, environ);
+	}
+	{
+		char input[] = "\"echo hello\"";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "\"echo hello\""},
+				{COMMAND_ARG_NODE, "error"},
+		};
+		test_expander(input, expected, WORD_SPLIT, environ);
+	}
+	{
+		setenv("TEST", "echo hello", 1);
+		char input[] = "\"ls -l\"$TEST";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "\"ls -l\"echo"},
+				{COMMAND_ARG_NODE, "hello"},
+				{COMMAND_ARG_NODE, "error"},
+		};
+		test_expander(input, expected, WORD_SPLIT, environ);
 	}
 }
 

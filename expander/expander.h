@@ -44,10 +44,14 @@ void		print_env_lst(t_env_var *vars);
 // expander_wildcard.c
 char		*append_wildcard_strings(char *dst, const char *src, const char *data);
 bool		is_match_pattern(const char *data, size_t len, char *name);
+char		*sort_strings(char *src);
 
 // expander_quote.c
 bool		is_quoted(const char *str);
 size_t		unquoted_strlen(const char *str);
+
+// expander_splitting.c
+char	**word_split(char const *s, const char *set);
 
 #endif
 

@@ -6,6 +6,6 @@
 #include <stdlib.h>
 #include "../../libft/libft.h"
 
-void	cd(int argc, char **argv);
+int		cd(int argc, char **argv);
 
 #endif //BUILTIN_H
