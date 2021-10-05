@@ -15,16 +15,15 @@
 # define EXPANDABLE "\"\'$"
 # define EXPANSION_DELIMITER "\"\'$|&<>() =\t\n"
 
-typedef struct s_env_var t_env_var;
+typedef struct s_expander t_expander;
 
-struct s_env_var {
-	char		*key;
-	char		*value;
-	t_env_var	*next;
+struct s_expander {
+	t_ast_node	*root;
+	t_ast_node	*node;
 };
 
 // expander.c
-t_ast_node	*expand(t_ast_node *node, char **envp);
+t_ast_node	*expand(t_ast_node *root, char **envp);
 
 // expander_utils.c
 bool		is_expandable_string(char *str, char delimiter);

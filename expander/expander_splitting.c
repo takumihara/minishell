@@ -1,6 +1,6 @@
 #include "expander.h"
 
-static bool	match_check(char c, char const *set)
+static bool	is_set(char c, char const *set)
 {
 	size_t	j;
 
@@ -24,9 +24,9 @@ static char	**row_malloc_split(char const *str, const char *set, size_t *row)
 	len = 0;
 	while (str[i])
 	{
-		if (!match_check(str[i], set))
+		if (!is_set(str[i], set))
 		{
-			while (!match_check(str[i], set) && str[i])
+			while (!is_set(str[i], set) && str[i])
 				i++;
 			len++;
 		}
@@ -49,7 +49,7 @@ static char	*ft_strdup_split(char const *src, const char *set)
 	char	*str;
 
 	len = 0;
-	while (!match_check(src[len], set) && src[len])
+	while (!is_set(src[len], set) && src[len])
 		len++;
 	str = (char *)malloc(sizeof(char) * (len + 1));
 	if (str == NULL)
@@ -94,13 +94,13 @@ char	**word_split(char const *str, const char *set)
 		return (NULL);
 	while (i < row)
 	{
-		while (match_check(str[j], set))
+		while (is_set(str[j], set))
 			j++;
 		split[i] = ft_strdup_split(&str[j], set);
 		if (split[i] == NULL)
 			return (free_split(split));
 		i++;
-		while (!match_check(str[j], set) && str[j])
+		while (!is_set(str[j], set) && str[j])
 			j++;
 	}
 	return (split);

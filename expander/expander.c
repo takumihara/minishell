@@ -1,53 +1,55 @@
 #include "expander.h"
 
-void		search_command_arg_node(t_ast_node *node);
-char		*expand_word(char *data, char delimiter, char *(*f)(char *, size_t));
+void		search_command_arg_node(t_expander *e);
+char		*expand_word(t_expander *e, char delimiter, char *(*f)(char *, size_t, t_expander *));
 char		*expand_quotes_string(char *data, size_t replace_start, char quote_type);
 char		*expand_environment_variable(char *data, size_t replace_starts);
 char		*expand_wildcard(char *data, size_t pre_len);
 t_ast_node	*word_splitting(t_ast_node *node);
 
-t_ast_node	*expand(t_ast_node *node, char **envp)
+t_ast_node	*expand(t_ast_node *root, char **environ)
 {
-	t_ast_node	*root;
-	// t_env_var	*vars;
+	t_expander	*e;
 
-	(void)envp;
-	// vars = split_environment_vars(envp);
-	// if (!vars)
-	// 	return (NULL);
-	// todo: remove this. To confirm env list.
-	// print_env_lst(vars);
-	root = node;
-	search_command_arg_node(node);
+	(void)environ;
+	if (!root)
+		return (NULL);
+	if (!new_expander(&e, root))
+		return (ex_perror(NULL, "malloc"));
+	search_command_arg_node(e);
 	// env_lstclear(vars);
+	free(e);
 	return (root);
 }
 
-void	search_command_arg_node(t_ast_node *node)
+void	search_command_arg_node(t_expander *e)
 {
-	if (!node)
+	if (!e->node)
 		return ;
-	search_command_arg_node(node->right);
-	search_command_arg_node(node->left);
+	e->node = e->node->right;
+	search_command_arg_node(e);
+	e->node = e->node->left;
+	search_command_arg_node(e);
 	if (node->type != COMMAND_ARG_NODE)
 		return ;
 	// todo: export env_var
 	// if (!ft_strcmp(node->data, "export"))
 	// 	export_env_var();
-	node->data = expand_word(node->data, '$', &expand_environment_variable);
-	node->data = expand_word(node->data, '*', &expand_wildcard);
-	node = word_splitting(node);
+	e->node->data = expand_word(e, '$', &expand_environment_variable);
+	e->node->data = expand_word(e, '*', &expand_wildcard);
+	e->node = word_splitting(node);
 	// todo: remove quotes
 	// data = remove_quotes();
 }
 
-char	*expand_word(char *data, char delimiter, char *(*f)(char *, size_t))
+char	*expand_word(t_expander *e, char delimiter, char *(*f)(char *, size_t, t_expander *))
 {
+	char	*data;
 	size_t	i;
 	size_t	double_quote;
 	size_t	single_quote;
 
+	data = e->node->data;
 	if (!data)
 		return (NULL);
 	if (!is_expandable_string(data, delimiter))
@@ -62,7 +64,7 @@ char	*expand_word(char *data, char delimiter, char *(*f)(char *, size_t))
 		else if (data[i] == '\'' && double_quote % 2 == 0)
 			single_quote++;
 		else if (data[i] == delimiter && single_quote % 2 == 0)
-			data = f(data, i);
+			data = f(data, i, e);
 		if (!data)
 			return (NULL);
 		if (!data[i])
@@ -73,7 +75,7 @@ char	*expand_word(char *data, char delimiter, char *(*f)(char *, size_t))
 }
 
 // todo: $? expands exit status
-char	*expand_environment_variable(char *data, size_t replace_start)
+char	*expand_environment_variable(char *data, size_t replace_start, t_expander *e)
 {
 	const char		*var_start = &data[replace_start + 1];
 	const size_t	var_len = var_strlen(var_start);
@@ -82,7 +84,7 @@ char	*expand_environment_variable(char *data, size_t replace_start)
 
 	key = malloc(sizeof(char) * (var_len + 1));
 	if (!key)
-		return (NULL);
+		return (ex_perror());
 	ft_memmove(key, var_start, var_len);
 	key[var_len] = '\0';
 	value = getenv(key);
@@ -93,7 +95,7 @@ char	*expand_environment_variable(char *data, size_t replace_start)
 		return (str_insert(data, replace_start, "", 0));
 }
 
-char	*expand_wildcard(char *data, size_t pre_len)
+char	*expand_wildcard(char *data, size_t pre_len, t_expander *e)
 {
 	DIR				*dir;
 	struct dirent	*dp;
