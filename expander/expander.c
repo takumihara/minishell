@@ -107,6 +107,9 @@ char	*expand_wildcard(char *data, size_t pre_len, t_env_var *vars)
 	}
 	closedir(dir);
 	if (rtn != data)
+	{
 		free(data);
+		rtn = sort_strings(rtn);
+	}
 	return (rtn);
 }

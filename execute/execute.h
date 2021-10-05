@@ -14,6 +14,7 @@
 
 # define CONDITION_AND_IF 0
 # define CONDITION_OR_IF 1
+# define CONDITION_NL 2
 
 
 # define READ 0
@@ -22,12 +23,13 @@
 # define CHILD_PROCESS_CREATED 0
 
 
+typedef struct s_pipeline		t_pipeline;
+typedef struct s_subshell		t_subshell;
+typedef struct s_compound_list	t_compound_list;
+typedef struct s_simple_command	t_simple_command;
 typedef struct s_redirect_out	t_redirect_out;
 typedef struct s_redirect_in	t_redirect_in;
 typedef struct s_heredoc		t_heredoc;
-typedef struct s_simple_command	t_simple_command;
-typedef struct s_subshell		t_subshell;
-typedef struct s_pipeline		t_pipeline;
 
 typedef enum e_list_type {
 	UNSET,
@@ -46,6 +48,36 @@ typedef struct s_executor {
 	t_pipeline 	*pipeline;
 }	t_executor;
 
+struct s_pipeline {
+	void		*command;
+	t_list_type	type;
+	t_pipeline	*next;
+};
+
+struct s_subshell {
+	t_compound_list		*compound_list;
+	// redirect list
+	t_redirect_out 		*r_out;
+	t_redirect_in 		*r_in;
+	t_heredoc			*heredoc;
+};
+
+struct s_compound_list {
+	int			exit_status;
+	int			condition;
+	t_pipeline 	*pipeline;
+	t_ast_node	*compound_list_next;
+};
+
+struct s_simple_command {
+	t_ast_node			*root;
+	int					argc;
+	char				**argv;
+	t_redirect_out 		*r_out;
+	t_redirect_in 		*r_in;
+	t_heredoc			*heredoc;
+};
+
 struct s_redirect_out {
 	int				fd;
 	bool			append;
@@ -62,26 +94,13 @@ struct s_heredoc {
 	t_heredoc	*next;
 };
 
-struct s_simple_command {
-	t_ast_node			*root;
-	int					argc;
-	char				**argv;
-	t_redirect_out 		*r_out;
-	t_redirect_in 		*r_in;
-	t_heredoc			*heredoc;
-};
-
-struct s_pipeline {
-	void		*command;
-	t_list_type	type;
-	t_pipeline	*next;
-};
-
 // execute_init.c
 int		execute(t_ast_node *root);
-
+t_compound_list *init_compound_list(t_executor *e, t_ast_node *node);
 // execute_init_utils.c
 bool	new_t_pipeline(t_pipeline **pipeline);
+bool	new_t_subshell(t_subshell **ss);
+bool	new_t_compound_list(t_compound_list **cl);
 bool	new_t_simple_command(t_simple_command **sc);
 bool	new_argv(t_simple_command *sc);
 

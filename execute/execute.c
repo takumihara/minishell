@@ -1,7 +1,9 @@
 #include "execute.h"
 
-int execute_simple_command(t_executor *e, t_simple_command *sc);
 int execute_command(t_executor *e, void *command, int type);
+int execute_simple_command(t_executor *e, t_simple_command *sc);
+int execute_subshell(t_executor *e, t_subshell *ss);
+int execute_compound_list(t_executor *e, t_compound_list *cl);
 
 int execute_pipeline(t_executor *e, t_pipeline *pl)
 {
@@ -51,8 +53,49 @@ int execute_command(t_executor *e, void *command, int type)
 {
 	if (type == T_SIMPLE_COMMAND)
 		return (execute_simple_command(e, (t_simple_command *)command));
-	// todo: subshell
-	return (1);
+	else // subshell
+		return (execute_subshell(e, (t_subshell *)command));
+}
+
+int execute_subshell(t_executor *e, t_subshell *ss)
+{
+	// redirection list process
+	return (execute_compound_list(e, ss->compound_list));
+}
+
+int execute_compound_list(t_executor *e, t_compound_list *cl)
+{
+	pid_t	pid;
+	t_compound_list *cl_next;
+	t_executor *exe_child;
+
+	pid = fork();
+	cl_next = NULL;
+	if (pid == 0) //child process
+	{
+		if (!new_executor(&exe_child, NULL))
+			exit(ex_perror(e, "malloc"));
+		cl->exit_status = execute_pipeline(exe_child, cl->pipeline);
+		if (cl->compound_list_next)
+			cl_next = init_compound_list(e, cl->compound_list_next);
+		while (cl_next)
+		{
+			if (cl->condition == CONDITION_NL || cl->condition == cl->exit_status)
+				cl_next->exit_status = execute_pipeline(exe_child, cl_next->pipeline);
+			// free(cl);
+			// free(exe_child);
+			cl = cl_next;
+			if (cl->compound_list_next)
+				cl_next = init_compound_list(e, cl->compound_list_next);
+			else
+				exit(0);
+		}
+		exit(0); // idk if this matters
+	}
+	else if (pid < 0)
+		exit(ex_perror(e, "fork"));
+	wait(NULL);
+	return (0);
 }
 
 int execute_simple_command(t_executor *e, t_simple_command *sc)
