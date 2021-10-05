@@ -3,7 +3,7 @@
 static int command_line(t_executor *e, t_ast_node *node);
 static t_pipeline *pipeline(t_executor *e, t_ast_node *node);
 static t_subshell *subshell(t_executor *e, t_ast_node *node);
-static int compound_list(t_executor *e, t_ast_node *node);
+t_compound_list *init_compound_list(t_executor *e, t_ast_node *node);
 static t_simple_command *simple_command(t_executor *e, t_ast_node *node);
 
 int	execute(t_ast_node *root)
@@ -76,34 +76,65 @@ t_pipeline	*pipeline(t_executor *e, t_ast_node *node)
 
 t_subshell	*subshell(t_executor *e, t_ast_node *node)
 {
-	if (node->right)
+	t_subshell *ss;
+
+	if (!new_t_subshell(&ss))
+		exit(ex_perror(e, "malloc"));
+	ss->compound_list = init_compound_list(e, node->left);
+	while (node->right != NULL)
 	{
-		// process redirection list
+		node = node->right;
+		if (node->type == REDIRECT_OUT_NODE)
+		{
+			if (!new_t_redirect_out(&ss->r_out, node->data, false))
+				exit(ex_perror(e, "malloc"));
+		}
+		else if (node->type == REDIRECT_IN_NODE)
+		{
+			if (!new_t_redirect_in(&ss->r_in, node->data))
+				exit(ex_perror(e, "malloc"));
+		}
+		else if (node->type == REDIRECT_APPEND_NODE)
+		{
+			if (!new_t_redirect_out(&ss->r_out, node->data, true))
+				exit(ex_perror(e, "malloc"));
+		}
+		else if (node->type == HEREDOC_NODE)
+		{
+			if (!new_t_heredoc(&ss->heredoc, node->data))
+				exit(ex_perror(e, "malloc"));
+		}
 	}
-	compound_list(e, node->left);
-	return (NULL);
+	return (ss);
 }
 
-int compound_list(t_executor *e, t_ast_node *node)
+t_compound_list *init_compound_list(t_executor *e, t_ast_node *node)
 {
-	if (e->exit_status == e->condition)
-		pipeline(e, node->left);
+	t_compound_list	*cl;
+
+	if (!new_t_compound_list(&cl))
+		exit (ex_perror(e, "malloc"));
 	if (node->type == AND_IF_NODE)
 	{
-		e->condition = CONDITION_AND_IF;
-		return (command_line(e, node->right));
+		cl->pipeline = pipeline(e, node->left);
+		cl->condition = CONDITION_AND_IF;
+		cl->compound_list_next = node->right;
 	}
 	else if (node->type == OR_IF_NODE)
 	{
-		e->condition = CONDITION_OR_IF;
-		return (command_line(e, node->right));
+		cl->pipeline = pipeline(e, node->left);
+		cl->condition = CONDITION_OR_IF;
+		cl->compound_list_next = node->right;
 	}
 	else if (node->type == SUBSHELL_NEWLINE_NODE)
 	{
-		e->condition = e->exit_status;
-		return (command_line(e, node->right));
+		cl->pipeline = pipeline(e, node->left);
+		cl->condition = CONDITION_NL;
+		cl->compound_list_next = node->right;
 	}
-	return (e->exit_status);
+	else
+		cl->pipeline = pipeline(e, node);
+	return (cl);
 }
 
 t_simple_command *simple_command(t_executor *e, t_ast_node *node)

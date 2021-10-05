@@ -1,6 +1,6 @@
 #include "execute.h"
 
-bool new_t_pipeline(t_pipeline **pipeline)
+bool	new_t_pipeline(t_pipeline **pipeline)
 {
 	*pipeline = malloc(sizeof(**pipeline));
 	if (!*pipeline)
@@ -8,6 +8,30 @@ bool new_t_pipeline(t_pipeline **pipeline)
 	(*pipeline)->command = NULL;
 	(*pipeline)->type = UNSET;
 	(*pipeline)->next = NULL;
+	return (true);
+}
+
+bool	new_t_subshell(t_subshell **ss)
+{
+	*ss = malloc(sizeof(**ss));
+	if (!*ss)
+		return (false);
+	(*ss)->compound_list = NULL;
+	(*ss)->r_out = NULL;
+	(*ss)->r_in = NULL;
+	(*ss)->heredoc = NULL;
+	return (true);
+}
+
+bool	new_t_compound_list(t_compound_list **cl)
+{
+	*cl = malloc(sizeof(**cl));
+	if (!*cl)
+		return (false);
+	(*cl)->exit_status = -1; //idk what should be the default
+	(*cl)->condition = -1;
+	(*cl)->pipeline = NULL;
+	(*cl)->compound_list_next = NULL;
 	return (true);
 }
 
