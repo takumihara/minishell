@@ -45,7 +45,7 @@ int minishell(char *line)
 		if (!line || ft_strncmp(line, "exit", 4) == 0)
 		{
 			free(line);
-			ft_putendl_fd("exit", STDOUT_FILENO);
+			ft_putendl_fd("exit", STDERR_FILENO);
 			break ;
 		}
 		t_token *token = lex(line);

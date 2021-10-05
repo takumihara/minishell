@@ -5,7 +5,8 @@ PARSER_PATH		= parser
 LEXER_PATH		= lexer
 AST_PATH		= ast
 UTILS_PATH		= utils
-SRC_PATHS		= . $(EXECUTE_PATH) $(PARSER_PATH) $(LEXER_PATH) $(AST_PATH) $(UTILS_PATH)
+BUILTIN_PATH	= builtin
+SRC_PATHS		= . $(BUILTIN_PATH) $(EXECUTE_PATH) $(PARSER_PATH) $(LEXER_PATH) $(AST_PATH) $(UTILS_PATH)
 SRCS			= $(foreach path, $(SRC_PATHS), $(wildcard $(path)/*.c))
 
 OBJDIR  	= ./obj
@@ -54,6 +55,10 @@ $(OBJDIR)/%.o: $(AST_PATH)/%.c
 	$(CC) $(CFLAG) -o $@ -c $<
 
 $(OBJDIR)/%.o: $(UTILS_PATH)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAG) -o $@ -c $<
+
+$(OBJDIR)/%.o: $(BUILTIN_PATH)/%.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAG) -o $@ -c $<
 

@@ -102,6 +102,7 @@ int execute_simple_command(t_executor *e, t_simple_command *sc)
 {
 	pid_t	pid;
 	void	*tmp;
+	int		res;
 	//todo: builtin check
 
 	// assume there are no several redirect in
@@ -123,6 +124,9 @@ int execute_simple_command(t_executor *e, t_simple_command *sc)
 	delete_list(tmp, T_REDIRECT_OUT);
 	// actual execution
 	sc->r_out = NULL;
+	res = execute_builtin(sc->argc, sc->argv);
+	if (res != NOT_BUILTIN)
+		return (res);
 	pid = fork();
 	if (pid == 0) //child process
 	{
@@ -131,7 +135,7 @@ int execute_simple_command(t_executor *e, t_simple_command *sc)
 			ft_putstr_fd("minishell: ", 2);
 			ft_putstr_fd(sc->argv[0], 2);
 			ft_putstr_fd(": command not found\n", 2);
-			return (127);
+			return (INEXECUTABLE);
 		}
 	}
 	else if (pid < 0)

@@ -53,3 +53,10 @@ int	ex_perror(t_executor *e, const char *s)
 	}
 	return (EXIT_FAILURE);
 }
+
+int	execute_builtin(int argc, char **argv)
+{
+	if (!ft_strcmp(argv[0], "cd"))
+		return (cd(argc, argv));
+	return (NOT_BUILTIN);
+}
