@@ -11,17 +11,17 @@ int	cd(int argc, char **argv)
 		if (!path)
 		{
 			ft_putendl_fd("minishell: cd: HOME not set", 2);
-			return (1);
+			return (EXIT_FAILURE);
 		}
 	}
 	else if (argv[1][0] == '\0')
-		return (0);
+		return (EXIT_SUCCESS);
 	else
 		path = argv[1];
 	if (chdir(path) == -1)
 	{
 		perror("minishell: cd");
-		return (1);
+		return (EXIT_FAILURE);
 	}
-	return (0);
+	return (EXIT_SUCCESS);
 }
