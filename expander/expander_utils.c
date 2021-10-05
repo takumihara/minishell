@@ -16,3 +16,14 @@ bool	is_expandable_string(char *str, char delimiter)
 		return (true);
 	return (false);
 }
+
+int	expand_perror(t_expander *e, const char *s)
+{
+	perror(s);
+	if (e)
+	{
+		delete_ast_nodes(e->root, NULL);
+	}
+	free(e);
+	return (EXIT_FAILURE);
+}

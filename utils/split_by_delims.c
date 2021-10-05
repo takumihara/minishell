@@ -1,20 +1,20 @@
-#include "expander.h"
+#include "utils.h"
 
-static bool	is_set(char c, char const *set)
+static bool	is_delims(char c, char const *delims)
 {
 	size_t	j;
 
 	j = 0;
-	while (set[j])
+	while (delims[j])
 	{
-		if (set[j] == c)
+		if (delims[j] == c)
 			return (true);
 		j++;
 	}
 	return (false);
 }
 
-static char	**row_malloc_split(char const *str, const char *set, size_t *row)
+static char	**row_malloc_split(char const *str, const char *delims, size_t *row)
 {
 	size_t	len;
 	size_t	i;
@@ -24,9 +24,9 @@ static char	**row_malloc_split(char const *str, const char *set, size_t *row)
 	len = 0;
 	while (str[i])
 	{
-		if (!is_set(str[i], set))
+		if (!is_delims(str[i], delims))
 		{
-			while (!is_set(str[i], set) && str[i])
+			while (!is_delims(str[i], delims) && str[i])
 				i++;
 			len++;
 		}
@@ -42,14 +42,14 @@ static char	**row_malloc_split(char const *str, const char *set, size_t *row)
 	return (split);
 }
 
-static char	*ft_strdup_split(char const *src, const char *set)
+static char	*ft_strdup_split(char const *src, const char *delims)
 {
 	size_t	i;
 	size_t	len;
 	char	*str;
 
 	len = 0;
-	while (!is_set(src[len], set) && src[len])
+	while (!is_delims(src[len], delims) && src[len])
 		len++;
 	str = (char *)malloc(sizeof(char) * (len + 1));
 	if (str == NULL)
@@ -78,7 +78,7 @@ static char	**free_split(char **split)
 	return (NULL);
 }
 
-char	**word_split(char const *str, const char *set)
+char	**split_by_delims(char const *str, const char *delims)
 {
 	size_t	i;
 	size_t	j;
@@ -89,18 +89,18 @@ char	**word_split(char const *str, const char *set)
 		return (NULL);
 	i = 0;
 	j = 0;
-	split = row_malloc_split(str, set, &row);
+	split = row_malloc_split(str, delims, &row);
 	if (split == NULL)
 		return (NULL);
 	while (i < row)
 	{
-		while (is_set(str[j], set))
+		while (is_delims(str[j], delims))
 			j++;
-		split[i] = ft_strdup_split(&str[j], set);
+		split[i] = ft_strdup_split(&str[j], delims);
 		if (split[i] == NULL)
 			return (free_split(split));
 		i++;
-		while (!is_set(str[j], set) && str[j])
+		while (!is_delims(str[j], delims) && str[j])
 			j++;
 	}
 	return (split);

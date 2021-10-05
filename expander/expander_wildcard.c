@@ -1,6 +1,6 @@
 #include "expander.h"
 
-char	*append_wildcard_strings(char *dst, const char *src, const char *data)
+char	*append_wildcard_strings(char *dst, char *src, const char *data, t_expander *e)
 {
 	if (dst == data)
 		return (ft_strdup(src));
@@ -8,7 +8,10 @@ char	*append_wildcard_strings(char *dst, const char *src, const char *data)
 	{
 		dst = strappend(dst, " ", 1);
 		if (!dst)
-			return (NULL);
+		{
+			free(src);
+			exit(expand_perror(e, "malloc"));
+		}
 		dst = strappend(dst, src, ft_strlen(src));
 		return (dst);
 	}
@@ -71,7 +74,7 @@ static void	quick_sort(char **array, size_t left, size_t right)
 		quick_sort(array, j + 1, right);
 }
 
-char	*sort_strings(char *src)
+char	*sort_strings(char *src, t_expander *e)
 {
 	char	**wildcard_array;
 	size_t	word_num;
@@ -79,9 +82,9 @@ char	*sort_strings(char *src)
 	size_t	i;
 
 	wildcard_array = ft_split(src, ' ');
-	if (!wildcard_array)
-		return (NULL);
 	free(src);
+	if (!wildcard_array)
+		exit(expand_perror(e, "malloc"));
 	word_num = 0;
 	while (wildcard_array[word_num])
 		word_num++;
@@ -89,7 +92,7 @@ char	*sort_strings(char *src)
 	rtn = NULL;
 	i = 0;
 	while (i < word_num)
-		rtn = append_wildcard_strings(rtn, wildcard_array[i++], NULL);
+		rtn = append_wildcard_strings(rtn, wildcard_array[i++], NULL, e);
 	free_2d_array((void ***)&wildcard_array);
 	return (rtn);
 }

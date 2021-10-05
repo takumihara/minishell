@@ -1,11 +1,11 @@
 #include "expander.h"
 
-void		search_command_arg_node(t_expander *e);
+void		search_command_arg_node(t_expander *e, t_ast_node *node);
 char		*expand_word(t_expander *e, char delimiter, char *(*f)(char *, size_t, t_expander *));
 char		*expand_quotes_string(char *data, size_t replace_start, char quote_type);
-char		*expand_environment_variable(char *data, size_t replace_starts);
-char		*expand_wildcard(char *data, size_t pre_len);
-t_ast_node	*word_splitting(t_ast_node *node);
+char		*expand_environment_variable(char *data, size_t replace_starts, t_expander *e);
+char		*expand_wildcard(char *data, size_t pre_len, t_expander *e);
+t_ast_node	*word_splitting(t_ast_node *node, t_expander *e);
 
 t_ast_node	*expand(t_ast_node *root, char **environ)
 {
@@ -15,29 +15,27 @@ t_ast_node	*expand(t_ast_node *root, char **environ)
 	if (!root)
 		return (NULL);
 	if (!new_expander(&e, root))
-		return (ex_perror(NULL, "malloc"));
-	search_command_arg_node(e);
-	// env_lstclear(vars);
+		exit(expand_perror(NULL, "malloc"));
+	search_command_arg_node(e, root);
 	free(e);
 	return (root);
 }
 
-void	search_command_arg_node(t_expander *e)
+void	search_command_arg_node(t_expander *e, t_ast_node *node)
 {
-	if (!e->node)
+	if (!node)
 		return ;
-	e->node = e->node->right;
-	search_command_arg_node(e);
-	e->node = e->node->left;
-	search_command_arg_node(e);
+	search_command_arg_node(e, node->right);
+	search_command_arg_node(e, node->left);
 	if (node->type != COMMAND_ARG_NODE)
 		return ;
+	e->node = node;
 	// todo: export env_var
 	// if (!ft_strcmp(node->data, "export"))
 	// 	export_env_var();
-	e->node->data = expand_word(e, '$', &expand_environment_variable);
-	e->node->data = expand_word(e, '*', &expand_wildcard);
-	e->node = word_splitting(node);
+	node->data = expand_word(e, '$', &expand_environment_variable);
+	node->data = expand_word(e, '*', &expand_wildcard);
+	node = word_splitting(node, e);
 	// todo: remove quotes
 	// data = remove_quotes();
 }
@@ -50,6 +48,7 @@ char	*expand_word(t_expander *e, char delimiter, char *(*f)(char *, size_t, t_ex
 	size_t	single_quote;
 
 	data = e->node->data;
+	printf("%s\n", data);
 	if (!data)
 		return (NULL);
 	if (!is_expandable_string(data, delimiter))
@@ -84,7 +83,7 @@ char	*expand_environment_variable(char *data, size_t replace_start, t_expander *
 
 	key = malloc(sizeof(char) * (var_len + 1));
 	if (!key)
-		return (ex_perror());
+		exit(expand_perror(e, "malloc"));
 	ft_memmove(key, var_start, var_len);
 	key[var_len] = '\0';
 	value = getenv(key);
@@ -105,7 +104,7 @@ char	*expand_wildcard(char *data, size_t pre_len, t_expander *e)
 
 	dir = opendir(".");
 	if (!dir)
-		return (NULL);
+		exit(expand_perror(e, "opendir"));
 	rtn = data;
 	while (1)
 	{
@@ -116,18 +115,18 @@ char	*expand_wildcard(char *data, size_t pre_len, t_expander *e)
 			continue ;
 		if (is_match_pattern(rtn, pre_len, dp->d_name)
 			&& is_match_pattern(post_start, post_len, ft_strchr(dp->d_name, 0) - post_len))
-			rtn = append_wildcard_strings(rtn, dp->d_name, data);
+			rtn = append_wildcard_strings(rtn, dp->d_name, data, e);
 	}
 	closedir(dir);
 	if (rtn != data)
 	{
 		free(data);
-		rtn = sort_strings(rtn);
+		rtn = sort_strings(rtn, e);
 	}
 	return (rtn);
 }
 
-t_ast_node	*word_splitting(t_ast_node *node)
+t_ast_node	*word_splitting(t_ast_node *node, t_expander *e)
 {
 	char		**split;
 	size_t		i;
@@ -138,9 +137,9 @@ t_ast_node	*word_splitting(t_ast_node *node)
 		return (NULL);
 	if (!*node->data)
 		return (node);
-	split = word_split(node->data, " \t\n");
+	split = split_by_delims(node->data, " \t\n");
 	if (!split)
-		return (NULL);
+		exit(expand_perror(e, "malloc"));
 	free(node->data);
 	i = 0;
 	root = node;
@@ -151,7 +150,7 @@ t_ast_node	*word_splitting(t_ast_node *node)
 		else
 		{
 			if (!new_ast_node(&result))
-				return (delete_ast_nodes(node, NULL));
+				exit(expand_perror(e, "malloc"));
 			result->data = split[i];
 			result->type = COMMAND_ARG_NODE;
 			node->right = result;

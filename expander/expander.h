@@ -9,6 +9,7 @@
 # include "../parser/parser.h"
 # include "../libft/libft.h"
 # include "../utils/utils.h"
+# include "../execute/execute.h"
 
 # include <stdlib.h>
 
@@ -26,7 +27,9 @@ struct s_expander {
 t_ast_node	*expand(t_ast_node *root, char **envp);
 
 // expander_utils.c
+bool		new_expander(t_expander **e, t_ast_node *root);
 bool		is_expandable_string(char *str, char delimiter);
+int			expand_perror(t_expander *e, const char *s);
 
 // expander_env.c
 size_t		var_strlen(const char *str);
@@ -41,9 +44,9 @@ char		*str_insert(char *data, size_t replace_start, char *env_value, size_t env_
 // void		print_env_lst(t_env_var *vars);
 
 // expander_wildcard.c
-char		*append_wildcard_strings(char *dst, const char *src, const char *data);
+char		*append_wildcard_strings(char *dst, char *src, const char *data, t_expander *e);
 bool		is_match_pattern(const char *data, size_t len, char *name);
-char		*sort_strings(char *src);
+char		*sort_strings(char *src, t_expander *e);
 
 // expander_quote.c
 bool		is_quoted(const char *str);
