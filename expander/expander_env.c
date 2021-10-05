@@ -19,7 +19,6 @@ char	*search_env_vars(char *data, size_t var_start, t_env_var *vars)
 		vars = vars->next;
 	if (vars)
 		return (vars->value);
-		// todo: 環境変数が見つからなかった場合の処理
 	else
 		return (NULL);
 }

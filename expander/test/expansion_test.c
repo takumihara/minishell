@@ -22,7 +22,7 @@ char *debug_node_type[20] = {
 
 typedef struct s_test {
 	t_node_type expected_type;
-	char expected_literal[57];
+	char expected_literal[100];
 } t_test;
 
 void print_ast_nodes(t_ast_node *node, int level);
@@ -53,7 +53,7 @@ int main(int ac, char **av, char **envp) {
 		setenv("TEST", "ho", 1);
 		char input[] = "ec$TEST hello";
 		t_test expected[] = {
-				{COMMAND_ARG_NODE, "ech"},
+				{COMMAND_ARG_NODE, "echo"},
 				{COMMAND_ARG_NODE, "hello"},
 		};
 		test_expander(input, expected, ENV_VARS, environ);
@@ -76,10 +76,26 @@ int main(int ac, char **av, char **envp) {
 		test_expander(input, expected, ENV_VARS, environ);
 	}
 	{
+		char input[] = "echo $HOGE";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, ""},
+		};
+		test_expander(input, expected, ENV_VARS, environ);
+	}
+	{
+		char input[] = "echo hello$HOGE";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "hello"},
+		};
+		test_expander(input, expected, ENV_VARS, environ);
+	}
+	{
 		char input[] = "echo \"hoge\"";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
-				{COMMAND_ARG_NODE, "hoge"},
+				{COMMAND_ARG_NODE, "\"hoge\""},
 		};
 		test_expander(input, expected, QUOTES, environ);
 	}
@@ -88,7 +104,7 @@ int main(int ac, char **av, char **envp) {
 		char input[] = "echo \"$TEST\"";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
-				{COMMAND_ARG_NODE, "example"},
+				{COMMAND_ARG_NODE, "\"example\""},
 		};
 		test_expander(input, expected, QUOTES, environ);
 	}
@@ -97,7 +113,7 @@ int main(int ac, char **av, char **envp) {
 		char input[] = "echo \'$TEST\'";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
-				{COMMAND_ARG_NODE, "$TEST"},
+				{COMMAND_ARG_NODE, "\'$TEST\'"},
 		};
 		test_expander(input, expected, QUOTES, environ);
 	}
@@ -106,7 +122,7 @@ int main(int ac, char **av, char **envp) {
 		char input[] = "echo \"\'$USER\'\"";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
-				{COMMAND_ARG_NODE, "\'user42\'"},
+				{COMMAND_ARG_NODE, "\"\'user42\'\""},
 		};
 		test_expander(input, expected, QUOTES, environ);
 	}
@@ -115,7 +131,7 @@ int main(int ac, char **av, char **envp) {
 		char input[] = "echo \'\"$USER\"\'";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
-				{COMMAND_ARG_NODE, "\"$USER\""},
+				{COMMAND_ARG_NODE, "\'\"$USER\"\'"},
 		};
 		test_expander(input, expected, QUOTES, environ);
 	}
@@ -123,7 +139,7 @@ int main(int ac, char **av, char **envp) {
 		char input[] = "echo exp*.c";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
-				{COMMAND_ARG_NODE, "expansion_test.c"},
+				{COMMAND_ARG_NODE, "expansion_wildcard_test.c expansion_test.c"},
 		};
 		test_expander(input, expected, WILDCARD, environ);
 	}
@@ -131,7 +147,7 @@ int main(int ac, char **av, char **envp) {
 		char input[] = "echo *.c";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
-				{COMMAND_ARG_NODE, "expansion_test.c expansion_wildcard_test.c"},
+				{COMMAND_ARG_NODE, "expansion_wildcard_test.c expansion_test.c"},
 		};
 		test_expander(input, expected, WILDCARD, environ);
 	}
@@ -139,7 +155,7 @@ int main(int ac, char **av, char **envp) {
 		char input[] = "echo expa*";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
-				{COMMAND_ARG_NODE, "expansion_test.c expansion_wildcard_test.c"},
+				{COMMAND_ARG_NODE, "expansion_wildcard_test.c expansion_test.c"},
 		};
 		test_expander(input, expected, WILDCARD, environ);
 	}
@@ -147,7 +163,7 @@ int main(int ac, char **av, char **envp) {
 		char input[] = "echo \"ex\"p*.\'c\'";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
-				{COMMAND_ARG_NODE, "expansion_test.c expansion_wildcard_test.c"},
+				{COMMAND_ARG_NODE, "expansion_wildcard_test.c expansion_test.c"},
 		};
 		test_expander(input, expected, WILDCARD, environ);
 	}
@@ -155,7 +171,7 @@ int main(int ac, char **av, char **envp) {
 		char input[] = "echo *";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
-				{COMMAND_ARG_NODE, "expansion_test.c expansion_wildcard_test.c"},
+				{COMMAND_ARG_NODE, "obj expansion_wildcard_test.c Makefile expansion_test.c a.out"},
 		};
 		test_expander(input, expected, WILDCARD, environ);
 	}
@@ -201,44 +217,31 @@ void test_expander(char input[], t_test *expected, int test_type, char **envp) {
 	// } else {
 		ast_index = 0;
 		print_ast_nodes(root, 0);
-		// ast_index = 0;
-		// test_ast_nodes(node, 0, expected);
+		ast_index = 0;
+		test_ast_nodes(root, 0, expected);
 	// }
 
 	printf("\n---------------------------------\n");
 }
 
-// void test_ast_nodes(t_ast_node *node, int level, test *expected) {
-// 	if (!node)
-// 		return;
-// 	char *literal;
-// 	if (node->data) {
-// 		literal = (char *) calloc(node->data->len + 1, sizeof(char));
-// 		ft_memmove(literal, node->data->start, node->data->len);
-// 	} else
-// 		literal = strdup("");
-// 	if (node->type != expected[ast_index].expected_type) {
-// 		fprintf(stderr, RED "test[%d] - node type wrong. expected=%s, got=%s\n" RESET, ast_index,
-// 				debug_node_type[expected[ast_index].expected_type], debug_node_type[node->type]);
-// 		err_cnt++;
-// 	}
-// 	if (level != expected[ast_index].expected_level) {
-// 		fprintf(stderr, RED "test[%d] - node level wrong. expected=%d, got=%d\n" RESET, ast_index,
-// 				expected[ast_index].expected_level,
-// 				level);
-// 		err_cnt++;
-// 	}
-// 	if (ft_strcmp(literal, expected[ast_index].expected_literal)) {
-// 		fprintf(stderr, RED "test[%d] - node literal wrong. expected=%s, got=%s\n" RESET, ast_index,
-// 				expected[ast_index].expected_literal,
-// 				literal);
-// 		err_cnt++;
-// 	}
-// 	ast_index++;
-// 	free(literal);
-// 	test_ast_nodes(node->left, level + 1, expected);
-// 	test_ast_nodes(node->right, level + 1, expected);
-// }
+void test_ast_nodes(t_ast_node *node, int level, t_test *expected) {
+	if (!node)
+		return;
+	if (node->type != expected[ast_index].expected_type) {
+		fprintf(stderr, RED "test[%d] - node type wrong. expected=%s, got=%s\n" RESET, ast_index,
+				debug_node_type[expected[ast_index].expected_type], debug_node_type[node->type]);
+		err_cnt++;
+	}
+	if (ft_strcmp(node->data, expected[ast_index].expected_literal)) {
+		fprintf(stderr, RED "test[%d] - node literal wrong. expected=%s, got=%s\n" RESET, ast_index,
+				expected[ast_index].expected_literal,
+				node->data);
+		err_cnt++;
+	}
+	ast_index++;
+	test_ast_nodes(node->left, level + 1, expected);
+	test_ast_nodes(node->right, level + 1, expected);
+}
 
 void print_ast_nodes(t_ast_node *node, int level) {
 	if (!node)
