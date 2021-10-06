@@ -6,7 +6,7 @@ bool	new_executor(t_executor **e, t_ast_node *root)
 	if (!*e)
 		return (false);
 	(*e)->root = root;
-	(*e)->exit_status = SUCCESS;
+	(*e)->exit_status = EXIT_SUCCESS;
 	(*e)->condition = CONDITION_AND_IF;
 	(*e)->pipeline = NULL;
 	return (true);
@@ -59,4 +59,15 @@ int	execute_builtin(int argc, char **argv)
 	if (!ft_strcmp(argv[0], "cd"))
 		return (cd(argc, argv));
 	return (NOT_BUILTIN);
+}
+
+bool	is_execute_condition(int condition, int exit_status)
+{
+	if (condition == CONDITION_AND_IF && exit_status == 0)
+		return (true);
+	if (condition == CONDITION_AND_IF && exit_status != 0)
+		return (true);
+	if (condition == CONDITION_NL)
+		return (true);
+	return (false);
 }

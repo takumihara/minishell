@@ -24,26 +24,21 @@ int	execute(t_ast_node *root)
 
 int command_line(t_executor *e, t_ast_node *node)
 {
-	if (node->type == AND_IF_NODE)
+	if (node->type == AND_IF_NODE || node->type == OR_IF_NODE)
 	{
-		if (e->exit_status == e->condition)
+		if (is_execute_condition(e->condition, e->exit_status))
 			e->exit_status = execute_pipeline(e, pipeline(e, node->left));
-		e->condition = CONDITION_AND_IF;
-		return (command_line(e, node->right));
-	}
-	else if (node->type == OR_IF_NODE)
-	{
-		if (e->exit_status == e->condition)
-			e->exit_status = execute_pipeline(e, pipeline(e, node->left));
-		e->condition = CONDITION_OR_IF;
+		if (node->type == AND_IF_NODE)
+			e->condition = CONDITION_AND_IF;
+		else if (node->type == OR_IF_NODE)
+			e->condition = CONDITION_OR_IF;
 		return (command_line(e, node->right));
 	}
 	else
 	{
-		if (e->exit_status == e->condition)
-			e->exit_status = execute_pipeline(e, pipeline(e, node));
+		e->exit_status = execute_pipeline(e, pipeline(e, node));
+		return (e->exit_status);
 	}
-	return (e->exit_status);
 }
 
 t_pipeline	*pipeline(t_executor *e, t_ast_node *node)
