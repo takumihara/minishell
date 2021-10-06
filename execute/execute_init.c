@@ -36,7 +36,8 @@ int command_line(t_executor *e, t_ast_node *node)
 	}
 	else
 	{
-		e->exit_status = execute_pipeline(e, pipeline(e, node));
+		if (is_execute_condition(e->condition, e->exit_status))
+			e->exit_status = execute_pipeline(e, pipeline(e, node));
 		return (e->exit_status);
 	}
 }

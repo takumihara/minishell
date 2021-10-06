@@ -20,8 +20,10 @@
 # define READ 0
 # define WRITE 1
 
-# define CHILD_PROCESS_CREATED (-1)
-# define NOT_BUILTIN (-1)
+# define CHILD_PROCESS 0
+
+# define CHILD_PROCESS_NOT_CREATED 0
+# define NOT_LAST_COMMAND 0
 
 typedef struct s_pipeline		t_pipeline;
 typedef struct s_subshell		t_subshell;
@@ -109,7 +111,7 @@ bool	new_argv(t_simple_command *sc);
 bool	new_executor(t_executor **e, t_ast_node *root);
 int		ex_perror(t_executor *e, const char *s);
 void	delete_list(void *element, t_list_type type);
-int		execute_builtin(int argc, char **argv);
+bool	execute_builtin(t_executor *e, int argc, char **argv, bool islast);
 bool	is_execute_condition(int condition, int exit_status);
 
 // new_redirect.c

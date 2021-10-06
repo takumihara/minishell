@@ -1,22 +1,22 @@
 #include "execute.h"
 
-int execute_command(t_executor *e, void *command, int type);
-int execute_simple_command(t_executor *e, t_simple_command *sc);
+int execute_command(t_executor *e, void *command, int type, bool islast);
+int execute_simple_command(t_executor *e, t_simple_command *sc, bool islast);
 int execute_subshell(t_executor *e, t_subshell *ss);
 int execute_compound_list(t_executor *e, t_compound_list *cl);
 
 int execute_pipeline(t_executor *e, t_pipeline *pl)
 {
-	int	res;
+	int	child_pid;
 	int	orig_stdfd[2];
 	int	pipefd[2];
 	int	child_process_cnt;
+	int	statloc;
 
 	orig_stdfd[READ] = dup(STDIN_FILENO);
 	orig_stdfd[WRITE] = dup(STDOUT_FILENO);
 	pipefd[READ] = STDIN_FILENO;
 	child_process_cnt = 0;
-	e->exit_status = -1;
 	while (pl)
 	{
 		dup2(pipefd[READ], STDIN_FILENO);
@@ -30,11 +30,11 @@ int execute_pipeline(t_executor *e, t_pipeline *pl)
 		}
 		else
 			dup2(orig_stdfd[WRITE], STDOUT_FILENO);
-		res = execute_command(e, pl->command, pl->type);
-		if (res == CHILD_PROCESS_CREATED)
+		child_pid = execute_command(e, pl->command, pl->type, !pl->next);
+		if (child_pid != CHILD_PROCESS_NOT_CREATED)
 			child_process_cnt++;
-		else if (!pl->next)
-			e->exit_status = res;
+		else if (pl->next)
+			child_pid = NOT_LAST_COMMAND;
 		pl = pl->next;
 	}
 	delete_list((void *)e->pipeline, T_PIPELINE);
@@ -43,16 +43,16 @@ int execute_pipeline(t_executor *e, t_pipeline *pl)
 	dup2(orig_stdfd[WRITE], STDOUT_FILENO);
 	close(orig_stdfd[WRITE]);
 	while (child_process_cnt--)
-		wait(&res);
-	if (e->exit_status == -1)
-		e->exit_status = res;
-	return (res);
+		if (wait(&statloc) == child_pid)
+			if (WIFEXITED(statloc))
+				e->exit_status = WEXITSTATUS(statloc);
+	return (e->exit_status);
 }
 
-int execute_command(t_executor *e, void *command, int type)
+int execute_command(t_executor *e, void *command, int type, bool islast)
 {
 	if (type == T_SIMPLE_COMMAND)
-		return (execute_simple_command(e, (t_simple_command *)command));
+		return (execute_simple_command(e, (t_simple_command *)command, islast));
 	else // subshell
 		return (execute_subshell(e, (t_subshell *)command));
 }
@@ -71,7 +71,7 @@ int execute_compound_list(t_executor *e, t_compound_list *cl)
 
 	pid = fork();
 	cl_next = NULL;
-	if (pid == 0) //child process
+	if (pid == CHILD_PROCESS)
 	{
 		if (!new_executor(&exe_child, NULL))
 			exit(ex_perror(e, "malloc"));
@@ -95,15 +95,14 @@ int execute_compound_list(t_executor *e, t_compound_list *cl)
 	else if (pid < 0)
 		exit(ex_perror(e, "fork"));
 	wait(NULL);
-	return (0);
+	return (pid);
 }
 
-int execute_simple_command(t_executor *e, t_simple_command *sc)
+// execute_simple_command returns either its child process pid or macro 'CHILD_PROCESS_NOT_CREATED'
+int execute_simple_command(t_executor *e, t_simple_command *sc, bool islast)
 {
 	pid_t	pid;
 	void	*tmp;
-	int		res;
-	//todo: builtin check
 
 	// assume there are no several redirect in
 	// process redirect in
@@ -124,21 +123,20 @@ int execute_simple_command(t_executor *e, t_simple_command *sc)
 	delete_list(tmp, T_REDIRECT_OUT);
 	// actual execution
 	sc->r_out = NULL;
-	res = execute_builtin(sc->argc, sc->argv);
-	if (res != NOT_BUILTIN)
-		return (res);
+	if (execute_builtin(e, sc->argc, sc->argv, islast))
+		return (CHILD_PROCESS_NOT_CREATED);
 	pid = fork();
-	if (pid == 0) //child process
+	if (pid == CHILD_PROCESS)
 	{
 		if (execvp(sc->argv[0], sc->argv) == -1)
 		{
 			ft_putstr_fd("minishell: ", 2);
 			ft_putstr_fd(sc->argv[0], 2);
 			ft_putstr_fd(": command not found\n", 2);
-			return (INEXECUTABLE);
+			exit(INEXECUTABLE);
 		}
 	}
 	else if (pid < 0)
 		exit(ex_perror(e, "fork"));
-	return (CHILD_PROCESS_CREATED);
+	return (pid);
 }
