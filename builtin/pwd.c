@@ -10,6 +10,6 @@ int	pwd()
 		perror("minishell: pwd"); //todo: cannot reproduce EACCES
 		return (EXIT_FAILURE);
 	}
-	ft_putendl_fd(cwd, 2);
+	ft_putendl_fd(cwd, 1);
 	return (EXIT_SUCCESS);
 }

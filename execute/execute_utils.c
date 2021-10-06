@@ -58,5 +58,7 @@ int	execute_builtin(int argc, char **argv)
 {
 	if (!ft_strcmp(argv[0], "cd"))
 		return (cd(argc, argv));
+	if (!ft_strcmp(argv[0], "pwd"))
+		return (pwd());
 	return (NOT_BUILTIN);
 }
