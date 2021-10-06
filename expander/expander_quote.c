@@ -1,8 +1,8 @@
 #include "expander.h"
 
-bool	is_quoted(const char *str)
+bool	is_quote(const char c)
 {
-	return (ft_strchr(str, '\'') || ft_strchr(str, '\"'));
+	return (c == '\'' || c == '\"');
 }
 
 size_t	unquoted_strlen(const char *str)

@@ -49,11 +49,11 @@ bool		is_match_pattern(const char *data, size_t len, char *name);
 char		*sort_strings(char *src, t_expander *e);
 
 // expander_quote.c
-bool		is_quoted(const char *str);
+bool		is_quote(const char c);
 size_t		unquoted_strlen(const char *str);
 
 // expander_splitting.c
-char	**word_split(char const *s, const char *set);
+char		**split_by_space_skip_quotes(char const *str, const char *delims);
 
 #endif
 
