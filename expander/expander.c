@@ -48,7 +48,6 @@ char	*expand_word(t_expander *e, char delimiter, char *(*f)(char *, size_t, t_ex
 	size_t	single_quote;
 
 	data = e->node->data;
-	printf("%s\n", data);
 	if (!data)
 		return (NULL);
 	if (!is_expandable_string(data, delimiter))
@@ -137,7 +136,7 @@ t_ast_node	*word_splitting(t_ast_node *node, t_expander *e)
 		return (NULL);
 	if (!*node->data)
 		return (node);
-	split = split_by_delims(node->data, " \t\n");
+	split = split_by_delims_skip_quotes(node->data, " \t\n");
 	if (!split)
 		exit(expand_perror(e, "malloc"));
 	free(node->data);
