@@ -1,0 +1,8 @@
+ls | cat
+ls | cat | cat
+ls | cat | wc
+ls | ls | ls
+ls | cat | wc
+xxxx | ls | xxxx
+ls | xxxx | ls
+xxxx | yyyy | zzzz
