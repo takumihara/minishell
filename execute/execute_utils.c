@@ -69,9 +69,9 @@ bool	execute_builtin(t_executor *e, int argc, char **argv, bool islast)
 
 bool	is_execute_condition(int condition, int exit_status)
 {
-	if (condition == CONDITION_AND_IF && exit_status == 0)
+	if (condition == CONDITION_AND_IF && exit_status == EXIT_SUCCESS)
 		return (true);
-	if (condition == CONDITION_OR_IF && exit_status != 0)
+	if (condition == CONDITION_OR_IF && exit_status != EXIT_SUCCESS)
 		return (true);
 	if (condition == CONDITION_NL)
 		return (true);
