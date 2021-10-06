@@ -35,10 +35,9 @@ int err_cnt;
 
 extern char	**environ;
 
-int main(int ac, char **av, char **envp) {
+int main(int ac, char **av) {
 	(void)ac;
 	(void)av;
-	(void)envp;
 	{
 		if (setenv("TEST", "hello", 1) != 0)
 			perror("setenv");

@@ -9,42 +9,44 @@
 # include "../parser/parser.h"
 # include "../libft/libft.h"
 # include "../utils/utils.h"
+# include "../execute/execute.h"
 
 # include <stdlib.h>
 
 # define EXPANDABLE "\"\'$"
 # define EXPANSION_DELIMITER "\"\'$|&<>() =\t\n"
 
-typedef struct s_env_var t_env_var;
+typedef struct s_expander t_expander;
 
-struct s_env_var {
-	char		*key;
-	char		*value;
-	t_env_var	*next;
+struct s_expander {
+	t_ast_node	*root;
+	t_ast_node	*node;
 };
 
 // expander.c
-t_ast_node	*expand(t_ast_node *node, char **envp);
+t_ast_node	*expand(t_ast_node *root, char **envp);
 
 // expander_utils.c
+bool		new_expander(t_expander **e, t_ast_node *root);
 bool		is_expandable_string(char *str, char delimiter);
+int			expand_perror(t_expander *e, const char *s);
 
 // expander_env.c
-size_t		var_len(const char *str);	
-char		*search_env_vars(char *data, size_t var_start, t_env_var *vars);
+size_t		var_strlen(const char *str);
+char		*search_env_vars(char *data, size_t var_start);
 char		*str_insert(char *data, size_t replace_start, char *env_value, size_t env_value_len);
 
 // expander_list.c
-t_env_var	*split_environment_vars(char **envp);
-void		env_lstclear(t_env_var *lst);
-void		set_key_value(char *envp, t_env_var *vars);
-// todo: remove this
-void		print_env_lst(t_env_var *vars);
+// t_env_var	*split_environment_vars(char **envp);
+// void		env_lstclear(t_env_var *lst);
+// void		set_key_value(char *envp, t_env_var *vars);
+// // todo: remove this
+// void		print_env_lst(t_env_var *vars);
 
 // expander_wildcard.c
-char		*append_wildcard_strings(char *dst, const char *src, const char *data);
+char		*append_wildcard_strings(char *dst, char *src, const char *data, t_expander *e);
 bool		is_match_pattern(const char *data, size_t len, char *name);
-char		*sort_strings(char *src);
+char		*sort_strings(char *src, t_expander *e);
 
 // expander_quote.c
 bool		is_quoted(const char *str);
