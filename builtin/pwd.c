@@ -1,0 +1,15 @@
+#include "builtin.h"
+
+int	pwd()
+{
+	char	*cwd;
+
+	cwd = getcwd(NULL, 0);
+	if (!cwd)
+	{
+		perror("minishell: pwd"); //todo: cannot reproduce EACCES
+		return (EXIT_FAILURE);
+	}
+	ft_putendl_fd(cwd, 2);
+	return (EXIT_SUCCESS);
+}

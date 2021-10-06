@@ -7,5 +7,6 @@
 #include "../../libft/libft.h"
 
 int		cd(int argc, char **argv);
+int		pwd();
 
 #endif //BUILTIN_H
