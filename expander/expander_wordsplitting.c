@@ -60,8 +60,6 @@ static char	*ft_strdup_split(char const *src, const char *delims)
 	char	*str;
 
 	len = 0;
-	// while (!is_delims(src[len], delims) && src[len])
-	// 	len++;
 	while (!is_delims(src[len], delims) && src[len])
 	{
 		if (is_quote(src[len]))
@@ -95,7 +93,7 @@ static char	**free_split(char **split)
 	return (NULL);
 }
 
-char	**split_by_delims_skip_quotes(char const *str, const char *delims)
+char	**split_by_space_skip_quotes(char const *str, const char *delims)
 {
 	size_t	i;
 	size_t	j;

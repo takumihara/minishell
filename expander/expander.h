@@ -53,7 +53,7 @@ bool		is_quote(const char c);
 size_t		unquoted_strlen(const char *str);
 
 // expander_splitting.c
-char	**split_by_delims_skip_quotes(char const *str, const char *delims);
+char		**split_by_space_skip_quotes(char const *str, const char *delims);
 
 #endif
 

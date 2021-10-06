@@ -136,7 +136,7 @@ t_ast_node	*word_splitting(t_ast_node *node, t_expander *e)
 		return (NULL);
 	if (!*node->data)
 		return (node);
-	split = split_by_delims_skip_quotes(node->data, " \t\n");
+	split = split_by_space_skip_quotes(node->data, " \t\n");
 	if (!split)
 		exit(expand_perror(e, "malloc"));
 	free(node->data);
