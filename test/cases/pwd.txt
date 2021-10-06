@@ -1,0 +1,3 @@
+pwd
+pwd a
+pwd a b

@@ -57,6 +57,7 @@ int	ex_perror(t_executor *e, const char *s)
 bool	execute_builtin(t_executor *e, int argc, char **argv, bool islast)
 {
 	if (!ft_strcmp(argv[0], "cd"))
+<<<<<<< HEAD
 	{
 		if (islast)
 			e->exit_status = cd(argc, argv);
@@ -76,4 +77,10 @@ bool	is_execute_condition(int condition, int exit_status)
 	if (condition == CONDITION_NL)
 		return (true);
 	return (false);
+=======
+		return (cd(argc, argv));
+	if (!ft_strcmp(argv[0], "pwd"))
+		return (pwd());
+	return (NOT_BUILTIN);
+>>>>>>> b579d9e6a539d739d22e6a8659af5a41c092d393
 }
