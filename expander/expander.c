@@ -6,6 +6,7 @@ char		*expand_quotes_string(char *data, size_t replace_start, char quote_type);
 char		*expand_environment_variable(char *data, size_t replace_starts, t_expander *e);
 char		*expand_wildcard(char *data, size_t pre_len, t_expander *e);
 t_ast_node	*word_splitting(t_ast_node *node, t_expander *e);
+t_ast_node	*remove_quotes(t_ast_node *node, t_expander *e);
 
 t_ast_node	*expand(t_ast_node *root, char **environ)
 {
@@ -36,8 +37,7 @@ void	search_command_arg_node(t_expander *e, t_ast_node *node)
 	node->data = expand_word(e, '$', &expand_environment_variable);
 	node->data = expand_word(e, '*', &expand_wildcard);
 	node = word_splitting(node, e);
-	// todo: remove quotes
-	// data = remove_quotes();
+	node = remove_quotes(node, e);
 }
 
 char	*expand_word(t_expander *e, char delimiter, char *(*f)(char *, size_t, t_expander *))
@@ -57,11 +57,13 @@ char	*expand_word(t_expander *e, char delimiter, char *(*f)(char *, size_t, t_ex
 	single_quote = 0;
 	while (data[i])
 	{
-		if (data[i] == '\"' && single_quote % 2 == 0)
+		if (data[i] == '\"' && !(single_quote & 1))
 			double_quote++;
-		else if (data[i] == '\'' && double_quote % 2 == 0)
+		else if (data[i] == '\'' && !(double_quote & 1))
 			single_quote++;
-		else if (data[i] == delimiter && single_quote % 2 == 0)
+		else if (data[i] == delimiter && !(single_quote & 1) && delimiter == '$')
+			data = f(data, i, e);
+		else if (data[i] == delimiter && !(double_quote & 1) && single_quote % 2 == 0 && delimiter == '*')
 			data = f(data, i, e);
 		if (!data)
 			return (NULL);
@@ -158,4 +160,23 @@ t_ast_node	*word_splitting(t_ast_node *node, t_expander *e)
 		i++;
 	}
 	return (root);
+}
+
+t_ast_node	*remove_quotes(t_ast_node *node, t_expander *e)
+{
+	char	*prev_data;
+	size_t	unquoted_len;
+	char	*unquoted_str;
+
+	if (!is_removable_quotes(node->data))
+		return (node);
+	prev_data = node->data;
+	unquoted_len = unquoted_strlen(node->data);
+	unquoted_str = malloc(sizeof(char) * (unquoted_len + 1));
+	if (!unquoted_str)
+		exit(expand_perror(e, "malloc"));
+	unquoted_str = unquoted_memmove(unquoted_str, node->data);
+	node->data = unquoted_str;
+	free(prev_data);
+	return (node);
 }

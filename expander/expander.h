@@ -51,6 +51,8 @@ char		*sort_strings(char *src, t_expander *e);
 // expander_quote.c
 bool		is_quote(const char c);
 size_t		unquoted_strlen(const char *str);
+bool		is_removable_quotes(const char *str);
+char		*unquoted_memmove(char *dst, char *src);
 
 // expander_splitting.c
 char		**split_by_space_skip_quotes(char const *str, const char *delims);
