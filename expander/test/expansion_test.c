@@ -33,8 +33,6 @@ void print_err_cnt();
 int ast_index;
 int err_cnt;
 
-extern char	**environ;
-
 int main(int ac, char **av) {
 	(void)ac;
 	(void)av;

@@ -18,6 +18,8 @@
 
 typedef struct s_expander t_expander;
 
+extern char	**environ;
+
 struct s_expander {
 	t_ast_node	*root;
 	t_ast_node	*node;
