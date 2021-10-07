@@ -16,9 +16,9 @@ size_t	unquoted_strlen(const char *str)
 	double_quote = 0;
 	while (*str)
 	{
-		if (*str == '\"' && single_quote % 2 == 0)
+		if (in_quotes_type(*str, single_quote) == DOUBLE_QUOTE)
 			double_quote++;
-		else if (*str == '\'' && double_quote % 2 == 0)
+		else if (in_quotes_type(*str, double_quote) == SINGLE_QUOTE)
 			single_quote++;
 		else
 			len++;
@@ -27,10 +27,19 @@ size_t	unquoted_strlen(const char *str)
 	return (len);
 }
 
-bool	is_removable_quotes(const char *str)
+bool	is_contain_quotes(const char *str)
 {
 	return (ft_strchr(str, '\'') || ft_strchr(str, '\"'));
 }
+
+int		in_quotes_type(char c, size_t count)
+{
+	if  (c == '\"' && count % 2 == 0)
+		return (DOUBLE_QUOTE);
+	else if (c == '\'' && count % 2 == 0)
+		return (SINGLE_QUOTE);
+	return (NOT_QUOTE);
+}	
 
 char	*unquoted_memmove(char *dst, char *src)
 {
@@ -43,9 +52,9 @@ char	*unquoted_memmove(char *dst, char *src)
 	dst_start = dst;
 	while (*src)
 	{
-		if (*src == '\"' && single_quote % 2 == 0)
+		if (in_quotes_type(*src, single_quote) == DOUBLE_QUOTE)
 			double_quote++;
-		else if (*src == '\'' && double_quote % 2 == 0)
+		else if (in_quotes_type(*src, double_quote) == SINGLE_QUOTE)
 			single_quote++;
 		else
 			*dst++ = *src;
