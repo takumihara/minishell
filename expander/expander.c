@@ -1,7 +1,7 @@
 #include "expander.h"
 
 void		search_command_arg_node(t_expander *e, t_ast_node *node);
-char		*expand_word(t_expander *e, char delimiter, char *(*f)(char *, size_t, t_expander *));
+char		*expand_word(t_expander *e, char delimiter);
 char		*expand_quotes_string(char *data, size_t replace_start, char quote_type);
 char		*expand_environment_variable(char *data, size_t replace_starts, t_expander *e);
 char		*expand_wildcard(char *data, size_t pre_len, t_expander *e);
@@ -34,13 +34,13 @@ void	search_command_arg_node(t_expander *e, t_ast_node *node)
 	// todo: export env_var
 	// if (!ft_strcmp(node->data, "export"))
 	// 	export_env_var();
-	node->data = expand_word(e, '$', &expand_environment_variable);
-	node->data = expand_word(e, '*', &expand_wildcard);
+	node->data = expand_word(e, '$');
+	node->data = expand_word(e, '*');
 	node = word_splitting(node, e);
 	node = remove_quotes(node, e);
 }
 
-char	*expand_word(t_expander *e, char delimiter, char *(*f)(char *, size_t, t_expander *))
+char	*expand_word(t_expander *e, char delimiter)
 {
 	char	*data;
 	size_t	i;
@@ -57,14 +57,16 @@ char	*expand_word(t_expander *e, char delimiter, char *(*f)(char *, size_t, t_ex
 	single_quote = 0;
 	while (data[i])
 	{
-		if (data[i] == '\"' && !(single_quote & 1))
+		if (in_quotes_type(data[i], single_quote) == DOUBLE_QUOTE)
 			double_quote++;
-		else if (data[i] == '\'' && !(double_quote & 1))
+		else if (in_quotes_type(data[i], double_quote) == SINGLE_QUOTE)
 			single_quote++;
-		else if (data[i] == delimiter && !(single_quote & 1) && delimiter == '$')
-			data = f(data, i, e);
+		// double_quote += (data[i] == '\"' && !(single_quote & 1));
+		// single_quote += (data[i] == '\'' && !(double_quote & 1));
+		if (data[i] == delimiter && !(single_quote & 1) && delimiter == '$')
+			data = expand_environment_variable(data, i, e);
 		else if (data[i] == delimiter && !(double_quote & 1) && single_quote % 2 == 0 && delimiter == '*')
-			data = f(data, i, e);
+			data = expand_wildcard(data, i, e);
 		if (!data)
 			return (NULL);
 		if (!data[i])
@@ -164,19 +166,17 @@ t_ast_node	*word_splitting(t_ast_node *node, t_expander *e)
 
 t_ast_node	*remove_quotes(t_ast_node *node, t_expander *e)
 {
-	char	*prev_data;
 	size_t	unquoted_len;
 	char	*unquoted_str;
 
-	if (!is_removable_quotes(node->data))
+	if (!is_contain_quotes(node->data))
 		return (node);
-	prev_data = node->data;
 	unquoted_len = unquoted_strlen(node->data);
 	unquoted_str = malloc(sizeof(char) * (unquoted_len + 1));
 	if (!unquoted_str)
 		exit(expand_perror(e, "malloc"));
 	unquoted_str = unquoted_memmove(unquoted_str, node->data);
+	free(node->data);
 	node->data = unquoted_str;
-	free(prev_data);
 	return (node);
 }
