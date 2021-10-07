@@ -1,12 +1,13 @@
 NAME    	= minishell
 
 EXECUTE_PATH	= execute
+EXPANDER_PATH	= expander
 PARSER_PATH		= parser
 LEXER_PATH		= lexer
 AST_PATH		= ast
 UTILS_PATH		= utils
 BUILTIN_PATH	= builtin
-SRC_PATHS		= . $(BUILTIN_PATH) $(EXECUTE_PATH) $(PARSER_PATH) $(LEXER_PATH) $(AST_PATH) $(UTILS_PATH)
+SRC_PATHS		= . $(EXPANDER_PATH) $(BUILTIN_PATH) $(EXECUTE_PATH) $(PARSER_PATH) $(LEXER_PATH) $(AST_PATH) $(UTILS_PATH)
 SRCS			= $(foreach path, $(SRC_PATHS), $(wildcard $(path)/*.c))
 
 OBJDIR  	= ./obj
@@ -39,6 +40,10 @@ $(OBJDIR)/%.o: %.c
 	$(CC) $(CFLAG) -o $@ -c $<
 
 $(OBJDIR)/%.o: $(EXECUTE_PATH)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAG) -o $@ -c $<
+
+$(OBJDIR)/%.o: $(EXPANDER_PATH)/%.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAG) -o $@ -c $<
 
