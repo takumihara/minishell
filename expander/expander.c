@@ -63,9 +63,9 @@ char	*expand_word(t_expander *e, char delimiter)
 			single_quote++;
 		// double_quote += (data[i] == '\"' && !(single_quote & 1));
 		// single_quote += (data[i] == '\'' && !(double_quote & 1));
-		if (data[i] == delimiter && !(single_quote & 1) && delimiter == '$')
+		if (data[i] == '$' && single_quote % 2 == 0 && delimiter == '$')
 			data = expand_environment_variable(data, i, e);
-		else if (data[i] == delimiter && !(double_quote & 1) && single_quote % 2 == 0 && delimiter == '*')
+		else if (data[i] == '*' && double_quote % 2 == 0 && single_quote % 2 == 0 && delimiter == '*')
 			data = expand_wildcard(data, i, e);
 		if (!data)
 			return (NULL);
