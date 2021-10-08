@@ -33,8 +33,6 @@ void print_err_cnt();
 int ast_index;
 int err_cnt;
 
-extern char	**environ;
-
 int main(int ac, char **av) {
 	(void)ac;
 	(void)av;
@@ -95,7 +93,7 @@ int main(int ac, char **av) {
 		char input[] = "echo \"hoge\"";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
-				{COMMAND_ARG_NODE, "\"hoge\""},
+				{COMMAND_ARG_NODE, "hoge"},
 		};
 		test_expander(input, expected, QUOTES, environ);
 	}
@@ -104,7 +102,7 @@ int main(int ac, char **av) {
 		char input[] = "echo \"$TEST\"";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
-				{COMMAND_ARG_NODE, "\"example\""},
+				{COMMAND_ARG_NODE, "example"},
 		};
 		test_expander(input, expected, QUOTES, environ);
 	}
@@ -113,7 +111,7 @@ int main(int ac, char **av) {
 		char input[] = "echo \'$TEST\'";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
-				{COMMAND_ARG_NODE, "\'$TEST\'"},
+				{COMMAND_ARG_NODE, "$TEST"},
 		};
 		test_expander(input, expected, QUOTES, environ);
 	}
@@ -122,7 +120,7 @@ int main(int ac, char **av) {
 		char input[] = "echo \"\'$USER\'\"";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
-				{COMMAND_ARG_NODE, "\"\'user42\'\""},
+				{COMMAND_ARG_NODE, "\'user42\'"},
 		};
 		test_expander(input, expected, QUOTES, environ);
 	}
@@ -131,7 +129,7 @@ int main(int ac, char **av) {
 		char input[] = "echo \'\"$USER\"\'";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
-				{COMMAND_ARG_NODE, "\'\"$USER\"\'"},
+				{COMMAND_ARG_NODE, "\"$USER\""},
 		};
 		test_expander(input, expected, QUOTES, environ);
 	}
@@ -184,6 +182,14 @@ int main(int ac, char **av) {
 		test_expander(input, expected, WILDCARD, environ);
 	}
 	{
+		char input[] = "echo \"*\"";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "*"},
+		};
+		test_expander(input, expected, WILDCARD, environ);
+	}
+	{
 		char input[] = "echo o*";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo"},
@@ -194,7 +200,7 @@ int main(int ac, char **av) {
 	{
 		char input[] = "\"echo hello\"";
 		t_test expected[] = {
-				{COMMAND_ARG_NODE, "\"echo hello\""},
+				{COMMAND_ARG_NODE, "echo hello"},
 		};
 		test_expander(input, expected, WORD_SPLIT, environ);
 	}
@@ -202,7 +208,7 @@ int main(int ac, char **av) {
 		setenv("TEST", "echo hello", 1);
 		char input[] = "\"ls -l\"$TEST";
 		t_test expected[] = {
-				{COMMAND_ARG_NODE, "\"ls -l\"echo"},
+				{COMMAND_ARG_NODE, "ls -lecho"},
 				{COMMAND_ARG_NODE, "hello"},
 		};
 		test_expander(input, expected, WORD_SPLIT, environ);
@@ -211,7 +217,7 @@ int main(int ac, char **av) {
 		setenv("TEST", "echo hello", 1);
 		char input[] = "hoge\"ls -l\"$TEST";
 		t_test expected[] = {
-				{COMMAND_ARG_NODE, "hoge\"ls -l\"echo"},
+				{COMMAND_ARG_NODE, "hogels -lecho"},
 				{COMMAND_ARG_NODE, "hello"},
 		};
 		test_expander(input, expected, WORD_SPLIT, environ);
