@@ -15,7 +15,7 @@ bool	register_key_value(char *key, char *value, t_env_var *env_vars)
 {
 	while (env_vars)
 	{
-		if (!strcmp(key, env_vars->key))
+		if (!ft_strcmp(key, env_vars->key))
 		{
 			free(env_vars->value);
 			env_vars->value = value;
@@ -72,8 +72,8 @@ t_env_var	*init_env_lst(void)
 	tmp = &vars;
 	while (*environ)
 	{
-		key = strndup(*environ, strchr(*environ, '=') - *environ);
-		value = strdup(strchr(*environ, '=') + 1);
+		key = ft_strldup(*environ, strchr(*environ, '=') - *environ);
+		value = ft_strdup(ft_strchr(*environ, '=') + 1);
 		if (!key || !value)
 			return (delete_env_lst(vars.next, key, value));
 		tmp->next = init_env_var(key, value);
