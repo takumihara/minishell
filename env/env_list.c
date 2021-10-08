@@ -1,9 +1,3 @@
-# include <string.h>
-# include <stdlib.h>
-# include <unistd.h>
-# include <stdio.h>
-# include <stdbool.h>
-
 # include "env.h"
 
 extern char	**environ;
@@ -24,12 +18,12 @@ bool	register_key_value(char *key, char *value, t_env_var *env_vars)
 		if (!strcmp(key, env_vars->key))
 		{
 			free(env_vars->value);
-			env_vars->key = value;
+			env_vars->value = value;
 			return (true);
 		}
 		env_vars = env_vars->next;
 	}
-	env_vars = init_node(key, value);
+	env_vars = init_env_var(key, value);
 	if (!env_vars)
 		return (false);
 	free(key);
@@ -37,26 +31,33 @@ bool	register_key_value(char *key, char *value, t_env_var *env_vars)
 	return (true);
 }
 
-t_env_var *init_node(char *key, char *value)
+t_env_var *init_env_var(char *key, char *value)
 {
-	t_env_var	*env_node;
+	t_env_var	*env_var;
     
-    env_node = (t_env_var *)malloc(sizeof(t_env_var));
-    if (!env_node)
+    env_var = (t_env_var *)malloc(sizeof(t_env_var));
+    if (!env_var)
         return (NULL);
-	env_node->key = key;
-    env_node->value = value;
-    env_node->next = NULL;
-    return (env_node);
+	env_var->key = key;
+    env_var->value = value;
+    env_var->next = NULL;
+    return (env_var);
 }
 
 void	*delete_env_lst(t_env_var *env_vars, char *key, char *value)
 {
-	(void)env_vars;
-	if (key)
-		free(key);
-	if (value)
-		free(value);
+	t_env_var	*next_env_var;
+
+	free(key);
+	free(value);
+	while (env_vars)
+	{
+		next_env_var = env_vars->next;
+		free(env_vars->key);
+		free(env_vars->value);
+		free(env_vars);
+		env_vars = next_env_var;
+	}
 	return (NULL);
 }
 
@@ -69,15 +70,13 @@ t_env_var	*init_env_lst(void)
 
 	vars.next = NULL;
 	tmp = &vars;
-	key = NULL;
-	value = NULL;
 	while (*environ)
 	{
 		key = strndup(*environ, strchr(*environ, '=') - *environ);
 		value = strdup(strchr(*environ, '=') + 1);
 		if (!key || !value)
 			return (delete_env_lst(vars.next, key, value));
-		tmp->next = init_node(key, value);
+		tmp->next = init_env_var(key, value);
 		if (!tmp->next)
 			return (delete_env_lst(vars.next, key, value));
 		tmp = tmp->next;
