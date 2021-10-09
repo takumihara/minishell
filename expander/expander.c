@@ -28,12 +28,10 @@ void	search_command_arg_node(t_expander *e, t_ast_node *node)
 		return ;
 	search_command_arg_node(e, node->right);
 	search_command_arg_node(e, node->left);
-	if (node->type != COMMAND_ARG_NODE)
+	if (node->type != COMMAND_ARG_NODE && node->type != REDIRECT_IN_NODE
+		&& node->type != REDIRECT_OUT_NODE && node->type != REDIRECT_APPEND_NODE)
 		return ;
 	e->node = node;
-	// todo: export env_var
-	// if (!ft_strcmp(node->data, "export"))
-	// 	export_env_var();
 	node->data = expand_word(e, '$');
 	node->data = expand_word(e, '*');
 	node = word_splitting(node, e);
