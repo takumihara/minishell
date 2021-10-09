@@ -44,6 +44,7 @@ t_token	*lex(char *input);
 // lexer_utils.c
 void	read_char(t_lexer *lexer);
 t_token	*skip_space(t_lexer *lexer);
+t_token	*lexer_perror(t_lexer *l, t_token *token, char *input, const char *s);
 
 // lexer_new_token.c
 t_token	*new_token(t_token_type token_type, t_lexer *l, size_t len, size_t start);

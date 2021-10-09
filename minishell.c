@@ -61,7 +61,6 @@ int minishell(char *line)
 		node = expand(node, NULL);
 		execute(node);
 		add_history(line);
-		free(line);
 	}
 	return (0);
 }
