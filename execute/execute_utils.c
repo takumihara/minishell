@@ -116,10 +116,7 @@ void	execute_redirect(t_executor *e, t_simple_command *sc, int orig_stdfd[])
 					close(pipefd[READ]);
 					while (1)
 					{
-//						ft_putstr_fd("> ", orig_stdfd[WRITE]);
-						dprintf(orig_stdfd[WRITE], "pipefd[WRITE]: %d \n", pipefd[WRITE]);
-						dprintf(orig_stdfd[WRITE], "orig_stdfd[WRITE]: %d \n", orig_stdfd[WRITE]);
-						ft_putstr_fd("> ", pipefd[WRITE]);
+						ft_putstr_fd("> ", orig_stdfd[WRITE]);
 						status = get_next_line(orig_stdfd[READ], &line);
 						process_gnl_error(e, status); // todo: idk
 						if (status == GNL_STATUS_DONE || !ft_strcmp(line, sc->r_in->doc))
@@ -128,7 +125,6 @@ void	execute_redirect(t_executor *e, t_simple_command *sc, int orig_stdfd[])
 							exit(EXIT_SUCCESS);
 						}
 						ft_putendl_fd(line, pipefd[WRITE]);
-						ft_putendl_fd("hello", pipefd[WRITE]);
 						free(line);
 					}
 				}

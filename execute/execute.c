@@ -25,8 +25,6 @@ int execute_pipeline(t_executor *e, t_pipeline *pl)
 		if (pl->next)
 		{
 			pipe(pipefd);
-			printf("pipefd[WRITE]: %d \n", pipefd[WRITE]);
-			printf("pipefd[READ]: %d \n", pipefd[READ]);
 			dup2(pipefd[WRITE], STDOUT_FILENO);
 			close(pipefd[WRITE]);
 		}
