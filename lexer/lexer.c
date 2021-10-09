@@ -96,7 +96,7 @@ t_token	*lex(char *input)
 
 	l = new_lexer(input);
 	if (!l)
-		return (NULL);
+		return (lexer_perror(l, NULL, input, "malloc"));
 	token.next = NULL;
 	tmp = &token;
 	read_char(l);
@@ -104,10 +104,7 @@ t_token	*lex(char *input)
 	{
 		tmp->next = next_token(l);
 		if (!tmp->next)
-		{
-			token_lstclear(token.next);
-			return (NULL);
-		}
+			return (lexer_perror(l, token.next, input, "malloc"));
 		if (tmp->next->type == EOL)
 			break ;
 		tmp = tmp->next;

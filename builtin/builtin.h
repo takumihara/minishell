@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../../libft/libft.h"
+#include "../libft/libft.h"
 
 int		cd(int argc, char **argv);
 int		pwd();

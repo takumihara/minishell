@@ -16,7 +16,13 @@
 # define EXPANDABLE "\"\'$"
 # define EXPANSION_DELIMITER "\"\'$|&<>() =\t\n"
 
+# define DOUBLE_QUOTE 0
+# define SINGLE_QUOTE 1
+# define NOT_QUOTE 2
+
 typedef struct s_expander t_expander;
+
+extern char	**environ;
 
 struct s_expander {
 	t_ast_node	*root;
@@ -51,6 +57,9 @@ char		*sort_strings(char *src, t_expander *e);
 // expander_quote.c
 bool		is_quote(const char c);
 size_t		unquoted_strlen(const char *str);
+bool		is_contain_quotes(const char *str);
+char		*unquoted_memmove(char *dst, char *src);
+int			in_quotes_type(char c, size_t count);
 
 // expander_splitting.c
 char		**split_by_space_skip_quotes(char const *str, const char *delims);
