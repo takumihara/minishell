@@ -79,7 +79,6 @@ struct s_simple_command {
 
 struct s_redirect_out {
 	int				fd;
-	bool			append;
 	t_redirect_out	*next; // maybe there is no need to connect these, just overwrite
 };
 

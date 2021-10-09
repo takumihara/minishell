@@ -13,7 +13,6 @@ bool	new_t_redirect_out(t_redirect_out **r_out, char *filename, t_node_type type
 		(*r_out)->fd = open(filename, O_WRONLY | O_APPEND | O_CREAT, 00644);
 	if ((*r_out)->fd == -1)
 		perror("open"); //todo: check when to print error
-	(*r_out)->append = (type == REDIRECT_APPEND_NODE);
 	(*r_out)->next = NULL;
 	return (true);
 }

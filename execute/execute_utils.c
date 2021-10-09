@@ -86,12 +86,15 @@ bool	is_execute_condition(int condition, int exit_status)
 	return (false);
 }
 
-static void process_gnl_error(t_executor *e, t_gnl_status status)
+static void process_gnl_error(t_executor *e, t_gnl_status status, char *line)
 {
 	if (status == GNL_STATUS_ERROR_MALLOC)
 		exit(ex_perror(e, "minishell: malloc"));
 	if (status == GNL_STATUS_ERROR_READ)
+	{
+		free(line);
 		exit(ex_perror(e, "minishell: malloc"));
+	}
 }
 
 void	execute_redirect(t_executor *e, t_simple_command *sc, int orig_stdfd[])
@@ -118,7 +121,7 @@ void	execute_redirect(t_executor *e, t_simple_command *sc, int orig_stdfd[])
 					{
 						ft_putstr_fd("> ", orig_stdfd[WRITE]);
 						status = get_next_line(orig_stdfd[READ], &line);
-						process_gnl_error(e, status); // todo: idk
+						process_gnl_error(e, status, line); // todo: idk
 						if (status == GNL_STATUS_DONE || !ft_strcmp(line, sc->r_in->doc))
 						{
 							close(pipefd[WRITE]);
@@ -142,7 +145,7 @@ void	execute_redirect(t_executor *e, t_simple_command *sc, int orig_stdfd[])
 			{
 				ft_putstr_fd("> ", STDIN_FILENO);
 				status = get_next_line(STDIN_FILENO, &line);
-				process_gnl_error(e, status);
+				process_gnl_error(e, status, line);
 				if (status == GNL_STATUS_DONE || !ft_strcmp(line, sc->r_in->doc))
 					break ;
 			}
