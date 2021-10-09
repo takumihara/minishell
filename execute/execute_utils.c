@@ -1,4 +1,5 @@
 #include "execute.h"
+#include "../utils/get_next_line.h"
 
 bool	new_executor(t_executor **e, t_ast_node *root)
 {
@@ -27,13 +28,12 @@ void	delete_list(void *element, t_list_type type)
 		delete_list(((t_redirect_in *)element)->next, T_REDIRECT_IN);
 	}
 	else if (type == T_HEREDOC)
-		delete_list(((t_heredoc *)element)->next, T_HEREDOC);
+		delete_list(((t_redirect_in *)element)->next, T_HEREDOC);
 	else if (type == T_SIMPLE_COMMAND)
 	{
 		free(((t_simple_command *)element)->argv);
 		delete_list(((t_simple_command *)element)->r_out, T_REDIRECT_OUT);
 		delete_list(((t_simple_command *)element)->r_in, T_REDIRECT_IN);
-		delete_list(((t_simple_command *)element)->heredoc, T_HEREDOC);
 	}
 	else if (type == T_PIPELINE)
 	{
@@ -84,4 +84,81 @@ bool	is_execute_condition(int condition, int exit_status)
 	if (condition == CONDITION_NL)
 		return (true);
 	return (false);
+}
+
+static void process_gnl_error(t_executor *e, t_gnl_status status, char *line)
+{
+	if (status == GNL_STATUS_ERROR_MALLOC)
+		exit(ex_perror(e, "minishell: malloc"));
+	if (status == GNL_STATUS_ERROR_READ)
+	{
+		free(line);
+		exit(ex_perror(e, "minishell: malloc"));
+	}
+}
+
+void	execute_redirect(t_executor *e, t_simple_command *sc, int orig_stdfd[])
+{
+	int				pipefd[2];
+	pid_t			pid;
+	t_gnl_status	status;
+	char			*line;
+
+	while (sc->r_in)
+	{
+		if (!sc->r_in->next)
+		{
+			if (sc->r_in->type == T_REDIRECT_IN)
+				dup2(sc->r_in->fd, STDIN_FILENO);
+			else if (sc->r_in->type == T_HEREDOC)
+			{
+				pipe(pipefd);
+				pid = fork();
+				if (pid == CHILD_PROCESS)
+				{
+					close(pipefd[READ]);
+					while (1)
+					{
+						ft_putstr_fd("> ", orig_stdfd[WRITE]);
+						status = get_next_line(orig_stdfd[READ], &line);
+						process_gnl_error(e, status, line); // todo: idk
+						if (status == GNL_STATUS_DONE || !ft_strcmp(line, sc->r_in->doc))
+						{
+							close(pipefd[WRITE]);
+							exit(EXIT_SUCCESS);
+						}
+						ft_putendl_fd(line, pipefd[WRITE]);
+						free(line);
+					}
+				}
+				else if (pid < 0)
+					exit(ex_perror(e, "minishell: fork"));
+				close(pipefd[WRITE]);
+				dup2(pipefd[READ], STDIN_FILENO);
+				close(pipefd[READ]);
+				wait(NULL);
+			}
+		}
+		else if (sc->r_in->type == T_HEREDOC)
+		{
+			while (1)
+			{
+				ft_putstr_fd("> ", STDIN_FILENO);
+				status = get_next_line(STDIN_FILENO, &line);
+				process_gnl_error(e, status, line);
+				if (status == GNL_STATUS_DONE || !ft_strcmp(line, sc->r_in->doc))
+					break ;
+			}
+		}
+		sc->r_in = sc->r_in->next;
+	}
+	delete_list(sc->r_in, T_REDIRECT_IN); //todo: does the fd have to be closed here?
+	sc->r_in = NULL;
+	while (sc->r_out && sc->r_out->next)
+		sc->r_out = sc->r_out->next;
+	if (sc->r_out) {
+		dup2(sc->r_out->fd, STDOUT_FILENO);
+	}
+	delete_list(sc->r_out, T_REDIRECT_OUT);
+	sc->r_out = NULL;
 }

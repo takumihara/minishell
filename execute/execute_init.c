@@ -81,24 +81,14 @@ t_subshell	*subshell(t_executor *e, t_ast_node *node)
 	while (node->right != NULL)
 	{
 		node = node->right;
-		if (node->type == REDIRECT_OUT_NODE)
+		if (node->type == REDIRECT_OUT_NODE || node->type == REDIRECT_APPEND_NODE)
 		{
-			if (!new_t_redirect_out(&ss->r_out, node->data, false))
+			if (!new_t_redirect_out(&ss->r_out, node->data, node->type))
 				exit(ex_perror(e, "malloc"));
 		}
-		else if (node->type == REDIRECT_IN_NODE)
+		else if (node->type == REDIRECT_IN_NODE || node->type == HEREDOC_NODE)
 		{
-			if (!new_t_redirect_in(&ss->r_in, node->data))
-				exit(ex_perror(e, "malloc"));
-		}
-		else if (node->type == REDIRECT_APPEND_NODE)
-		{
-			if (!new_t_redirect_out(&ss->r_out, node->data, true))
-				exit(ex_perror(e, "malloc"));
-		}
-		else if (node->type == HEREDOC_NODE)
-		{
-			if (!new_t_heredoc(&ss->heredoc, node->data))
+			if (!new_t_redirect_in(&ss->r_in, node->data, node->type))
 				exit(ex_perror(e, "malloc"));
 		}
 	}
@@ -146,24 +136,14 @@ t_simple_command *simple_command(t_executor *e, t_ast_node *node)
 	{
 		if (node->type == COMMAND_ARG_NODE)
 			sc->argc++;
-		else if (node->type == REDIRECT_OUT_NODE)
+		else if (node->type == REDIRECT_OUT_NODE || node->type == REDIRECT_APPEND_NODE)
 		{
-			if (!new_t_redirect_out(&sc->r_out, node->data, false))
+			if (!new_t_redirect_out(&sc->r_out, node->data, node->type))
 				exit(ex_perror(e, "malloc"));
 		}
-		else if (node->type == REDIRECT_IN_NODE)
+		else if (node->type == REDIRECT_IN_NODE || node->type == HEREDOC_NODE)
 		{
-			if (!new_t_redirect_in(&sc->r_in, node->data))
-				exit(ex_perror(e, "malloc"));
-		}
-		else if (node->type == REDIRECT_APPEND_NODE)
-		{
-			if (!new_t_redirect_out(&sc->r_out, node->data, true))
-				exit(ex_perror(e, "malloc"));
-		}
-		else if (node->type == HEREDOC_NODE)
-		{
-			if (!new_t_heredoc(&sc->heredoc, node->data))
+			if (!new_t_redirect_in(&sc->r_in, node->data, node->type))
 				exit(ex_perror(e, "malloc"));
 		}
 		node = node->right;

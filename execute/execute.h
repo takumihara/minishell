@@ -31,7 +31,6 @@ typedef struct s_compound_list	t_compound_list;
 typedef struct s_simple_command	t_simple_command;
 typedef struct s_redirect_out	t_redirect_out;
 typedef struct s_redirect_in	t_redirect_in;
-typedef struct s_heredoc		t_heredoc;
 
 typedef enum e_list_type {
 	UNSET,
@@ -61,7 +60,6 @@ struct s_subshell {
 	// redirect list
 	t_redirect_out 		*r_out;
 	t_redirect_in 		*r_in;
-	t_heredoc			*heredoc;
 };
 
 struct s_compound_list {
@@ -77,23 +75,18 @@ struct s_simple_command {
 	char				**argv;
 	t_redirect_out 		*r_out;
 	t_redirect_in 		*r_in;
-	t_heredoc			*heredoc;
 };
 
 struct s_redirect_out {
 	int				fd;
-	bool			append;
 	t_redirect_out	*next; // maybe there is no need to connect these, just overwrite
 };
 
 struct s_redirect_in {
 	int				fd;
+	t_list_type		type;
+	char			*doc;
 	t_redirect_in	*next;
-};
-
-struct s_heredoc {
-	char		*doc;
-	t_heredoc	*next;
 };
 
 // execute_init.c
@@ -113,11 +106,11 @@ int		ex_perror(t_executor *e, const char *s);
 void	delete_list(void *element, t_list_type type);
 bool	execute_builtin(t_executor *e, int argc, char **argv, bool islast);
 bool	is_execute_condition(int condition, int exit_status);
+void	execute_redirect(t_executor *e, t_simple_command *sc, int orig_stdfd[]);
 
 // new_redirect.c
-bool	new_t_redirect_out(t_redirect_out **r_out, char *filename, bool append);
-bool	new_t_redirect_in(t_redirect_in **r_in, char *filename);
-bool	new_t_heredoc(t_heredoc **heredoc, char *doc);
+bool	new_t_redirect_out(t_redirect_out **r_out, char *filename, t_node_type type);
+bool	new_t_redirect_in(t_redirect_in **r_in, char *data, t_node_type type);
 
 // execute_command.c
 int		execute_pipeline(t_executor *e, t_pipeline *c);
