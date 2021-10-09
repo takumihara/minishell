@@ -9,6 +9,7 @@
 #include "libft/libft.h"
 #include "parser/parser.h"
 #include "lexer/lexer.h"
+#include "expander/expander.h"
 #include "execute/execute.h"
 
 
@@ -36,7 +37,7 @@ void	set_signal_handler(void)
 int minishell(char *line)
 {
 	if (line)
-		return (execute(parse(lex(line))));
+		return (execute(expand(parse(lex(line)), NULL)));
 	set_signal_handler();
 	while (1)
 	{
@@ -56,6 +57,8 @@ int minishell(char *line)
 			free(line);
 			continue;
 		}
+		// todo: No need to pass arguments `char **env`?
+		node = expand(node, NULL);
 		execute(node);
 		add_history(line);
 		free(line);

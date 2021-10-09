@@ -1,0 +1,14 @@
+echo hello
+echo "hello"
+"echo hello"
+'echo hello'
+echo "$USER"
+echo '$USER'
+echo '"$USER"'
+echo "'$USER'"
+echo *
+echo "*"
+echo '*'
+ls *
+echo *.'c'
+echo mini*
