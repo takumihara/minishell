@@ -31,10 +31,9 @@ t_ast_node	*search_command_arg_node(t_expander *e, t_ast_node *node)
 	char	*original_data;
 
 	if (!node)
-		return (NULL);
-	search_command_arg_node(e, node->right);
-	search_command_arg_node(e, node->left);
-	if (!node)
+		return (e->node);
+	if (!search_command_arg_node(e, node->right)
+		|| !search_command_arg_node(e, node->left))
 		return (NULL);
 	if (node->type != COMMAND_ARG_NODE && node->type != REDIRECT_IN_NODE
 		&& node->type != REDIRECT_OUT_NODE && node->type != REDIRECT_APPEND_NODE)
@@ -146,6 +145,7 @@ t_ast_node	*word_splitting(t_ast_node *node, t_expander *e, char *original_data)
 	size_t		i;
 	t_ast_node	*root;
 	t_ast_node	*result;
+	t_ast_node	*original_right;
 
 	if (!node->data)
 		return (NULL);
@@ -159,6 +159,7 @@ t_ast_node	*word_splitting(t_ast_node *node, t_expander *e, char *original_data)
 	free(node->data);
 	i = 0;
 	root = node;
+	original_right = root->right;
 	while (split[i])
 	{
 		if (i == 0)
@@ -178,6 +179,7 @@ t_ast_node	*word_splitting(t_ast_node *node, t_expander *e, char *original_data)
 		}
 		i++;
 	}
+	node->right = original_right;
 	return (root);
 }
 
