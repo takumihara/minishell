@@ -110,6 +110,5 @@ t_token	*lex(char *input)
 		tmp = tmp->next;
 	}
 	free(l);
-	free(input);
 	return (token.next);
 }

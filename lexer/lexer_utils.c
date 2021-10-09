@@ -38,8 +38,7 @@ t_token	*skip_space(t_lexer *l)
 t_token	*lexer_perror(t_lexer *l, t_token *token, char *input, const char *s)
 {
 	perror(s);
-	if (token)
-		token_lstclear(token);
+	token_lstclear(token);
 	free(input);
 	free(l);
 	return (NULL);
