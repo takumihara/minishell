@@ -19,7 +19,6 @@ bool	new_t_subshell(t_subshell **ss)
 	(*ss)->compound_list = NULL;
 	(*ss)->r_out = NULL;
 	(*ss)->r_in = NULL;
-	(*ss)->heredoc = NULL;
 	return (true);
 }
 
@@ -45,7 +44,6 @@ bool	new_t_simple_command(t_simple_command **sc)
 	(*sc)->argv = NULL;
 	(*sc)->r_out = NULL;
 	(*sc)->r_in = NULL;
-	(*sc)->heredoc = NULL;
 	return (true);
 }
 

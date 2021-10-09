@@ -1,13 +1,16 @@
 NAME    	= minishell
 
+CURRENT_PATH	= .
 EXECUTE_PATH	= execute
 PARSER_PATH		= parser
 LEXER_PATH		= lexer
 AST_PATH		= ast
 UTILS_PATH		= utils
 BUILTIN_PATH	= builtin
-SRC_PATHS		= . $(BUILTIN_PATH) $(EXECUTE_PATH) $(PARSER_PATH) $(LEXER_PATH) $(AST_PATH) $(UTILS_PATH)
+SRC_PATHS		= $(CURRENT_PATH) $(BUILTIN_PATH) $(EXECUTE_PATH) $(PARSER_PATH) $(LEXER_PATH) $(AST_PATH) $(UTILS_PATH)
 SRCS			= $(foreach path, $(SRC_PATHS), $(wildcard $(path)/*.c))
+
+VPATH		= $(CURRENT_PATH):$(BUILTIN_PATH):$(EXECUTE_PATH):$(PARSER_PATH):$(LEXER_PATH):$(AST_PATH):$(UTILS_PATH)
 
 OBJDIR  	= ./obj
 OBJS    	= $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.c=.o)))
@@ -35,31 +38,7 @@ $(NAME): $(OBJS)
 bonus: $(NAME)
 
 $(OBJDIR)/%.o: %.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAG) -o $@ -c $<
-
-$(OBJDIR)/%.o: $(EXECUTE_PATH)/%.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAG) -o $@ -c $<
-
-$(OBJDIR)/%.o: $(PARSER_PATH)/%.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAG) -o $@ -c $<
-
-$(OBJDIR)/%.o: $(LEXER_PATH)/%.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAG) -o $@ -c $<
-
-$(OBJDIR)/%.o: $(AST_PATH)/%.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAG) -o $@ -c $<
-
-$(OBJDIR)/%.o: $(UTILS_PATH)/%.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAG) -o $@ -c $<
-
-$(OBJDIR)/%.o: $(BUILTIN_PATH)/%.c
-	@mkdir -p $(dir $@)
+	@if [ ! -d $(dir $@) ];then mkdir $(dir $@); fi
 	$(CC) $(CFLAG) -o $@ -c $<
 
 clean:
