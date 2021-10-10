@@ -120,6 +120,6 @@ int execute_simple_command(t_executor *e, t_simple_command *sc, bool islast, int
 	}
 	else if (pid < 0)
 		exit(ex_perror(e, "minishell: fork"));
-
+	//todo: check islast
 	return (pid);
 }

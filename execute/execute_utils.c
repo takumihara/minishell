@@ -100,7 +100,6 @@ static void process_gnl_error(t_executor *e, t_gnl_status status, char *line)
 void	execute_redirect(t_executor *e, t_simple_command *sc, int orig_stdfd[])
 {
 	int				pipefd[2];
-	pid_t			pid;
 	t_gnl_status	status;
 	char			*line;
 
@@ -113,52 +112,39 @@ void	execute_redirect(t_executor *e, t_simple_command *sc, int orig_stdfd[])
 			else if (sc->r_in->type == T_HEREDOC)
 			{
 				pipe(pipefd);
-				pid = fork();
-				if (pid == CHILD_PROCESS)
+				while (1)
 				{
-					close(pipefd[READ]);
-					while (1)
-					{
-						ft_putstr_fd("> ", orig_stdfd[WRITE]);
-						status = get_next_line(orig_stdfd[READ], &line);
-						process_gnl_error(e, status, line); // todo: idk
-						if (status == GNL_STATUS_DONE || !ft_strcmp(line, sc->r_in->doc))
-						{
-							close(pipefd[WRITE]);
-							exit(EXIT_SUCCESS);
-						}
-						ft_putendl_fd(line, pipefd[WRITE]);
-						free(line);
-					}
+					ft_putstr_fd("> ", orig_stdfd[WRITE]);
+					status = get_next_line(orig_stdfd[READ], &line);
+					process_gnl_error(e, status, line);
+					if (status == GNL_STATUS_DONE || !ft_strcmp(line, sc->r_in->doc))
+						break ;
+					ft_putendl_fd(line, pipefd[WRITE]);
+					free(line);
 				}
-				else if (pid < 0)
-					exit(ex_perror(e, "minishell: fork"));
+				free(line);
 				close(pipefd[WRITE]);
 				dup2(pipefd[READ], STDIN_FILENO);
 				close(pipefd[READ]);
-				wait(NULL);
 			}
 		}
 		else if (sc->r_in->type == T_HEREDOC)
 		{
 			while (1)
 			{
-				ft_putstr_fd("> ", STDIN_FILENO);
-				status = get_next_line(STDIN_FILENO, &line);
+				ft_putstr_fd("> ", orig_stdfd[WRITE]);
+				status = get_next_line(orig_stdfd[READ], &line);
 				process_gnl_error(e, status, line);
 				if (status == GNL_STATUS_DONE || !ft_strcmp(line, sc->r_in->doc))
 					break ;
+				free(line);
 			}
+			free(line);
 		}
 		sc->r_in = sc->r_in->next;
 	}
-	delete_list(sc->r_in, T_REDIRECT_IN); //todo: does the fd have to be closed here?
-	sc->r_in = NULL;
 	while (sc->r_out && sc->r_out->next)
 		sc->r_out = sc->r_out->next;
-	if (sc->r_out) {
+	if (sc->r_out)
 		dup2(sc->r_out->fd, STDOUT_FILENO);
-	}
-	delete_list(sc->r_out, T_REDIRECT_OUT);
-	sc->r_out = NULL;
 }

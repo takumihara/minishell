@@ -26,9 +26,9 @@ int	get_next_line(int fd, char **line)
 	ssize_t			read_bytes;
 	t_gnl_status	status;
 
-	if (!assign_mem((void **)line, malloc(sizeof(char) * 1)))
+	*line = ft_strdup("");
+	if (!*line)
 		return (GNL_STATUS_ERROR_MALLOC);
-	*line[0] = '\0';
 	status = GNL_STATUS_NOT_FINISHED;
 	if (buff[0])
 		status = process_buffer(buff, line);
