@@ -117,7 +117,7 @@ void	execute_redirect(t_executor *e, t_simple_command *sc, int orig_stdfd[])
 					ft_putstr_fd("> ", orig_stdfd[WRITE]);
 					status = get_next_line(orig_stdfd[READ], &line);
 					process_gnl_error(e, status, line);
-					if (status == GNL_STATUS_DONE || !ft_strcmp(line, sc->r_in->doc))
+					if (status == GNL_STATUS_DONE || !ft_strcmp(line, sc->r_in->delim))
 						break ;
 					ft_putendl_fd(line, pipefd[WRITE]);
 					free(line);
@@ -135,7 +135,7 @@ void	execute_redirect(t_executor *e, t_simple_command *sc, int orig_stdfd[])
 				ft_putstr_fd("> ", orig_stdfd[WRITE]);
 				status = get_next_line(orig_stdfd[READ], &line);
 				process_gnl_error(e, status, line);
-				if (status == GNL_STATUS_DONE || !ft_strcmp(line, sc->r_in->doc))
+				if (status == GNL_STATUS_DONE || !ft_strcmp(line, sc->r_in->delim))
 					break ;
 				free(line);
 			}

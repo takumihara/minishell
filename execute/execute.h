@@ -85,7 +85,7 @@ struct s_redirect_out {
 struct s_redirect_in {
 	int				fd;
 	t_list_type		type;
-	char			*doc;
+	char			*delim;
 	t_redirect_in	*next;
 };
 
