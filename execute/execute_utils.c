@@ -72,6 +72,14 @@ bool	execute_builtin(t_executor *e, int argc, char **argv, bool islast)
 			pwd(argc, argv);
 		return (true);
 	}
+	else if (!ft_strcmp(argv[0], "exit"))
+	{
+		if (islast)
+			e->exit_status = builtin_exit(argc, argv);
+		else
+			builtin_exit(argc, argv);
+		return (true);
+	}
 	return (false);
 }
 
