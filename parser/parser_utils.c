@@ -20,7 +20,6 @@ bool	consume_token(t_parser *p, t_token_type expected_type, t_ast_node *node)
 		return (false);
 	if (node)
 	{
-		// todo: FREE REQUIRED!
 		node->data = ft_strndup(p->token->literal.start, p->token->literal.len);
 		if (!node->data)
 		{
