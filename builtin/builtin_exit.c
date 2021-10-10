@@ -4,7 +4,7 @@ int builtin_exit(int argc, char **argv)
 {
 	int	num;
 
-	ft_putendl_fd("exit", STDERR_FILENO);// when c option is set, it should not print
+	ft_putendl_fd("exit", STDERR_FILENO);
 	if (argc == 1)
 		exit(EXIT_SUCCESS);
 	if (argc == 2)
