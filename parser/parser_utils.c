@@ -21,7 +21,7 @@ bool	consume_token(t_parser *p, t_token_type expected_type, t_ast_node *node)
 	if (node)
 	{
 		// todo: FREE REQUIRED!
-		node->data = strldup(p->token->literal.start, p->token->literal.len);
+		node->data = ft_strndup(p->token->literal.start, p->token->literal.len);
 		if (!node->data)
 		{
 			p->err = ERR_MALLOC;
