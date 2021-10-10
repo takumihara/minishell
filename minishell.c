@@ -59,7 +59,7 @@ int minishell(char *line)
 		add_history(line);
 		free(line);
 	}
-	return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
 }
 
 int	main(int argc, char **argv)
