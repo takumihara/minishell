@@ -38,7 +38,6 @@ int execute_pipeline(t_executor *e, t_pipeline *pl)
 			child_pid = NOT_LAST_COMMAND;
 		pl = pl->next;
 	}
-	delete_list((void *)e->pipeline, T_PIPELINE);
 	dup2(orig_stdfd[READ], STDIN_FILENO);
 	close(orig_stdfd[READ]);
 	dup2(orig_stdfd[WRITE], STDOUT_FILENO);

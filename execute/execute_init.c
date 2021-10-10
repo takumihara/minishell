@@ -1,9 +1,8 @@
 #include "execute.h"
 
 static int command_line(t_executor *e, t_ast_node *node);
-static t_pipeline *pipeline(t_executor *e, t_ast_node *node);
+static void pipeline(t_executor *e, t_pipeline **pipeline, t_ast_node *node);
 static t_subshell *subshell(t_executor *e, t_ast_node *node);
-t_compound_list *init_compound_list(t_executor *e, t_ast_node *node);
 static t_simple_command *simple_command(t_executor *e, t_ast_node *node);
 
 int	execute(t_ast_node *root)
@@ -27,7 +26,11 @@ int command_line(t_executor *e, t_ast_node *node)
 	if (node->type == AND_IF_NODE || node->type == OR_IF_NODE)
 	{
 		if (is_execute_condition(e->condition, e->exit_status))
-			e->exit_status = execute_pipeline(e, pipeline(e, node->left));
+		{
+			pipeline(e, &e->pipeline, node->left);
+			e->exit_status = execute_pipeline(e, e->pipeline);
+			delete_list(e->pipeline, T_PIPELINE);
+		}
 		if (node->type == AND_IF_NODE)
 			e->condition = CONDITION_AND_IF;
 		else if (node->type == OR_IF_NODE)
@@ -37,38 +40,40 @@ int command_line(t_executor *e, t_ast_node *node)
 	else
 	{
 		if (is_execute_condition(e->condition, e->exit_status))
-			e->exit_status = execute_pipeline(e, pipeline(e, node));
+		{
+			pipeline(e, &e->pipeline, node);
+			e->exit_status = execute_pipeline(e, e->pipeline);
+			delete_list(e->pipeline, T_PIPELINE);
+		}
 		return (e->exit_status);
 	}
 }
 
-t_pipeline	*pipeline(t_executor *e, t_ast_node *node)
+void	pipeline(t_executor *e, t_pipeline **pipeline_, t_ast_node *node)
 {
-	t_pipeline *pipeline_;
 	t_pipeline *pipeline_next;
 
 	pipeline_next = NULL;
 	// expected node: COMMAND_ARG_NODE, REDIRECT*, PIPE_NODE, SUBSHELL
-	if (!new_t_pipeline(&pipeline_))
+	if (!new_t_pipeline(pipeline_))
 		exit(ex_perror(e, "malloc"));
 	if (node->type == PIPE_NODE)
 	{
-		pipeline_next = pipeline(e, node->right);
+		pipeline(e, &pipeline_next, node->right);
 		node = node->left;
 	}
 	if (node->type == SUBSHELL_NODE)
 	{
-		pipeline_->command = (void *)subshell(e, node);
-		pipeline_->type = T_SUBSHELL;
+		(*pipeline_)->command = (void *)subshell(e, node);
+		(*pipeline_)->type = T_SUBSHELL;
 	}
 	else
 	{
-		pipeline_->command = (void *)simple_command(e, node);
-		pipeline_->type = T_SIMPLE_COMMAND;
+		(*pipeline_)->command = (void *)simple_command(e, node);
+		(*pipeline_)->type = T_SIMPLE_COMMAND;
 	}
 	if (pipeline_next)
-		pipeline_->next = pipeline_next;
-	return (pipeline_);
+		(*pipeline_)->next = pipeline_next;
 }
 
 t_subshell	*subshell(t_executor *e, t_ast_node *node)
@@ -103,24 +108,24 @@ t_compound_list *init_compound_list(t_executor *e, t_ast_node *node)
 		exit (ex_perror(e, "malloc"));
 	if (node->type == AND_IF_NODE)
 	{
-		cl->pipeline = pipeline(e, node->left);
+		pipeline(e, &cl->pipeline, node->left);
 		cl->condition = CONDITION_AND_IF;
 		cl->compound_list_next = node->right;
 	}
 	else if (node->type == OR_IF_NODE)
 	{
-		cl->pipeline = pipeline(e, node->left);
+		pipeline(e, &cl->pipeline, node->left);
 		cl->condition = CONDITION_OR_IF;
 		cl->compound_list_next = node->right;
 	}
 	else if (node->type == SUBSHELL_NEWLINE_NODE)
 	{
-		cl->pipeline = pipeline(e, node->left);
+		pipeline(e, &cl->pipeline, node->left);
 		cl->condition = CONDITION_NL;
 		cl->compound_list_next = node->right;
 	}
 	else
-		cl->pipeline = pipeline(e, node);
+		pipeline(e, &cl->pipeline, node);
 	return (cl);
 }
 

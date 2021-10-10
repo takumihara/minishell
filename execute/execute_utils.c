@@ -24,11 +24,10 @@ void	delete_list(void *element, t_list_type type)
 	}
 	else if (type == T_REDIRECT_IN)
 	{
-		close(((t_redirect_in *)element)->fd);
+		if (((t_redirect_in *)element)->type == T_REDIRECT_IN)
+			close(((t_redirect_in *)element)->fd);
 		delete_list(((t_redirect_in *)element)->next, T_REDIRECT_IN);
 	}
-	else if (type == T_HEREDOC)
-		delete_list(((t_redirect_in *)element)->next, T_HEREDOC);
 	else if (type == T_SIMPLE_COMMAND)
 	{
 		free(((t_simple_command *)element)->argv);
