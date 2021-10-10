@@ -2,8 +2,8 @@
 
 static int command_line(t_executor *e, t_ast_node *node);
 static void pipeline(t_executor *e, t_pipeline **pipeline, t_ast_node *node);
-static t_subshell *subshell(t_executor *e, t_ast_node *node);
-static t_simple_command *simple_command(t_executor *e, t_ast_node *node);
+static void	subshell(t_executor *e, t_subshell **ss, t_ast_node *node);
+static void	simple_command(t_executor *e, t_simple_command **sc, t_ast_node *node);
 
 int	execute(t_ast_node *root)
 {
@@ -64,96 +64,87 @@ void	pipeline(t_executor *e, t_pipeline **pipeline_, t_ast_node *node)
 	}
 	if (node->type == SUBSHELL_NODE)
 	{
-		(*pipeline_)->command = (void *)subshell(e, node);
+		subshell(e, (t_subshell **)&(*pipeline_)->command, node);
 		(*pipeline_)->type = T_SUBSHELL;
 	}
 	else
 	{
-		(*pipeline_)->command = (void *)simple_command(e, node);
+		simple_command(e, (t_simple_command **)&(*pipeline_)->command, node);
 		(*pipeline_)->type = T_SIMPLE_COMMAND;
 	}
 	if (pipeline_next)
 		(*pipeline_)->next = pipeline_next;
 }
 
-t_subshell	*subshell(t_executor *e, t_ast_node *node)
+void	subshell(t_executor *e, t_subshell **ss, t_ast_node *node)
 {
-	t_subshell *ss;
-
-	if (!new_t_subshell(&ss))
+	if (!new_t_subshell(ss))
 		exit(ex_perror(e, "malloc"));
-	ss->compound_list = init_compound_list(e, node->left);
+	init_compound_list(e, &(*ss)->compound_list, node->left);
 	while (node->right != NULL)
 	{
 		node = node->right;
 		if (node->type == REDIRECT_OUT_NODE || node->type == REDIRECT_APPEND_NODE)
 		{
-			if (!new_t_redirect_out(&ss->r_out, node->data, node->type))
+			if (!new_t_redirect_out(&(*ss)->r_out, node->data, node->type))
 				exit(ex_perror(e, "malloc"));
 		}
 		else if (node->type == REDIRECT_IN_NODE || node->type == HEREDOC_NODE)
 		{
-			if (!new_t_redirect_in(&ss->r_in, node->data, node->type))
+			if (!new_t_redirect_in(&(*ss)->r_in, node->data, node->type))
 				exit(ex_perror(e, "malloc"));
 		}
 	}
-	return (ss);
 }
 
-t_compound_list *init_compound_list(t_executor *e, t_ast_node *node)
+void	init_compound_list(t_executor *e, t_compound_list **cl, t_ast_node *node)
 {
-	t_compound_list	*cl;
-
-	if (!new_t_compound_list(&cl))
+	if (!new_t_compound_list(cl))
 		exit (ex_perror(e, "malloc"));
 	if (node->type == AND_IF_NODE)
 	{
-		pipeline(e, &cl->pipeline, node->left);
-		cl->condition = CONDITION_AND_IF;
-		cl->compound_list_next = node->right;
+		pipeline(e, &(*cl)->pipeline, node->left);
+		(*cl)->condition = CONDITION_AND_IF;
+		(*cl)->compound_list_next = node->right;
 	}
 	else if (node->type == OR_IF_NODE)
 	{
-		pipeline(e, &cl->pipeline, node->left);
-		cl->condition = CONDITION_OR_IF;
-		cl->compound_list_next = node->right;
+		pipeline(e, &(*cl)->pipeline, node->left);
+		(*cl)->condition = CONDITION_OR_IF;
+		(*cl)->compound_list_next = node->right;
 	}
 	else if (node->type == SUBSHELL_NEWLINE_NODE)
 	{
-		pipeline(e, &cl->pipeline, node->left);
-		cl->condition = CONDITION_NL;
-		cl->compound_list_next = node->right;
+		pipeline(e, &(*cl)->pipeline, node->left);
+		(*cl)->condition = CONDITION_NL;
+		(*cl)->compound_list_next = node->right;
 	}
 	else
-		pipeline(e, &cl->pipeline, node);
-	return (cl);
+		pipeline(e, &(*cl)->pipeline, node);
 }
 
-t_simple_command *simple_command(t_executor *e, t_ast_node *node)
+void	simple_command(t_executor *e, t_simple_command **sc, t_ast_node *node)
 {
-	t_simple_command	*sc;
-
-	if (!new_t_simple_command(&sc))
+	if (!new_t_simple_command(sc))
 		exit(ex_perror(e, "malloc"));
-	sc->root = node;
+	(*sc)->root = node;
 	// expected node: COMMAND_ARG_NODE, REDIRECT*
 	while (node != NULL)
 	{
 		if (node->type == COMMAND_ARG_NODE)
-			sc->argc++;
+			(*sc)->argc++;
 		else if (node->type == REDIRECT_OUT_NODE || node->type == REDIRECT_APPEND_NODE)
 		{
-			if (!new_t_redirect_out(&sc->r_out, node->data, node->type))
+			if (!new_t_redirect_out(&(*sc)->r_out, node->data, node->type))
 				exit(ex_perror(e, "malloc"));
 		}
 		else if (node->type == REDIRECT_IN_NODE || node->type == HEREDOC_NODE)
 		{
-			if (!new_t_redirect_in(&sc->r_in, node->data, node->type))
+			if (!new_t_redirect_in(&(*sc)->r_in, node->data, node->type))
 				exit(ex_perror(e, "malloc"));
 		}
 		node = node->right;
 	}
-	if (!new_argv(sc))
+	if (!new_argv(*sc))
 		exit(ex_perror(e, "malloc"));
-	return (sc);
 }

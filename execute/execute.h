@@ -91,7 +91,7 @@ struct s_redirect_in {
 
 // execute_init.c
 int		execute(t_ast_node *root);
-t_compound_list *init_compound_list(t_executor *e, t_ast_node *node);
+void	init_compound_list(t_executor *e, t_compound_list **cl, t_ast_node *node);
 // execute_init_utils.c
 bool	new_t_pipeline(t_pipeline **pipeline);
 bool	new_t_subshell(t_subshell **ss);

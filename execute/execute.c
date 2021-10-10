@@ -77,7 +77,7 @@ int execute_compound_list(t_executor *e, t_compound_list *cl)
 			exit(ex_perror(e, "malloc"));
 		cl->exit_status = execute_pipeline(exe_child, cl->pipeline);
 		if (cl->compound_list_next)
-			cl_next = init_compound_list(e, cl->compound_list_next);
+			 init_compound_list(e, &cl_next, cl->compound_list_next);
 		while (cl_next)
 		{
 			if (cl->condition == CONDITION_NL || cl->condition == cl->exit_status)
@@ -86,7 +86,7 @@ int execute_compound_list(t_executor *e, t_compound_list *cl)
 			// free(exe_child);
 			cl = cl_next;
 			if (cl->compound_list_next)
-				cl_next = init_compound_list(e, cl->compound_list_next);
+				init_compound_list(e, &cl_next, cl->compound_list_next);
 			else
 				exit(0);
 		}
