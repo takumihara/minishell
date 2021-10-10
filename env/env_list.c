@@ -72,7 +72,7 @@ t_env_var	*init_env_lst(void)
 	tmp = &vars;
 	while (*environ)
 	{
-		key = ft_strldup(*environ, strchr(*environ, '=') - *environ);
+		key = ft_strndup(*environ, strchr(*environ, '=') - *environ);
 		value = ft_strdup(ft_strchr(*environ, '=') + 1);
 		if (!key || !value)
 			return (delete_env_lst(vars.next, key, value));

@@ -1,6 +1,6 @@
 #include "utils.h"
 
-char	*strldup(const char *str, size_t size)
+char	*ft_strndup(const char *str, size_t size)
 {
 	char	*rtn;
 	size_t	i;
