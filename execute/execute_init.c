@@ -57,6 +57,7 @@ void	pipeline(t_executor *e, t_pipeline **pipeline_, t_ast_node *node)
 	// expected node: COMMAND_ARG_NODE, REDIRECT*, PIPE_NODE, SUBSHELL
 	if (!new_t_pipeline(pipeline_))
 		exit(ex_perror(e, "malloc"));
+	// call expand()
 	if (node->type == PIPE_NODE)
 	{
 		pipeline(e, &pipeline_next, node->right);
@@ -81,20 +82,6 @@ void	subshell(t_executor *e, t_subshell **ss, t_ast_node *node)
 	if (!new_t_subshell(ss))
 		exit(ex_perror(e, "malloc"));
 	init_compound_list(e, &(*ss)->compound_list, node->left);
-	while (node->right != NULL)
-	{
-		node = node->right;
-		if (node->type == REDIRECT_OUT_NODE || node->type == REDIRECT_APPEND_NODE)
-		{
-			if (!new_t_redirect_out(&(*ss)->r_out, node->data, node->type))
-				exit(ex_perror(e, "malloc"));
-		}
-		else if (node->type == REDIRECT_IN_NODE || node->type == HEREDOC_NODE)
-		{
-			if (!new_t_redirect_in(&(*ss)->r_in, node->data, node->type))
-				exit(ex_perror(e, "malloc"));
-		}
-	}
 }
 
 void	init_compound_list(t_executor *e, t_compound_list **cl, t_ast_node *node)
@@ -135,12 +122,12 @@ void	simple_command(t_executor *e, t_simple_command **sc, t_ast_node *node)
 			(*sc)->argc++;
 		else if (node->type == REDIRECT_OUT_NODE || node->type == REDIRECT_APPEND_NODE)
 		{
-			if (!new_t_redirect_out(&(*sc)->r_out, node->data, node->type))
+			if (!new_t_redirect_out(*sc, node->data, node->type))
 				exit(ex_perror(e, "malloc"));
 		}
 		else if (node->type == REDIRECT_IN_NODE || node->type == HEREDOC_NODE)
 		{
-			if (!new_t_redirect_in(&(*sc)->r_in, node->data, node->type))
+			if (!new_t_redirect_in(e, *sc, node->data, node->type))
 				exit(ex_perror(e, "malloc"));
 		}
 		node = node->right;

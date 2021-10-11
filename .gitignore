@@ -1,4 +1,5 @@
 res*
+multi*
 minishell
 .DS_Store
 cmake-build-debug
