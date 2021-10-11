@@ -84,8 +84,6 @@ struct s_redirect_out {
 
 struct s_redirect_in {
 	int				fd;
-	t_list_type		type;
-	char			*delim;
 	t_redirect_in	*next;
 };
 
@@ -106,11 +104,11 @@ int		ex_perror(t_executor *e, const char *s);
 void	delete_list(void *element, t_list_type type);
 bool	execute_builtin(t_executor *e, int argc, char **argv, bool islast);
 bool	is_execute_condition(int condition, int exit_status);
-void	execute_redirect(t_executor *e, t_simple_command *sc, int orig_stdfd[]);
+void	execute_redirect(t_simple_command *sc);
 
 // new_redirect.c
 bool	new_t_redirect_out(t_redirect_out **r_out, char *filename, t_node_type type);
-bool	new_t_redirect_in(t_redirect_in **r_in, char *data, t_node_type type);
+bool	new_t_redirect_in(t_executor *e, t_redirect_in **r_in, char *data, t_node_type type);
 
 // execute_command.c
 int		execute_pipeline(t_executor *e, t_pipeline *c);

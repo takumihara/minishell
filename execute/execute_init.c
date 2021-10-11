@@ -91,7 +91,7 @@ void	subshell(t_executor *e, t_subshell **ss, t_ast_node *node)
 		}
 		else if (node->type == REDIRECT_IN_NODE || node->type == HEREDOC_NODE)
 		{
-			if (!new_t_redirect_in(&(*ss)->r_in, node->data, node->type))
+			if (!new_t_redirect_in(e, &(*ss)->r_in, node->data, node->type))
 				exit(ex_perror(e, "malloc"));
 		}
 	}
@@ -140,7 +140,7 @@ void	simple_command(t_executor *e, t_simple_command **sc, t_ast_node *node)
 		}
 		else if (node->type == REDIRECT_IN_NODE || node->type == HEREDOC_NODE)
 		{
-			if (!new_t_redirect_in(&(*sc)->r_in, node->data, node->type))
+			if (!new_t_redirect_in(e, &(*sc)->r_in, node->data, node->type))
 				exit(ex_perror(e, "malloc"));
 		}
 		node = node->right;
