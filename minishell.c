@@ -36,8 +36,13 @@ void	set_signal_handler(void)
 
 int minishell(char *line)
 {
+	t_env_var	*env_vars;
+
+	env_vars = init_env_lst();
+	if (!env_vars)
+		return (EXIT_FAILURE);
 	if (line)
-		return (execute(expand(parse(lex(line)), NULL)));
+		return (execute(expand(parse(lex(line)), env_vars)));
 	set_signal_handler();
 	while (1)
 	{
@@ -54,7 +59,7 @@ int minishell(char *line)
 			continue;
 		}
 		// todo: No need to pass arguments `char **env`?
-		node = expand(node, NULL);
+		node = expand(node, env_vars);
 		execute(node);
 		add_history(line);
 		free(line);
