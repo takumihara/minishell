@@ -2,35 +2,6 @@
 
 extern char	**environ;
 
-void	print_env_vars(t_env_var *env_vars)
-{
-	while (env_vars)
-	{
-		printf("%s=%s\n", env_vars->key, env_vars->value);
-		env_vars = env_vars->next;
-	}
-}
-
-bool	register_key_value(char *key, char *value, t_env_var *env_vars)
-{
-	while (env_vars)
-	{
-		if (!ft_strcmp(key, env_vars->key))
-		{
-			free(env_vars->value);
-			env_vars->value = value;
-			return (true);
-		}
-		env_vars = env_vars->next;
-	}
-	env_vars = init_env_var(key, value);
-	if (!env_vars)
-		return (false);
-	free(key);
-	key = NULL;
-	return (true);
-}
-
 t_env_var *init_env_var(char *key, char *value)
 {
 	t_env_var	*env_var;
@@ -83,12 +54,4 @@ t_env_var	*init_env_lst(void)
 		environ++;
 	}
 	return (vars.next);
-}
-
-int	main(void)
-{
-	t_env_var	*env_vars;
-
-	env_vars = init_env_lst();
-	print_env_vars(env_vars);
 }
