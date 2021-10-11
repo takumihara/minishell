@@ -55,12 +55,12 @@ int	ex_perror(t_executor *e, const char *s)
 	return (EXIT_FAILURE);
 }
 
-static void execute_builtin_internal(int argc, char **argv, t_executor *e, bool islast, int (*fn)(int, char**, int))
+static void execute_builtin_internal(int argc, char **argv, t_executor *e, bool islast, int (*fn)(int, char**, int, t_env_var*))
 {
 	if (islast)
-		e->exit_status = fn(argc, argv, e->exit_status);
+		e->exit_status = fn(argc, argv, e->exit_status, e->env_vars);
 	else
-		fn(argc, argv, e->exit_status);
+		fn(argc, argv, e->exit_status, e->env_vars);
 }
 
 bool	execute_builtin(t_executor *e, int argc, char **argv, bool is_last)

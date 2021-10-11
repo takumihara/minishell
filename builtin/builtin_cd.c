@@ -1,13 +1,13 @@
 #include "builtin.h"
 
-int	builtin_cd(int argc, char **argv, int no_use)
+int	builtin_cd(int argc, char **argv, int no_use, t_env_var *env_vars)
 {
 	char	*path;
 
 	(void)no_use;
 	if (argc == 1)
 	{
-		path = getenv("HOME");
+		path = get_env_value("HOME", env_vars);
 		if (!path)
 		{
 			ft_putendl_fd("minishell: cd: HOME not set", 2);
