@@ -46,7 +46,7 @@ static void	swap(char **a, char **b)
 	*b = tmp;
 }
 
-static void	quick_sort(char **array, size_t left, size_t right)
+void	quick_sort(char **array, size_t left, size_t right)
 {
 	const char	*pivot = array[left];
 	size_t		i;
