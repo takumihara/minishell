@@ -98,12 +98,17 @@ bool	is_execute_condition(int condition, int exit_status)
 
 void	execute_redirect(t_simple_command *sc)
 {
-	while (sc->r_in && sc->r_in->next)
-		sc->r_in = sc->r_in->next;
-	if (sc->r_in)
-		dup2(sc->r_in->fd, STDIN_FILENO);
-	while (sc->r_out && sc->r_out->next)
-		sc->r_out = sc->r_out->next;
-	if (sc->r_out)
-		dup2(sc->r_out->fd, STDOUT_FILENO);
+	t_redirect_in	*r_in;
+	t_redirect_out	*r_out;
+
+	r_in = sc->r_in;
+	while (r_in && r_in->next)
+		r_in = r_in->next;
+	if (r_in)
+		dup2(r_in->fd, STDIN_FILENO);
+	r_out = sc->r_out;
+	while (r_out && r_out->next)
+		r_out = r_out->next;
+	if (r_out)
+		dup2(r_out->fd, STDOUT_FILENO);
 }
