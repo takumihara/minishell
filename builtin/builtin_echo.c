@@ -7,12 +7,11 @@ int builtin_echo(int argc, char **argv, int no_use)
 
 	(void)no_use;
 	i = nflag + 1;
-	while (1)
+	while (i < argc)
 	{
 		ft_putstr_fd(argv[i++], STDOUT_FILENO);
-		if (i == argc)
-			break ;
-		ft_putstr_fd(" ", STDOUT_FILENO);
+		if (i != argc)
+			ft_putstr_fd(" ", STDOUT_FILENO);
 	}
 	if (!nflag)
 		ft_putstr_fd("\n", STDOUT_FILENO);
