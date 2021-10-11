@@ -24,11 +24,10 @@ void	delete_list(void *element, t_list_type type)
 	}
 	else if (type == T_REDIRECT_IN)
 	{
-		close(((t_redirect_in *)element)->fd);
+		if (((t_redirect_in *)element)->type == T_REDIRECT_IN)
+			close(((t_redirect_in *)element)->fd);
 		delete_list(((t_redirect_in *)element)->next, T_REDIRECT_IN);
 	}
-	else if (type == T_HEREDOC)
-		delete_list(((t_redirect_in *)element)->next, T_HEREDOC);
 	else if (type == T_SIMPLE_COMMAND)
 	{
 		free(((t_simple_command *)element)->argv);
@@ -125,7 +124,7 @@ void	execute_redirect(t_executor *e, t_simple_command *sc, int orig_stdfd[])
 					ft_putstr_fd("> ", orig_stdfd[WRITE]);
 					status = get_next_line(orig_stdfd[READ], &line);
 					process_gnl_error(e, status, line);
-					if (status == GNL_STATUS_DONE || !ft_strcmp(line, sc->r_in->doc))
+					if (status == GNL_STATUS_DONE || !ft_strcmp(line, sc->r_in->delim))
 						break ;
 					ft_putendl_fd(line, pipefd[WRITE]);
 					free(line);
@@ -143,7 +142,7 @@ void	execute_redirect(t_executor *e, t_simple_command *sc, int orig_stdfd[])
 				ft_putstr_fd("> ", orig_stdfd[WRITE]);
 				status = get_next_line(orig_stdfd[READ], &line);
 				process_gnl_error(e, status, line);
-				if (status == GNL_STATUS_DONE || !ft_strcmp(line, sc->r_in->doc))
+				if (status == GNL_STATUS_DONE || !ft_strcmp(line, sc->r_in->delim))
 					break ;
 				free(line);
 			}

@@ -35,7 +35,7 @@ bool	new_t_redirect_in(t_redirect_in **r_in, char *data, t_node_type type)
 	else if (type == HEREDOC_NODE)
 	{
 		(*r_in)->type = T_HEREDOC;
-		(*r_in)->doc = data;
+		(*r_in)->delim = data;
 		(*r_in)->next = NULL;
 	}
 	return (true);
