@@ -1,39 +1,40 @@
 #include "expander.h"
 
-t_ast_node	*search_command_arg_node(t_expander *e, t_ast_node *node);
-char		*expand_word(t_expander *e, char delimiter);
+t_ast_node	*search_command_arg_node(t_expander *e, t_ast_node *node, t_env_var *env_vars);
+char		*expand_word(t_expander *e, char delimiter, t_env_var *env_vars);
 char		*expand_quotes_string(char *data, size_t replace_start, char quote_type);
-char		*expand_environment_variable(char *data, size_t replace_starts, t_expander *e);
+char		*expand_environment_variable(char *data, size_t replace_starts, t_expander *e, t_env_var *env_vars);
 char		*expand_wildcard(char *data, size_t pre_len, t_expander *e);
 t_ast_node	*word_splitting(t_ast_node *node, t_expander *e, char *original_data);
-// t_ast_node	*remove_quotes(t_ast_node *node, t_expander *e);
 char		*remove_quotes(char *data, t_expander *e);
 
 // todo: expander in execute
 // t_ast_node	*expand(t_expander *e, t_env_var *env_vars, int exit_status)
-t_ast_node	*expand(t_ast_node *root, char **environ)
+t_ast_node	*expand(t_ast_node *root, t_env_var *env_vars)
 {
 	t_expander	*e;
 
-	(void)environ;
 	if (!root)
 		return (NULL);
 	if (!new_expander(&e, root))
 		exit(expand_perror(NULL, "malloc"));
-	if (!search_command_arg_node(e, root))
+	if (!search_command_arg_node(e, root, env_vars))
+	{
+		free(e);
 		return (NULL);
+	}
 	free(e);
 	return (root);
 }
 
-t_ast_node	*search_command_arg_node(t_expander *e, t_ast_node *node)
+t_ast_node	*search_command_arg_node(t_expander *e, t_ast_node *node, t_env_var *env_vars)
 {
 	char	*original_data;
 
 	if (!node)
 		return (e->node);
-	if (!search_command_arg_node(e, node->right)
-		|| !search_command_arg_node(e, node->left))
+	if (!search_command_arg_node(e, node->right, env_vars)
+		|| !search_command_arg_node(e, node->left, env_vars))
 		return (NULL);
 	if (node->type != COMMAND_ARG_NODE && node->type != REDIRECT_IN_NODE
 		&& node->type != REDIRECT_OUT_NODE && node->type != REDIRECT_APPEND_NODE)
@@ -42,8 +43,8 @@ t_ast_node	*search_command_arg_node(t_expander *e, t_ast_node *node)
 	if (!original_data)
 		exit(expand_perror(e, "malloc"));
 	e->node = node;
-	node->data = expand_word(e, '$');
-	node->data = expand_word(e, '*');
+	node->data = expand_word(e, '$', env_vars);
+	node->data = expand_word(e, '*', env_vars);
 	node = word_splitting(node, e, original_data);
 	if (!node)
 		return (NULL);
@@ -52,7 +53,7 @@ t_ast_node	*search_command_arg_node(t_expander *e, t_ast_node *node)
 	return (node);
 }
 
-char	*expand_word(t_expander *e, char delimiter)
+char	*expand_word(t_expander *e, char delimiter, t_env_var *env_vars)
 {
 	char	*data;
 	size_t	i;
@@ -74,7 +75,7 @@ char	*expand_word(t_expander *e, char delimiter)
 		else if (in_quotes_type(data[i], double_quote) == SINGLE_QUOTE)
 			single_quote++;
 		if (data[i] == '$' && single_quote % 2 == 0 && delimiter == '$')
-			data = expand_environment_variable(data, i, e);
+			data = expand_environment_variable(data, i, e, env_vars);
 		else if (data[i] == '*' && double_quote % 2 == 0 && single_quote % 2 == 0 && delimiter == '*')
 			data = expand_wildcard(data, i, e);
 		if (!data)
@@ -87,7 +88,7 @@ char	*expand_word(t_expander *e, char delimiter)
 }
 
 // todo: $? expands exit status
-char	*expand_environment_variable(char *data, size_t replace_start, t_expander *e)
+char	*expand_environment_variable(char *data, size_t replace_start, t_expander *e, t_env_var *env_vars)
 {
 	const char		*var_start = &data[replace_start + 1];
 	const size_t	var_len = var_strlen(var_start);
@@ -99,7 +100,7 @@ char	*expand_environment_variable(char *data, size_t replace_start, t_expander *
 		exit(expand_perror(e, "malloc"));
 	ft_memmove(key, var_start, var_len);
 	key[var_len] = '\0';
-	value = getenv(key);
+	value = get_env_value(key, env_vars);
 	free(key);
 	if (value)
 		return (str_insert(data, replace_start, value, ft_strlen(value)));

@@ -10,6 +10,7 @@
 # include "../libft/libft.h"
 # include "../utils/utils.h"
 # include "../execute/execute.h"
+# include "../env/env.h"
 
 # include <stdlib.h>
 
@@ -30,7 +31,7 @@ struct s_expander {
 };
 
 // expander.c
-t_ast_node	*expand(t_ast_node *root, char **envp);
+t_ast_node	*expand(t_ast_node *root, t_env_var *env_vars);
 
 // expander_utils.c
 bool		new_expander(t_expander **e, t_ast_node *root);
@@ -40,7 +41,7 @@ void		*expand_redirect_error(char *original_data);
 
 // expander_env.c
 size_t		var_strlen(const char *str);
-char		*search_env_vars(char *data, size_t var_start);
+char		*get_env_value(char *key, t_env_var *env_var);
 char		*str_insert(char *data, size_t replace_start, char *env_value, size_t env_value_len);
 
 // expander_list.c

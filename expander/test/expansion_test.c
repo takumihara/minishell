@@ -26,7 +26,7 @@ typedef struct s_test {
 } t_test;
 
 void print_ast_nodes(t_ast_node *node, int level);
-void test_expander(char input[], t_test *expected, int test_type, char **envp);
+void test_expander(char input[], t_test *expected, int test_type);
 void test_ast_nodes(t_ast_node *node, int level, t_test *expected);
 void print_err_cnt();
 
@@ -44,7 +44,7 @@ int main(int ac, char **av) {
 				{COMMAND_ARG_NODE, "echo"},
 				{COMMAND_ARG_NODE, "hello"},
 		};
-		test_expander(input, expected, ENV_VARS, environ);
+		test_expander(input, expected, ENV_VARS);
 	}
 	{
 		setenv("TEST", "ho", 1);
@@ -53,7 +53,7 @@ int main(int ac, char **av) {
 				{COMMAND_ARG_NODE, "echo"},
 				{COMMAND_ARG_NODE, "hello"},
 		};
-		test_expander(input, expected, ENV_VARS, environ);
+		test_expander(input, expected, ENV_VARS);
 	}
 	{
 		setenv("TEST", "hoge", 1);
@@ -62,7 +62,7 @@ int main(int ac, char **av) {
 				{COMMAND_ARG_NODE, "echo"},
 				{COMMAND_ARG_NODE, "aaahogehoge"},
 		};
-		test_expander(input, expected, ENV_VARS, environ);
+		test_expander(input, expected, ENV_VARS);
 	}
 	{
 		setenv("TEST", "echo hello", 1);
@@ -71,7 +71,7 @@ int main(int ac, char **av) {
 				{COMMAND_ARG_NODE, "echo"},
 				{COMMAND_ARG_NODE, "hello"},
 		};
-		test_expander(input, expected, ENV_VARS, environ);
+		test_expander(input, expected, ENV_VARS);
 	}
 	{
 		char input[] = "echo $HOGE";
@@ -79,7 +79,7 @@ int main(int ac, char **av) {
 				{COMMAND_ARG_NODE, "echo"},
 				{COMMAND_ARG_NODE, ""},
 		};
-		test_expander(input, expected, ENV_VARS, environ);
+		test_expander(input, expected, ENV_VARS);
 	}
 	{
 		char input[] = "echo hello$HOGE";
@@ -87,7 +87,7 @@ int main(int ac, char **av) {
 				{COMMAND_ARG_NODE, "echo"},
 				{COMMAND_ARG_NODE, "hello"},
 		};
-		test_expander(input, expected, ENV_VARS, environ);
+		test_expander(input, expected, ENV_VARS);
 	}
 	{
 		char input[] = "echo \"hoge\"";
@@ -95,7 +95,7 @@ int main(int ac, char **av) {
 				{COMMAND_ARG_NODE, "echo"},
 				{COMMAND_ARG_NODE, "hoge"},
 		};
-		test_expander(input, expected, QUOTES, environ);
+		test_expander(input, expected, QUOTES);
 	}
 	{
 		setenv("TEST", "example", 1);
@@ -104,7 +104,7 @@ int main(int ac, char **av) {
 				{COMMAND_ARG_NODE, "echo"},
 				{COMMAND_ARG_NODE, "example"},
 		};
-		test_expander(input, expected, QUOTES, environ);
+		test_expander(input, expected, QUOTES);
 	}
 	{
 		setenv("TEST", "example", 1);
@@ -113,7 +113,7 @@ int main(int ac, char **av) {
 				{COMMAND_ARG_NODE, "echo"},
 				{COMMAND_ARG_NODE, "$TEST"},
 		};
-		test_expander(input, expected, QUOTES, environ);
+		test_expander(input, expected, QUOTES);
 	}
 	{
 		setenv("USER", "user42", 1);
@@ -122,7 +122,7 @@ int main(int ac, char **av) {
 				{COMMAND_ARG_NODE, "echo"},
 				{COMMAND_ARG_NODE, "\'user42\'"},
 		};
-		test_expander(input, expected, QUOTES, environ);
+		test_expander(input, expected, QUOTES);
 	}
 	{
 		setenv("USER", "user42", 1);
@@ -131,7 +131,7 @@ int main(int ac, char **av) {
 				{COMMAND_ARG_NODE, "echo"},
 				{COMMAND_ARG_NODE, "\"$USER\""},
 		};
-		test_expander(input, expected, QUOTES, environ);
+		test_expander(input, expected, QUOTES);
 	}
 	{
 		char input[] = "echo exp*.c";
@@ -140,7 +140,7 @@ int main(int ac, char **av) {
 				{COMMAND_ARG_NODE, "expansion_test.c"},
 				{COMMAND_ARG_NODE, "expansion_wildcard_test.c"},
 		};
-		test_expander(input, expected, WILDCARD, environ);
+		test_expander(input, expected, WILDCARD);
 	}
 	{
 		char input[] = "echo *.c";
@@ -149,7 +149,7 @@ int main(int ac, char **av) {
 				{COMMAND_ARG_NODE, "expansion_test.c"},
 				{COMMAND_ARG_NODE, "expansion_wildcard_test.c"},
 		};
-		test_expander(input, expected, WILDCARD, environ);
+		test_expander(input, expected, WILDCARD);
 	}
 	{
 		char input[] = "echo expa*";
@@ -158,7 +158,7 @@ int main(int ac, char **av) {
 				{COMMAND_ARG_NODE, "expansion_test.c"},
 				{COMMAND_ARG_NODE, "expansion_wildcard_test.c"},
 		};
-		test_expander(input, expected, WILDCARD, environ);
+		test_expander(input, expected, WILDCARD);
 	}
 	{
 		char input[] = "echo \"ex\"p*.\'c\'";
@@ -167,7 +167,7 @@ int main(int ac, char **av) {
 				{COMMAND_ARG_NODE, "expansion_test.c"},
 				{COMMAND_ARG_NODE, "expansion_wildcard_test.c"},
 		};
-		test_expander(input, expected, WILDCARD, environ);
+		test_expander(input, expected, WILDCARD);
 	}
 	{
 		char input[] = "echo *";
@@ -179,7 +179,7 @@ int main(int ac, char **av) {
 				{COMMAND_ARG_NODE, "expansion_wildcard_test.c"},
 				{COMMAND_ARG_NODE, "obj"},
 		};
-		test_expander(input, expected, WILDCARD, environ);
+		test_expander(input, expected, WILDCARD);
 	}
 	{
 		char input[] = "echo \"*\"";
@@ -187,7 +187,7 @@ int main(int ac, char **av) {
 				{COMMAND_ARG_NODE, "echo"},
 				{COMMAND_ARG_NODE, "*"},
 		};
-		test_expander(input, expected, WILDCARD, environ);
+		test_expander(input, expected, WILDCARD);
 	}
 	{
 		char input[] = "echo o*";
@@ -195,14 +195,14 @@ int main(int ac, char **av) {
 				{COMMAND_ARG_NODE, "echo"},
 				{COMMAND_ARG_NODE, "obj"},
 		};
-		test_expander(input, expected, WILDCARD, environ);
+		test_expander(input, expected, WILDCARD);
 	}
 	{
 		char input[] = "\"echo hello\"";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "echo hello"},
 		};
-		test_expander(input, expected, WORD_SPLIT, environ);
+		test_expander(input, expected, WORD_SPLIT);
 	}
 	{
 		setenv("TEST", "echo hello", 1);
@@ -211,7 +211,7 @@ int main(int ac, char **av) {
 				{COMMAND_ARG_NODE, "ls -lecho"},
 				{COMMAND_ARG_NODE, "hello"},
 		};
-		test_expander(input, expected, WORD_SPLIT, environ);
+		test_expander(input, expected, WORD_SPLIT);
 	}
 	{
 		setenv("TEST", "echo hello", 1);
@@ -220,11 +220,11 @@ int main(int ac, char **av) {
 				{COMMAND_ARG_NODE, "hogels -lecho"},
 				{COMMAND_ARG_NODE, "hello"},
 		};
-		test_expander(input, expected, WORD_SPLIT, environ);
+		test_expander(input, expected, WORD_SPLIT);
 	}
 }
 
-void test_expander(char input[], t_test *expected, int test_type, char **envp) {
+void test_expander(char input[], t_test *expected, int test_type) {
 	printf("\n---------------------------------\n");
 	if (test_type == GENERAL_CASE)
 		printf("	 [GENERAL] TEST\n");
@@ -238,7 +238,8 @@ void test_expander(char input[], t_test *expected, int test_type, char **envp) {
 	(void)expected;
 	t_token		*token = lex(input);
 	t_ast_node	*root = parse(token);
-				root = expand(root, envp);
+	t_env_var	*env_vars = init_env_lst();
+				root = expand(root, env_vars);
 	// if (!res) {
 	// 	fprintf(stderr, RED "parse() returned NULL!\n" RESET);
 	// 	err_cnt++;

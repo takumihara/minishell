@@ -10,18 +10,16 @@ size_t	var_strlen(const char *str)
 	return (len);
 }
 
-// char	*search_env_vars(char *data, size_t var_start)
-// {
-// 	const char		*start = &data[var_start];
-// 	const size_t	len = var_len(start);
-
-// 	while (vars && ft_strncmp(vars->key, start, len))
-// 		vars = vars->next;
-// 	if (vars)
-// 		return (vars->value);
-// 	else
-// 		return (NULL);
-// }
+char	*get_env_value(char *key, t_env_var *env_var)
+{
+	while (env_var)
+	{
+		if (!ft_strcmp(key, env_var->key))
+			return (env_var->value);
+		env_var = env_var->next;
+	}
+	return (NULL);
+}
 
 char	*str_insert(char *data, size_t replace_start, char *env_value, size_t env_value_len)
 {
