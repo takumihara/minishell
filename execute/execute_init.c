@@ -5,14 +5,14 @@ static void pipeline(t_executor *e, t_pipeline **pipeline, t_ast_node *node);
 static void	subshell(t_executor *e, t_subshell **ss, t_ast_node *node);
 static void	simple_command(t_executor *e, t_simple_command **sc, t_ast_node *node);
 
-int	execute(t_ast_node *root)
+int	execute(t_ast_node *root, t_env_var *env_vars)
 {
 	t_executor	*e;
 	int			exit_status;
 
 	if (!root)
 		return (EXIT_FAILURE);
-	if (!new_executor(&e, root))
+	if (!new_executor(&e, root, env_vars))
 		return (ex_perror(NULL, "malloc"));
 	command_line(e, root);
 	exit_status = e->exit_status;

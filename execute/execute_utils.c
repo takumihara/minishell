@@ -1,7 +1,7 @@
 #include "execute.h"
 #include "../utils/get_next_line.h"
 
-bool	new_executor(t_executor **e, t_ast_node *root)
+bool	new_executor(t_executor **e, t_ast_node *root, t_env_var *env_vars)
 {
 	*e = (t_executor *)malloc(sizeof(**e));
 	if (!*e)
@@ -10,6 +10,7 @@ bool	new_executor(t_executor **e, t_ast_node *root)
 	(*e)->exit_status = EXIT_SUCCESS;
 	(*e)->condition = CONDITION_AND_IF;
 	(*e)->pipeline = NULL;
+	(*e)->env_vars = env_vars;
 	return (true);
 }
 
@@ -49,6 +50,7 @@ int	ex_perror(t_executor *e, const char *s)
 	{
 		delete_ast_nodes(e->root, NULL);
 		delete_list((void *)e->pipeline, T_PIPELINE);
+		delete_env_lst(e->env_vars, NULL, NULL);
 	}
 	return (EXIT_FAILURE);
 }

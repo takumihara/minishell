@@ -73,7 +73,7 @@ int execute_compound_list(t_executor *e, t_compound_list *cl)
 	cl_next = NULL;
 	if (pid == CHILD_PROCESS)
 	{
-		if (!new_executor(&exe_child, NULL))
+		if (!new_executor(&exe_child, NULL, NULL))
 			exit(ex_perror(e, "malloc"));
 		cl->exit_status = execute_pipeline(exe_child, cl->pipeline);
 		if (cl->compound_list_next)
