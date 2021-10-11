@@ -1,10 +1,10 @@
-#include <string.h>
 #include "builtin.h"
-#include "../libft/libft.h"
 
-int	cd(int argc, char **argv)
+int	builtin_cd(int argc, char **argv, int no_use)
 {
 	char	*path;
+
+	(void)no_use;
 	if (argc == 1)
 	{
 		path = getenv("HOME");
