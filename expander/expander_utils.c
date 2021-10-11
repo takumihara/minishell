@@ -21,9 +21,15 @@ int	expand_perror(t_expander *e, const char *s)
 {
 	perror(s);
 	if (e)
-	{
-		delete_ast_nodes(e->root, NULL);
-	}
+		delete_ast_nodes(e->node, NULL);
 	free(e);
 	return (EXIT_FAILURE);
+}
+
+void		*expand_redirect_error(char *original_data)
+{
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(original_data, 2);
+	ft_putendl_fd(": ambiguous redirect", 2);
+	return (NULL);
 }

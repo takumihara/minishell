@@ -12,3 +12,5 @@ echo '*'
 ls *
 echo *.'c'
 echo mini*
+echo hello > res*
+echo hello > $KONIAHI

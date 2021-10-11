@@ -36,6 +36,7 @@ t_ast_node	*expand(t_ast_node *root, char **envp);
 bool		new_expander(t_expander **e, t_ast_node *root);
 bool		is_expandable_string(char *str, char delimiter);
 int			expand_perror(t_expander *e, const char *s);
+void		*expand_redirect_error(char *original_data);
 
 // expander_env.c
 size_t		var_strlen(const char *str);
