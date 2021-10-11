@@ -21,7 +21,10 @@ t_ast_node	*expand(t_ast_node *root, char **environ)
 	if (!new_expander(&e, root))
 		exit(expand_perror(NULL, "malloc"));
 	if (!search_command_arg_node(e, root))
+	{
+		free(e);
 		return (NULL);
+	}
 	free(e);
 	return (root);
 }
