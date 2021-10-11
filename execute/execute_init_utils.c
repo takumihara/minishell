@@ -44,6 +44,7 @@ bool	new_t_simple_command(t_simple_command **sc)
 	(*sc)->argv = NULL;
 	(*sc)->r_out = NULL;
 	(*sc)->r_in = NULL;
+	(*sc)->err = NO_ERR;
 	return (true);
 }
 

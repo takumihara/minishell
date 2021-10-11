@@ -52,7 +52,14 @@ int execute_pipeline(t_executor *e, t_pipeline *pl)
 int execute_command(t_executor *e, void *command, int type, bool is_last, bool is_pipe)
 {
 	if (type == T_SIMPLE_COMMAND)
+	{
+		if (((t_simple_command *)command)->err != NO_ERR)
+		{
+			e->exit_status = EXIT_FAILURE;
+			return (CHILD_PROCESS_NOT_CREATED);
+		}
 		return (execute_simple_command(e, (t_simple_command *)command, is_last, is_pipe));
+	}
 	else // subshell
 		return (execute_subshell(e, (t_subshell *)command));
 }
@@ -104,7 +111,6 @@ int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bo
 	pid_t	pid;
 
 	execute_redirect(sc);
-	// todo: execute_heredoc
 	if (!is_pipe && execute_builtin(e, sc->argc, sc->argv, is_last))
 		return (CHILD_PROCESS_NOT_CREATED);
 	pid = fork();

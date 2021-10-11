@@ -1,20 +1,27 @@
 #include "execute.h"
 #include "../utils/get_next_line.h"
 
-bool	new_t_redirect_out(t_redirect_out **r_out, char *filename, t_node_type type)
+bool	new_t_redirect_out(t_simple_command *sc, char *filename, t_node_type type)
 {
-	while (*r_out)
-		r_out = &(*r_out)->next;
-	*r_out = malloc(sizeof(**r_out));
-	if (!*r_out)
+	t_redirect_out *r_out;
+
+	r_out = sc->r_out;
+	while (r_out)
+		r_out = r_out->next;
+	r_out = malloc(sizeof(*r_out));
+	if (!r_out)
 		return (false);
 	if (type == REDIRECT_OUT_NODE)
-		(*r_out)->fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 00644);
+		r_out->fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 00644);
 	else
-		(*r_out)->fd = open(filename, O_WRONLY | O_APPEND | O_CREAT, 00644);
-	if ((*r_out)->fd == -1)
-		perror("open"); //todo: check when to print error
-	(*r_out)->next = NULL;
+		r_out->fd = open(filename, O_WRONLY | O_APPEND | O_CREAT, 00644);
+	if (r_out->fd == -1)
+	{
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		perror(filename);
+		sc->err = ERR_REDIRECT;
+	}
+	r_out->next = NULL;
 	return (true);
 }
 
@@ -29,24 +36,29 @@ static void process_gnl_error(t_executor *e, t_gnl_status status, char *line)
 	}
 }
 
-bool	new_t_redirect_in(t_executor *e, t_redirect_in **r_in, char *data, t_node_type type)
+bool	new_t_redirect_in(t_executor *e, t_simple_command *sc, char *data, t_node_type type)
 {
 	int pipefd[2];
 	int status;
 	char *line;
+	t_redirect_in *r_in;
 
-
-	while (*r_in)
-		r_in = &(*r_in)->next;
-	*r_in = malloc(sizeof(**r_in));
-	if (!*r_in)
+	r_in = sc->r_in;
+	while (r_in)
+		r_in = r_in->next;
+	r_in = malloc(sizeof(*r_in));
+	if (!r_in)
 		return (false);
 	if (type == REDIRECT_IN_NODE)
 	{
-		(*r_in)->fd = open(data, O_RDONLY);
-		if ((*r_in)->fd == -1)
-			ex_perror(e, "minishell: open");
-		(*r_in)->next = NULL;
+		r_in->fd = open(data, O_RDONLY);
+		if (r_in->fd == -1)
+		{
+			ft_putstr_fd("minishell: ", STDERR_FILENO);
+			perror(data);
+			sc->err = ERR_REDIRECT;
+		}
+		r_in->next = NULL;
 	}
 	else if (type == HEREDOC_NODE)
 	{
@@ -63,8 +75,8 @@ bool	new_t_redirect_in(t_executor *e, t_redirect_in **r_in, char *data, t_node_t
 		}
 		free(line);
 		close(pipefd[WRITE]);
-		(*r_in)->fd = pipefd[READ];
-		(*r_in)->next = NULL;
+		r_in->fd = pipefd[READ];
+		r_in->next = NULL;
 	}
 	return (true);
 }
