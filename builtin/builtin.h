@@ -9,8 +9,9 @@
 #include "../utils/utils.h"
 #include "../execute/execute.h"
 
-int		cd(int argc, char **argv);
-int		pwd();
+int		builtin_cd(int argc, char **argv, int no_use);
+int		builtin_pwd(int argc, char **argv, int no_use);
 int		builtin_exit(int argc, char **argv, int last_exit_status);
+int		builtin_echo(int argc, char **argv, int no_use);
 
 #endif //BUILTIN_H

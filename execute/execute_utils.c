@@ -53,30 +53,34 @@ int	ex_perror(t_executor *e, const char *s)
 	return (EXIT_FAILURE);
 }
 
-bool	execute_builtin(t_executor *e, int argc, char **argv, bool islast)
+static void execute_builtin_internal(int argc, char **argv, t_executor *e, bool islast, int (*fn)(int, char**, int))
+{
+	if (islast)
+		e->exit_status = fn(argc, argv, e->exit_status);
+	else
+		fn(argc, argv, e->exit_status);
+}
+
+bool	execute_builtin(t_executor *e, int argc, char **argv, bool is_last)
 {
 	if (!ft_strcmp(argv[0], "cd"))
 	{
-		if (islast)
-			e->exit_status = cd(argc, argv);
-		else
-			cd(argc, argv);
+		execute_builtin_internal(argc, argv, e, is_last, builtin_cd);
 		return (true);
 	}
 	else if (!ft_strcmp(argv[0], "pwd"))
 	{
-		if (islast)
-			e->exit_status = pwd();
-		else
-			pwd(argc, argv);
+		execute_builtin_internal(argc, argv, e, is_last, builtin_pwd);
 		return (true);
 	}
 	else if (!ft_strcmp(argv[0], "exit"))
 	{
-		if (islast)
-			e->exit_status = builtin_exit(argc, argv, e->exit_status);
-		else
-			builtin_exit(argc, argv, e->exit_status);
+		execute_builtin_internal(argc, argv, e, is_last, builtin_exit);
+		return (true);
+	}
+	else if (!ft_strcmp(argv[0], "echo"))
+	{
+		execute_builtin_internal(argc, argv, e, is_last, builtin_echo);
 		return (true);
 	}
 	return (false);

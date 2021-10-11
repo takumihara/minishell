@@ -1,9 +1,12 @@
 #include "builtin.h"
 
-int	pwd()
+int	builtin_pwd(int argc, char **argv, int no_use)
 {
 	char	*cwd;
 
+	(void)argc;
+	(void)argv;
+	(void)no_use;
 	cwd = getcwd(NULL, 0);
 	if (!cwd)
 	{
