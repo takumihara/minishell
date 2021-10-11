@@ -47,13 +47,9 @@ int minishell(char *line)
 	while (1)
 	{
 		line = readline("minishell> ");
-		// line can be NULL when Ctrl+d
-		if (!line || ft_strncmp(line, "exit", 4) == 0)
-		{
-			free(line);
-			ft_putendl_fd("exit", STDERR_FILENO);
+		if (!line)
 			break ;
-		}
+		// line can be NULL when Ctrl+d
 		t_token *token = lex(line);
 		t_ast_node *node = parse(token);
 		if (!node)
@@ -68,7 +64,7 @@ int minishell(char *line)
 		add_history(line);
 		free(line);
 	}
-	return (0);
+	return (EXIT_SUCCESS);
 }
 
 int	main(int argc, char **argv)

@@ -1,0 +1,1 @@
+ls -l | wc -l || cat << a <<b > res

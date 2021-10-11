@@ -1,0 +1,2 @@
+cat < b
+cat < b > res
