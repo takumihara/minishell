@@ -7,9 +7,10 @@
 
 #include "../libft/libft.h"
 #include "../utils/utils.h"
+#include "../execute/execute.h"
 
 int		cd(int argc, char **argv);
 int		pwd();
-int		builtin_exit(int argc, char **argv);
+int		builtin_exit(int argc, char **argv, int last_exit_status);
 
 #endif //BUILTIN_H

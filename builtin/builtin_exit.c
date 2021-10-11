@@ -1,12 +1,12 @@
 #include "builtin.h"
 
-int builtin_exit(int argc, char **argv)
+int builtin_exit(int argc, char **argv, int last_exit_status)
 {
 	int	num;
 
 	ft_putendl_fd("exit", STDERR_FILENO);
 	if (argc == 1)
-		exit(EXIT_SUCCESS);
+		exit(last_exit_status);
 	if (argc == 2)
 	{
 		if (!atoi_strict(argv[1], &num))

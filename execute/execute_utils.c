@@ -75,9 +75,9 @@ bool	execute_builtin(t_executor *e, int argc, char **argv, bool islast)
 	else if (!ft_strcmp(argv[0], "exit"))
 	{
 		if (islast)
-			e->exit_status = builtin_exit(argc, argv);
+			e->exit_status = builtin_exit(argc, argv, e->exit_status);
 		else
-			builtin_exit(argc, argv);
+			builtin_exit(argc, argv, e->exit_status);
 		return (true);
 	}
 	return (false);
