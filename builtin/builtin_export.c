@@ -49,6 +49,8 @@ int	print_declaration(t_env_var *env_vars)
 	size_t			i;
 	char			*value;
 
+	if (!env_vars)
+		return (EXIT_SUCCESS);
 	env_key_array = malloc(sizeof(char *) * (len + 1));
 	if (!env_key_array)
 		return (BUILTIN_MALLOC_ERROR);
@@ -57,16 +59,11 @@ int	print_declaration(t_env_var *env_vars)
 	i = 0;
 	while (env_key_array[i])
 	{
-		ft_putstr_fd("declare -x ", STDOUT_FILENO);
-		ft_putstr_fd(env_key_array[i], STDOUT_FILENO);
+		printf("declare -x %s", env_key_array[i]);
 		value = get_env_value(env_key_array[i], env_vars);
 		if (value)
-		{
-			ft_putstr_fd("=\"", STDOUT_FILENO);
-			ft_putstr_fd(value, STDOUT_FILENO);
-			ft_putstr_fd("\"", STDOUT_FILENO);
-		}
-		ft_putstr_fd("\n", STDOUT_FILENO);
+			printf("=\"%s\"", value);
+		printf("\n");
 		i++;
 	}
 	free(env_key_array);
@@ -77,15 +74,14 @@ bool	is_valid_argument(char *argv)
 {
 	bool	is_valid;
 
-	is_valid = false;
+	is_valid = true;
 	if (argv[0] == '=' || argv[0] == '\0')
 	{
 		ft_putstr_fd("minishell: export: `", STDERR_FILENO);
 		ft_putchar_fd(argv[0], STDERR_FILENO);
 		ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
+		is_valid = false;
 	}
-	else
-		is_valid = true;
 	return (is_valid);
 }
 
@@ -106,31 +102,27 @@ t_env_var	*search_env_key(char *key, t_env_var *env_vars, bool *exist)
 	return (env_vars);
 }
 
-int	register_env_var(char *key, char *value, t_env_var *env_vars)
+int	register_env_var(char *key, char *value, t_env_var **env_vars)
 {
 	t_env_var	*target_var;
 	bool		exist;
 
-	exist = false;
-	target_var = search_env_key(key, env_vars, &exist);
+	target_var = search_env_key(key, *env_vars, &exist);
 	if (exist && value)
 	{
 		free(key);
 		free(target_var->value);
 		target_var->value = value;
 	}
-	else if (!exist)
+	else if (!exist && target_var)
+		target_var->next = init_env_var(key, value);
+	if (!*env_vars)
+		*env_vars = init_env_var(key, value);
+	if ((target_var && !target_var->next) || !*env_vars)
 	{
-		if (target_var)
-			target_var->next = init_env_var(key, value);
-		else
-			env_vars = init_env_var(key, value);
-		if (!target_var->next || !env_vars)
-		{
-			free(key);
-			free(value);
-			return (BUILTIN_MALLOC_ERROR);
-		}
+		free(key);
+		free(value);
+		return (BUILTIN_MALLOC_ERROR);
 	}
 	return (EXIT_SUCCESS);
 }
@@ -152,28 +144,26 @@ int	set_key_value(char **key, char **value, char *src)
 	return (EXIT_SUCCESS);
 }
 
-int	builtin_export(int argc, char **argv, int no_use, t_env_var *env_vars)
+int	builtin_export(int argc, char **argv, int no_use, t_env_var **env_vars)
 {
 	char	*key;
 	char	*value;
 	int		i;
 	int		exit_status;
 
-	exit_status = EXIT_SUCCESS;
 	(void)no_use;
 	value = NULL;
+	exit_status = EXIT_SUCCESS;
 	if (argc == 1)
-		return (print_declaration(env_vars));
+		return (print_declaration(*env_vars));
 	i = 1;
 	while (i < argc)
 	{
 		if (is_valid_argument(argv[i]))
 		{
-			exit_status = set_key_value(&key, &value, argv[i]);
-			if (exit_status == BUILTIN_MALLOC_ERROR)
+			if (set_key_value(&key, &value, argv[i]) == BUILTIN_MALLOC_ERROR)
 				return (exit_status);
-			exit_status = register_env_var(key, value, env_vars);
-			if (exit_status == BUILTIN_MALLOC_ERROR)
+			else if (register_env_var(key, value, env_vars) == BUILTIN_MALLOC_ERROR)
 				return (exit_status);
 		}
 		else
