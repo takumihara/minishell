@@ -14,8 +14,7 @@ int	execute(t_ast_node *root)
 		return (EXIT_FAILURE);
 	if (!new_executor(&e, root))
 		return (ex_perror(NULL, "malloc"));
-	command_line(e, root);
-	exit_status = e->exit_status;
+	exit_status = command_line(e, root);
 	delete_ast_nodes(e->root, NULL);
 	free(e);
 	return (exit_status);
