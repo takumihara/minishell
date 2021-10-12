@@ -131,19 +131,19 @@ int main() {
 		};
 		test_parser(input, expected, SUBSHELL_NODE, sizeof(expected) / sizeof(test));
 	}
-	{
-		char input[] = "(echo success) < input > res >> res1 << EOL";
-		test expected[] = {
-				{SUBSHELL_NODE,        0, ""},
-				{COMMAND_ARG_NODE,     1, "echo"},
-				{COMMAND_ARG_NODE,     2, "success"},
-				{REDIRECT_IN_NODE,     1, "input"},
-				{REDIRECT_OUT_NODE,    2, "res"},
-				{REDIRECT_APPEND_NODE, 3, "res1"},
-				{HEREDOC_NODE,         4, "EOL"},
-		};
-		test_parser(input, expected, SUBSHELL_NODE, sizeof(expected) / sizeof(test));
-	}
+//	{
+//		char input[] = "(echo success) < input > res >> res1 << EOL";
+//		test expected[] = {
+//				{SUBSHELL_NODE,        0, ""},
+//				{COMMAND_ARG_NODE,     1, "echo"},
+//				{COMMAND_ARG_NODE,     2, "success"},
+//				{REDIRECT_IN_NODE,     1, "input"},
+//				{REDIRECT_OUT_NODE,    2, "res"},
+//				{REDIRECT_APPEND_NODE, 3, "res1"},
+//				{HEREDOC_NODE,         4, "EOL"},
+//		};
+//		test_parser(input, expected, SUBSHELL_NODE, sizeof(expected) / sizeof(test));
+//	}
 	{
 		char input[] = "echo \"hello\"";
 		test expected[] = {
@@ -337,6 +337,7 @@ int main() {
 //	}
 
 	print_err_cnt();
+	system("leaks a.out");
 }
 
 void test_parser(char input[], test *expected, int test_type, int expected_token_num) {
@@ -366,6 +367,7 @@ void test_parser(char input[], test *expected, int test_type, int expected_token
 			fprintf(stderr, RED "error message wrong!\n" RESET);
 			err_cnt++;
 		}
+		free(err_msg);
 	} else {
 		t_ast_node *node = (t_ast_node *) res;
 		ast_index = 0;

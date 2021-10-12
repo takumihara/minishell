@@ -37,9 +37,9 @@ bool	consume_token(t_parser *p, t_token_type expected_type, t_ast_node *node);
 t_ast_node	*route_expressions(t_parser *p, t_ast_node *(*f[])(t_parser *), int element_num);
 
 #ifdef TEST
-char	*handle_err(t_parser *p);
+char	*handle_err(t_parser *p, t_ast_node *root);
 #else
-void	handle_err(t_parser *p);
+bool	handle_err(t_parser *p, t_ast_node *root);
 #endif
 
 // t_string related functions
