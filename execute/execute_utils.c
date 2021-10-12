@@ -1,5 +1,4 @@
 #include "execute.h"
-#include "../utils/get_next_line.h"
 
 bool	new_executor(t_executor **e, t_ast_node *root)
 {
@@ -11,6 +10,14 @@ bool	new_executor(t_executor **e, t_ast_node *root)
 	(*e)->condition = CONDITION_AND_IF;
 	(*e)->pipeline = NULL;
 	return (true);
+}
+
+void	delete_executor(t_executor **e)
+{
+	delete_list((*e)->pipeline, T_PIPELINE);
+	delete_ast_nodes((*e)->root, NULL);
+	free(*e);
+	*e = NULL;
 }
 
 void	delete_list(void *element, t_list_type type)
@@ -33,6 +40,15 @@ void	delete_list(void *element, t_list_type type)
 		delete_list(((t_simple_command *)element)->r_out, T_REDIRECT_OUT);
 		delete_list(((t_simple_command *)element)->r_in, T_REDIRECT_IN);
 	}
+	else if (type == T_COMPOUND_LIST)
+	{
+		delete_list(((t_compound_list *)element)->pipeline, T_PIPELINE);
+		delete_list(((t_compound_list *)element)->next, T_COMPOUND_LIST);
+	}
+	else if (type == T_SUBSHELL)
+	{
+		delete_list(((t_subshell *)element)->compound_list, T_COMPOUND_LIST);
+	}
 	else if (type == T_PIPELINE)
 	{
 		delete_list(((t_pipeline *)element)->command, ((t_pipeline *)element)->type);
@@ -45,10 +61,7 @@ int	ex_perror(t_executor *e, const char *s)
 {
 	perror(s);
 	if (e)
-	{
-		delete_ast_nodes(e->root, NULL);
-		delete_list((void *)e->pipeline, T_PIPELINE);
-	}
+		delete_executor(&e);
 	return (EXIT_FAILURE);
 }
 

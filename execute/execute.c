@@ -72,36 +72,32 @@ int execute_subshell(t_executor *e, t_subshell *ss)
 
 int execute_compound_list(t_executor *e, t_compound_list *cl)
 {
-	pid_t	pid;
-	t_compound_list *cl_next;
-	t_executor *exe_child;
+	pid_t			pid;
+	t_executor		*exe_child;
+	int				exit_status;
 
 	pid = fork();
-	cl_next = NULL;
 	if (pid == CHILD_PROCESS)
 	{
 		if (!new_executor(&exe_child, NULL))
 			exit(ex_perror(e, "malloc"));
-		cl->exit_status = execute_pipeline(exe_child, cl->pipeline);
+		exe_child->pipeline = cl->pipeline;
+		exit_status = execute_pipeline(exe_child, exe_child->pipeline);
 		if (cl->compound_list_next)
-			 init_compound_list(e, &cl_next, cl->compound_list_next);
-		while (cl_next)
+			 init_compound_list(e, &cl->next, cl->compound_list_next);
+		while (cl->next)
 		{
-			if (cl->condition == CONDITION_NL || cl->condition == cl->exit_status)
-				cl_next->exit_status = execute_pipeline(exe_child, cl_next->pipeline);
-			// free(cl);
-			// free(exe_child);
-			cl = cl_next;
+			if (is_execute_condition(cl->condition, exit_status))
+				exit_status = execute_pipeline(exe_child, cl->next->pipeline);
+			cl = cl->next;
 			if (cl->compound_list_next)
-				init_compound_list(e, &cl_next, cl->compound_list_next);
-			else
-				exit(0);
+				init_compound_list(e, &cl->next, cl->compound_list_next);
 		}
-		exit(0); // idk if this matters
+		free(exe_child);
+		exit(exit_status);
 	}
 	else if (pid < 0)
 		exit(ex_perror(e, "fork"));
-	wait(NULL);
 	return (pid);
 }
 

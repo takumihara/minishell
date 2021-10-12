@@ -40,6 +40,7 @@ typedef enum e_list_type {
 	T_REDIRECT_OUT,
 	T_REDIRECT_IN,
 	T_SIMPLE_COMMAND,
+	T_COMPOUND_LIST,
 	T_SUBSHELL,
 	T_PIPELINE,
 }	t_list_type;
@@ -59,16 +60,13 @@ struct s_pipeline {
 
 struct s_subshell {
 	t_compound_list		*compound_list;
-	// redirect list
-	t_redirect_out 		*r_out;
-	t_redirect_in 		*r_in;
 };
 
 struct s_compound_list {
-	int			exit_status;
-	int			condition;
-	t_pipeline 	*pipeline;
-	t_ast_node	*compound_list_next;
+	int				condition;
+	t_pipeline 		*pipeline;
+	t_ast_node		*compound_list_next;
+	t_compound_list	*next;
 };
 
 struct s_simple_command {
@@ -103,6 +101,7 @@ bool	new_argv(t_simple_command *sc);
 
 // execute_utils.c
 bool	new_executor(t_executor **e, t_ast_node *root);
+void	delete_executor(t_executor **e);
 int		ex_perror(t_executor *e, const char *s);
 void	delete_list(void *element, t_list_type type);
 bool	execute_builtin(t_executor *e, int argc, char **argv, bool islast);
