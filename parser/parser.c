@@ -33,10 +33,6 @@ static t_ast_node *simple_command(t_parser *p);
 static t_ast_node *simple_command_element(t_parser *p);
 static t_ast_node *word(t_parser *p);
 
-//<redirection> <redirection_list>
-//<redirection>
-static t_ast_node *redirection_list(t_parser *p);
-
 //<number>? '>' <word>
 //<number>? '<' <word>
 //<number>?　'>>' <word>
@@ -186,7 +182,6 @@ t_ast_node *subshell(t_parser *p)
 {
 	t_ast_node	*result;
 	t_ast_node	*compound_list_;
-	t_ast_node	*redirection_list_;
 
 	if (!consume_token(p, LPAREN, NULL))
 		return (NULL);
@@ -207,10 +202,7 @@ t_ast_node *subshell(t_parser *p)
 	if (!new_ast_node(&result))
 		return (delete_ast_nodes(compound_list_, NULL));
 	result->type = SUBSHELL_NODE;
-	redirection_list_ = redirection_list(p);
-	if (p->err)
-		return (delete_ast_nodes(result, compound_list_));
-	set_ast_nodes(result, compound_list_, redirection_list_);
+	set_ast_nodes(result, compound_list_, NULL);
 	return (result);
 }
 
@@ -287,20 +279,6 @@ t_ast_node *word(t_parser *p)
 	}
 	simple_command_element->type = COMMAND_ARG_NODE;
 	return (simple_command_element);
-}
-
-t_ast_node *redirection_list(t_parser *p)
-{
-	t_ast_node *redirection_;
-	t_ast_node *redirection_list_;
-
-	if (!assign_ast_node(&redirection_, redirection(p)))
-		return (NULL);
-	if (assign_ast_node(&redirection_list_, redirection_list(p)))
-		attach_ast_nodes(redirection_, NULL, redirection_list_);
-	if (p->err)
-		return (delete_ast_nodes(redirection_, NULL));
-	return (redirection_);
 }
 
 t_ast_node *redirection(t_parser *p)
