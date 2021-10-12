@@ -1,6 +1,6 @@
 #include "builtin.h"
 
-int builtin_exit(int argc, char **argv, int last_exit_status, t_env_var *env_vars)
+int builtin_exit(int argc, char **argv, int last_exit_status, t_env_var **env_vars)
 {
 	int	num;
 

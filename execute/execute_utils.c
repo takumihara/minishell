@@ -1,7 +1,7 @@
 #include "execute.h"
 #include "../utils/get_next_line.h"
 
-bool	new_executor(t_executor **e, t_ast_node *root, t_env_var *env_vars)
+bool	new_executor(t_executor **e, t_ast_node *root, t_env_var **env_vars)
 {
 	*e = (t_executor *)malloc(sizeof(**e));
 	if (!*e)
@@ -50,12 +50,12 @@ int	ex_perror(t_executor *e, const char *s)
 	{
 		delete_ast_nodes(e->root, NULL);
 		delete_list((void *)e->pipeline, T_PIPELINE);
-		delete_env_lst(e->env_vars, NULL, NULL);
+		delete_env_lst(*e->env_vars, NULL, NULL);
 	}
 	return (EXIT_FAILURE);
 }
 
-static void execute_builtin_internal(int argc, char **argv, t_executor *e, bool islast, int (*fn)(int, char**, int, t_env_var*))
+static void execute_builtin_internal(int argc, char **argv, t_executor *e, bool islast, int (*fn)(int, char**, int, t_env_var**))
 {
 	if (islast)
 		e->exit_status = fn(argc, argv, e->exit_status, e->env_vars);

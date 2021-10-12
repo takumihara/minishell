@@ -5,7 +5,7 @@ static void pipeline(t_executor *e, t_pipeline **pipeline, t_ast_node *node);
 static void	subshell(t_executor *e, t_subshell **ss, t_ast_node *node);
 static void	simple_command(t_executor *e, t_simple_command **sc, t_ast_node *node);
 
-int	execute(t_ast_node *root, t_env_var *env_vars)
+int	execute(t_ast_node *root, t_env_var **env_vars)
 {
 	t_executor	*e;
 	int			exit_status;

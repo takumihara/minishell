@@ -10,13 +10,13 @@ char		*remove_quotes(char *data, t_expander *e);
 
 // todo: expander in execute
 // t_ast_node	*expand(t_expander *e, t_env_var *env_vars, int exit_status)
-t_ast_node	*expand(t_ast_node *root, t_env_var *env_vars)
+t_ast_node	*expand(t_ast_node *root, t_env_var **env_vars)
 {
 	t_expander	*e;
 
 	if (!root)
 		return (NULL);
-	if (!new_expander(&e, root, env_vars))
+	if (!new_expander(&e, root, *env_vars))
 		exit(expand_perror(NULL, "malloc"));
 	if (!search_command_arg_node(e, root))
 	{
