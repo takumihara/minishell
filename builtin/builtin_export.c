@@ -108,21 +108,27 @@ int	register_env_var(char *key, char *value, t_env_var **env_vars)
 	bool		exist;
 
 	target_var = search_env_key(key, *env_vars, &exist);
-	if (exist && value)
+	if (exist)
 	{
 		free(key);
-		free(target_var->value);
-		target_var->value = value;
+		if (value)
+		{
+			free(target_var->value);
+			target_var->value = value;
+		}
 	}
-	else if (!exist && target_var)
-		target_var->next = init_env_var(key, value);
-	if (!*env_vars)
-		*env_vars = init_env_var(key, value);
-	if ((target_var && !target_var->next) || !*env_vars)
+	else
 	{
-		free(key);
-		free(value);
-		return (BUILTIN_MALLOC_ERROR);
+		if (target_var)
+			target_var->next = init_env_var(key, value);
+		else if (!*env_vars)
+			*env_vars = init_env_var(key, value);
+		if ((target_var && !target_var->next) || !*env_vars)
+		{
+			free(key);
+			free(value);
+			return (BUILTIN_MALLOC_ERROR);
+		}
 	}
 	return (EXIT_SUCCESS);
 }
@@ -162,9 +168,9 @@ int	builtin_export(int argc, char **argv, int no_use, t_env_var **env_vars)
 		if (is_valid_argument(argv[i]))
 		{
 			if (set_key_value(&key, &value, argv[i]) == BUILTIN_MALLOC_ERROR)
-				return (exit_status);
+				return (BUILTIN_MALLOC_ERROR);
 			else if (register_env_var(key, value, env_vars) == BUILTIN_MALLOC_ERROR)
-				return (exit_status);
+				return (BUILTIN_MALLOC_ERROR);
 		}
 		else
 			exit_status = EXIT_FAILURE;
