@@ -38,10 +38,9 @@ int minishell(char *line)
 {
 	t_env_var	*env_vars;
 
-	env_vars = NULL;
-	// env_vars = init_env_lst();
-	// if (!env_vars)
-	// 	return (EXIT_FAILURE);
+	env_vars = init_env_lst();
+	if (!env_vars)
+		return (EXIT_FAILURE);
 	if (line)
 		return (execute(expand(parse(lex(line)), &env_vars), &env_vars));
 	set_signal_handler();
