@@ -101,6 +101,11 @@ bool	execute_builtin(t_executor *e, int argc, char **argv, bool is_last)
 		execute_builtin_internal(argc, argv, e, is_last, builtin_export);
 		return (true);
 	}
+	else if (!ft_strcmp(argv[0], "env"))
+	{
+		execute_builtin_internal(argc, argv, e, is_last, builtin_env);
+		return (true);
+	}
 	return (false);
 }
 
