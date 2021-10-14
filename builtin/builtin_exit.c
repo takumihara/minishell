@@ -1,9 +1,10 @@
 #include "builtin.h"
 
-int builtin_exit(int argc, char **argv, int last_exit_status)
+int builtin_exit(int argc, char **argv, int last_exit_status, t_env_var **env_vars)
 {
 	int	num;
 
+	(void)env_vars;
 	ft_putendl_fd("exit", STDERR_FILENO);
 	if (argc == 1)
 		exit(last_exit_status);

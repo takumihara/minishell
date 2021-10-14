@@ -9,6 +9,7 @@
 # include "../ast/ast.h"
 # include "../libft/libft.h"
 # include "../builtin/builtin.h"
+# include "../env/env.h"
 
 # define CONDITION_AND_IF 0
 # define CONDITION_OR_IF 1
@@ -50,6 +51,7 @@ typedef struct s_executor {
 	int			exit_status;
 	int			condition;
 	t_pipeline 	*pipeline;
+	t_env_var	**env_vars;
 }	t_executor;
 
 struct s_pipeline {
@@ -89,7 +91,7 @@ struct s_redirect_in {
 };
 
 // execute_init.c
-int		execute(t_ast_node *root);
+int		execute(t_ast_node *root, t_env_var **env_vars);
 void	init_compound_list(t_executor *e, t_compound_list **cl, t_ast_node *node);
 // execute_init_utils.c
 bool	new_t_pipeline(t_pipeline **pipeline);
@@ -100,7 +102,7 @@ bool	new_argv(t_simple_command *sc);
 
 
 // execute_utils.c
-bool	new_executor(t_executor **e, t_ast_node *root);
+bool	new_executor(t_executor **e, t_ast_node *root, t_env_var **env_vars);
 void	delete_executor(t_executor **e);
 int		ex_perror(t_executor *e, const char *s);
 void	delete_list(void *element, t_list_type type);

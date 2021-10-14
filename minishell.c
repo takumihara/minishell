@@ -42,7 +42,7 @@ int minishell(char *line)
 	if (!env_vars)
 		return (EXIT_FAILURE);
 	if (line)
-		return (execute(expand(parse(lex(line)), env_vars)));
+		return (execute(expand(parse(lex(line)), &env_vars), &env_vars));
 	set_signal_handler();
 	while (1)
 	{
@@ -58,8 +58,8 @@ int minishell(char *line)
 			continue;
 		}
 		// todo: No need to pass arguments `char **env`?
-		node = expand(node, env_vars);
-		execute(node);
+		node = expand(node, &env_vars);
+		execute(node, &env_vars);
 		add_history(line);
 		free(line);
 	}

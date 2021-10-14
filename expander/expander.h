@@ -32,7 +32,7 @@ struct s_expander {
 };
 
 // expander.c
-t_ast_node	*expand(t_ast_node *root, t_env_var *env_vars);
+t_ast_node	*expand(t_ast_node *root, t_env_var **env_vars);
 
 // expander_utils.c
 bool		new_expander(t_expander **e, t_ast_node *root, t_env_var *env_vars);
@@ -47,6 +47,7 @@ char		*str_insert(char *data, size_t replace_start, char *env_value, size_t env_
 
 // expander_wildcard.c
 char		*append_wildcard_strings(char *dst, char *src, const char *data, t_expander *e);
+void		quick_sort(char **array, size_t left, size_t right);
 bool		is_match_pattern(const char *data, size_t len, char *name);
 char		*sort_strings(char *src, t_expander *e);
 

@@ -1,6 +1,6 @@
 #include "execute.h"
 
-bool	new_executor(t_executor **e, t_ast_node *root)
+bool	new_executor(t_executor **e, t_ast_node *root, t_env_var **env_vars)
 {
 	*e = (t_executor *)malloc(sizeof(**e));
 	if (!*e)
@@ -9,6 +9,7 @@ bool	new_executor(t_executor **e, t_ast_node *root)
 	(*e)->exit_status = EXIT_SUCCESS;
 	(*e)->condition = CONDITION_AND_IF;
 	(*e)->pipeline = NULL;
+	(*e)->env_vars = env_vars;
 	return (true);
 }
 
@@ -65,12 +66,12 @@ int	ex_perror(t_executor *e, const char *s)
 	return (EXIT_FAILURE);
 }
 
-static void execute_builtin_internal(int argc, char **argv, t_executor *e, bool islast, int (*fn)(int, char**, int))
+static void execute_builtin_internal(int argc, char **argv, t_executor *e, bool islast, int (*fn)(int, char**, int, t_env_var**))
 {
 	if (islast)
-		e->exit_status = fn(argc, argv, e->exit_status);
+		e->exit_status = fn(argc, argv, e->exit_status, e->env_vars);
 	else
-		fn(argc, argv, e->exit_status);
+		fn(argc, argv, e->exit_status, e->env_vars);
 }
 
 bool	execute_builtin(t_executor *e, int argc, char **argv, bool is_last)
@@ -93,6 +94,11 @@ bool	execute_builtin(t_executor *e, int argc, char **argv, bool is_last)
 	else if (!ft_strcmp(argv[0], "echo"))
 	{
 		execute_builtin_internal(argc, argv, e, is_last, builtin_echo);
+		return (true);
+	}
+	else if (!ft_strcmp(argv[0], "export"))
+	{
+		execute_builtin_internal(argc, argv, e, is_last, builtin_export);
 		return (true);
 	}
 	return (false);
