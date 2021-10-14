@@ -26,6 +26,9 @@
 # define CHILD_PROCESS_NOT_CREATED 0
 # define NOT_LAST_COMMAND 0
 
+# define NO_ERR 0
+# define ERR_REDIRECT 1
+
 typedef struct s_pipeline		t_pipeline;
 typedef struct s_subshell		t_subshell;
 typedef struct s_compound_list	t_compound_list;
@@ -37,8 +40,8 @@ typedef enum e_list_type {
 	UNSET,
 	T_REDIRECT_OUT,
 	T_REDIRECT_IN,
-	T_HEREDOC,
 	T_SIMPLE_COMMAND,
+	T_COMPOUND_LIST,
 	T_SUBSHELL,
 	T_PIPELINE,
 }	t_list_type;
@@ -59,16 +62,13 @@ struct s_pipeline {
 
 struct s_subshell {
 	t_compound_list		*compound_list;
-	// redirect list
-	t_redirect_out 		*r_out;
-	t_redirect_in 		*r_in;
 };
 
 struct s_compound_list {
-	int			exit_status;
-	int			condition;
-	t_pipeline 	*pipeline;
-	t_ast_node	*compound_list_next;
+	int				condition;
+	t_pipeline 		*pipeline;
+	t_ast_node		*compound_list_next;
+	t_compound_list	*next;
 };
 
 struct s_simple_command {
@@ -77,6 +77,7 @@ struct s_simple_command {
 	char				**argv;
 	t_redirect_out 		*r_out;
 	t_redirect_in 		*r_in;
+	int					err;
 };
 
 struct s_redirect_out {
@@ -86,8 +87,6 @@ struct s_redirect_out {
 
 struct s_redirect_in {
 	int				fd;
-	t_list_type		type;
-	char			*delim;
 	t_redirect_in	*next;
 };
 
@@ -104,15 +103,16 @@ bool	new_argv(t_simple_command *sc);
 
 // execute_utils.c
 bool	new_executor(t_executor **e, t_ast_node *root, t_env_var **env_vars);
+void	delete_executor(t_executor **e);
 int		ex_perror(t_executor *e, const char *s);
 void	delete_list(void *element, t_list_type type);
 bool	execute_builtin(t_executor *e, int argc, char **argv, bool islast);
 bool	is_execute_condition(int condition, int exit_status);
-void	execute_redirect(t_executor *e, t_simple_command *sc, int orig_stdfd[]);
+void	execute_redirect(t_simple_command *sc);
 
 // new_redirect.c
-bool	new_t_redirect_out(t_redirect_out **r_out, char *filename, t_node_type type);
-bool	new_t_redirect_in(t_redirect_in **r_in, char *data, t_node_type type);
+bool	new_t_redirect_out(t_simple_command *sc, char *filename, t_node_type type);
+bool	new_t_redirect_in(t_executor *e, t_simple_command *sc, char *data, t_node_type type);
 
 // execute_command.c
 int		execute_pipeline(t_executor *e, t_pipeline *c);

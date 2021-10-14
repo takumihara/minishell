@@ -17,8 +17,6 @@ bool	new_t_subshell(t_subshell **ss)
 	if (!*ss)
 		return (false);
 	(*ss)->compound_list = NULL;
-	(*ss)->r_out = NULL;
-	(*ss)->r_in = NULL;
 	return (true);
 }
 
@@ -27,10 +25,10 @@ bool	new_t_compound_list(t_compound_list **cl)
 	*cl = malloc(sizeof(**cl));
 	if (!*cl)
 		return (false);
-	(*cl)->exit_status = -1; //idk what should be the default
-	(*cl)->condition = -1;
+	 // (*cl)->condition will not be used w/ being initialized in init_compound_list()
 	(*cl)->pipeline = NULL;
 	(*cl)->compound_list_next = NULL;
+	(*cl)->next = NULL;
 	return (true);
 }
 
@@ -44,6 +42,7 @@ bool	new_t_simple_command(t_simple_command **sc)
 	(*sc)->argv = NULL;
 	(*sc)->r_out = NULL;
 	(*sc)->r_in = NULL;
+	(*sc)->err = NO_ERR;
 	return (true);
 }
 

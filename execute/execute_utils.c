@@ -1,5 +1,4 @@
 #include "execute.h"
-#include "../utils/get_next_line.h"
 
 bool	new_executor(t_executor **e, t_ast_node *root, t_env_var **env_vars)
 {
@@ -14,6 +13,14 @@ bool	new_executor(t_executor **e, t_ast_node *root, t_env_var **env_vars)
 	return (true);
 }
 
+void	delete_executor(t_executor **e)
+{
+	delete_list((*e)->pipeline, T_PIPELINE);
+	delete_ast_nodes((*e)->root, NULL);
+	free(*e);
+	*e = NULL;
+}
+
 void	delete_list(void *element, t_list_type type)
 {
 	if (!element)
@@ -25,8 +32,7 @@ void	delete_list(void *element, t_list_type type)
 	}
 	else if (type == T_REDIRECT_IN)
 	{
-		if (((t_redirect_in *)element)->type == T_REDIRECT_IN)
-			close(((t_redirect_in *)element)->fd);
+		close(((t_redirect_in *)element)->fd);
 		delete_list(((t_redirect_in *)element)->next, T_REDIRECT_IN);
 	}
 	else if (type == T_SIMPLE_COMMAND)
@@ -34,6 +40,15 @@ void	delete_list(void *element, t_list_type type)
 		free(((t_simple_command *)element)->argv);
 		delete_list(((t_simple_command *)element)->r_out, T_REDIRECT_OUT);
 		delete_list(((t_simple_command *)element)->r_in, T_REDIRECT_IN);
+	}
+	else if (type == T_COMPOUND_LIST)
+	{
+		delete_list(((t_compound_list *)element)->pipeline, T_PIPELINE);
+		delete_list(((t_compound_list *)element)->next, T_COMPOUND_LIST);
+	}
+	else if (type == T_SUBSHELL)
+	{
+		delete_list(((t_subshell *)element)->compound_list, T_COMPOUND_LIST);
 	}
 	else if (type == T_PIPELINE)
 	{
@@ -47,11 +62,7 @@ int	ex_perror(t_executor *e, const char *s)
 {
 	perror(s);
 	if (e)
-	{
-		delete_ast_nodes(e->root, NULL);
-		delete_list((void *)e->pipeline, T_PIPELINE);
-		delete_env_lst(*e->env_vars, NULL, NULL);
-	}
+		delete_executor(&e);
 	return (EXIT_FAILURE);
 }
 
@@ -104,65 +115,19 @@ bool	is_execute_condition(int condition, int exit_status)
 	return (false);
 }
 
-static void process_gnl_error(t_executor *e, t_gnl_status status, char *line)
+void	execute_redirect(t_simple_command *sc)
 {
-	if (status == GNL_STATUS_ERROR_MALLOC)
-		exit(ex_perror(e, "minishell: malloc"));
-	if (status == GNL_STATUS_ERROR_READ)
-	{
-		free(line);
-		exit(ex_perror(e, "minishell: malloc"));
-	}
-}
+	t_redirect_in	*r_in;
+	t_redirect_out	*r_out;
 
-void	execute_redirect(t_executor *e, t_simple_command *sc, int orig_stdfd[])
-{
-	int				pipefd[2];
-	t_gnl_status	status;
-	char			*line;
-
-	while (sc->r_in)
-	{
-		if (!sc->r_in->next)
-		{
-			if (sc->r_in->type == T_REDIRECT_IN)
-				dup2(sc->r_in->fd, STDIN_FILENO);
-			else if (sc->r_in->type == T_HEREDOC)
-			{
-				pipe(pipefd);
-				while (1)
-				{
-					ft_putstr_fd("> ", orig_stdfd[WRITE]);
-					status = get_next_line(orig_stdfd[READ], &line);
-					process_gnl_error(e, status, line);
-					if (status == GNL_STATUS_DONE || !ft_strcmp(line, sc->r_in->delim))
-						break ;
-					ft_putendl_fd(line, pipefd[WRITE]);
-					free(line);
-				}
-				free(line);
-				close(pipefd[WRITE]);
-				dup2(pipefd[READ], STDIN_FILENO);
-				close(pipefd[READ]);
-			}
-		}
-		else if (sc->r_in->type == T_HEREDOC)
-		{
-			while (1)
-			{
-				ft_putstr_fd("> ", orig_stdfd[WRITE]);
-				status = get_next_line(orig_stdfd[READ], &line);
-				process_gnl_error(e, status, line);
-				if (status == GNL_STATUS_DONE || !ft_strcmp(line, sc->r_in->delim))
-					break ;
-				free(line);
-			}
-			free(line);
-		}
-		sc->r_in = sc->r_in->next;
-	}
-	while (sc->r_out && sc->r_out->next)
-		sc->r_out = sc->r_out->next;
-	if (sc->r_out)
-		dup2(sc->r_out->fd, STDOUT_FILENO);
+	r_in = sc->r_in;
+	while (r_in && r_in->next)
+		r_in = r_in->next;
+	if (r_in)
+		dup2(r_in->fd, STDIN_FILENO);
+	r_out = sc->r_out;
+	while (r_out && r_out->next)
+		r_out = r_out->next;
+	if (r_out)
+		dup2(r_out->fd, STDOUT_FILENO);
 }

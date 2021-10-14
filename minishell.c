@@ -54,7 +54,6 @@ int minishell(char *line)
 		t_ast_node *node = parse(token);
 		if (!node)
 		{
-			fprintf(stderr, RED "parse() returned NULL!\n" RESET);
 			free(line);
 			continue;
 		}

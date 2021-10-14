@@ -1,7 +1,7 @@
 #include "execute.h"
 
-int execute_command(t_executor *e, void *command, int type, bool is_last, int orig_stdfd[], bool is_pipe);
-int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, int orig_stdfd[], bool is_pipe);
+int execute_command(t_executor *e, void *command, int type, bool is_last, bool is_pipe);
+int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bool is_pipe);
 int execute_subshell(t_executor *e, t_subshell *ss);
 int execute_compound_list(t_executor *e, t_compound_list *cl);
 
@@ -31,7 +31,7 @@ int execute_pipeline(t_executor *e, t_pipeline *pl)
 		}
 		else
 			dup2(orig_stdfd[WRITE], STDOUT_FILENO);
-		child_pid = execute_command(e, pl->command, pl->type, !pl->next, orig_stdfd, is_pipe);
+		child_pid = execute_command(e, pl->command, pl->type, !pl->next, is_pipe);
 		if (child_pid != CHILD_PROCESS_NOT_CREATED)
 			child_process_cnt++;
 		else if (pl->next)
@@ -49,10 +49,17 @@ int execute_pipeline(t_executor *e, t_pipeline *pl)
 	return (e->exit_status);
 }
 
-int execute_command(t_executor *e, void *command, int type, bool is_last, int orig_stdfd[], bool is_pipe)
+int execute_command(t_executor *e, void *command, int type, bool is_last, bool is_pipe)
 {
 	if (type == T_SIMPLE_COMMAND)
-		return (execute_simple_command(e, (t_simple_command *)command, is_last, orig_stdfd, is_pipe));
+	{
+		if (((t_simple_command *)command)->err != NO_ERR)
+		{
+			e->exit_status = EXIT_FAILURE;
+			return (CHILD_PROCESS_NOT_CREATED);
+		}
+		return (execute_simple_command(e, (t_simple_command *)command, is_last, is_pipe));
+	}
 	else // subshell
 		return (execute_subshell(e, (t_subshell *)command));
 }
@@ -65,46 +72,41 @@ int execute_subshell(t_executor *e, t_subshell *ss)
 
 int execute_compound_list(t_executor *e, t_compound_list *cl)
 {
-	pid_t	pid;
-	t_compound_list *cl_next;
-	t_executor *exe_child;
+	pid_t			pid;
+	t_executor		*exe_child;
+	int				exit_status;
 
 	pid = fork();
-	cl_next = NULL;
 	if (pid == CHILD_PROCESS)
 	{
 		if (!new_executor(&exe_child, NULL, NULL))
 			exit(ex_perror(e, "malloc"));
-		cl->exit_status = execute_pipeline(exe_child, cl->pipeline);
+		exe_child->pipeline = cl->pipeline;
+		exit_status = execute_pipeline(exe_child, exe_child->pipeline);
 		if (cl->compound_list_next)
-			 init_compound_list(e, &cl_next, cl->compound_list_next);
-		while (cl_next)
+			 init_compound_list(e, &cl->next, cl->compound_list_next);
+		while (cl->next)
 		{
-			if (cl->condition == CONDITION_NL || cl->condition == cl->exit_status)
-				cl_next->exit_status = execute_pipeline(exe_child, cl_next->pipeline);
-			// free(cl);
-			// free(exe_child);
-			cl = cl_next;
+			if (is_execute_condition(cl->condition, exit_status))
+				exit_status = execute_pipeline(exe_child, cl->next->pipeline);
+			cl = cl->next;
 			if (cl->compound_list_next)
-				init_compound_list(e, &cl_next, cl->compound_list_next);
-			else
-				exit(0);
+				init_compound_list(e, &cl->next, cl->compound_list_next);
 		}
-		exit(0); // idk if this matters
+		free(exe_child);
+		exit(exit_status);
 	}
 	else if (pid < 0)
 		exit(ex_perror(e, "fork"));
-	wait(NULL);
 	return (pid);
 }
 
 // execute_simple_command returns either its child process pid or macro 'CHILD_PROCESS_NOT_CREATED'
-int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, int orig_stdfd[], bool is_pipe)
+int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bool is_pipe)
 {
 	pid_t	pid;
 
-	execute_redirect(e, sc, orig_stdfd);
-	// todo: execute_heredoc
+	execute_redirect(sc);
 	if (!is_pipe && execute_builtin(e, sc->argc, sc->argv, is_last))
 		return (CHILD_PROCESS_NOT_CREATED);
 	pid = fork();
