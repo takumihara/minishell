@@ -1,15 +1,15 @@
 #include "execute.h"
 
-int execute_command(t_executor *e, void *command, int type, bool is_last, bool is_pipe);
-int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bool is_pipe);
+int execute_command(t_executor *e, void *command, int type, bool is_last, bool is_pipe, int	pipefd[]);
+int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bool is_pipe, int	pipefd[]);
 int execute_subshell(t_executor *e, t_subshell *ss);
 int execute_compound_list(t_executor *e, t_compound_list *cl);
 
 int execute_pipeline(t_executor *e, t_pipeline *pl)
 {
 	int	child_pid;
-	int	orig_stdfd[2];
 	int	pipefd[2];
+	int	orig_stdfd[2];
 	int	child_process_cnt;
 	int	statloc;
 	const bool is_pipe = (pl->next != NULL);
@@ -31,7 +31,7 @@ int execute_pipeline(t_executor *e, t_pipeline *pl)
 		}
 		else
 			dup2(orig_stdfd[WRITE], STDOUT_FILENO);
-		child_pid = execute_command(e, pl->command, pl->type, !pl->next, is_pipe);
+		child_pid = execute_command(e, pl->command, pl->type, !pl->next, is_pipe, pipefd);
 		if (child_pid != CHILD_PROCESS_NOT_CREATED)
 			child_process_cnt++;
 		else if (pl->next)
@@ -49,7 +49,7 @@ int execute_pipeline(t_executor *e, t_pipeline *pl)
 	return (e->exit_status);
 }
 
-int execute_command(t_executor *e, void *command, int type, bool is_last, bool is_pipe)
+int execute_command(t_executor *e, void *command, int type, bool is_last, bool is_pipe, int	pipefd[])
 {
 	if (type == T_SIMPLE_COMMAND)
 	{
@@ -58,7 +58,7 @@ int execute_command(t_executor *e, void *command, int type, bool is_last, bool i
 			e->exit_status = EXIT_FAILURE;
 			return (CHILD_PROCESS_NOT_CREATED);
 		}
-		return (execute_simple_command(e, (t_simple_command *)command, is_last, is_pipe));
+		return (execute_simple_command(e, (t_simple_command *)command, is_last, is_pipe, pipefd));
 	}
 	else // subshell
 		return (execute_subshell(e, (t_subshell *)command));
@@ -102,7 +102,7 @@ int execute_compound_list(t_executor *e, t_compound_list *cl)
 }
 
 // execute_simple_command returns either its child process pid or macro 'CHILD_PROCESS_NOT_CREATED'
-int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bool is_pipe)
+int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bool is_pipe, int	pipefd[])
 {
 	pid_t	pid;
 
@@ -112,6 +112,8 @@ int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bo
 	pid = fork();
 	if (pid == CHILD_PROCESS)
 	{
+		if (is_pipe && !is_last && pipefd[READ])
+			close(pipefd[READ]);
 		if (execute_builtin(e, sc->argc, sc->argv, is_last))
 			exit(EXIT_SUCCESS);
 		if (execvp(sc->argv[0], sc->argv) == -1)
