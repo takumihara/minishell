@@ -2,6 +2,7 @@
 # define UTILS_H
 
 # include <stdlib.h>
+# include <unistd.h>
 
 # include "../libft/libft.h"
 
@@ -11,5 +12,6 @@ char	*ft_strndup(const char *str, size_t size);
 void	free_2d_array(void ***array);
 char	**split_by_delims(char const *str, const char *delims);
 bool	atoi_strict(const char *str, int *num);
+bool	is_valid_argument(char *argv);
 
 # endif //UTILS_H
