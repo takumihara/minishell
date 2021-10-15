@@ -19,5 +19,6 @@ int		builtin_exit(int argc, char **argv, int last_exit_status, t_env_var **env_v
 int		builtin_echo(int argc, char **argv, int no_use, t_env_var **env_vars);
 int		builtin_export(int argc, char **argv, int no_use, t_env_var **env_vars);
 int		builtin_env(int argc, char **argv, int no_use, t_env_var **env_vars);
+int		builtin_unset(int argc, char **argv, int no_use, t_env_var **env_vars);
 
 #endif //BUILTIN_H

@@ -70,7 +70,7 @@ int	print_declaration(t_env_var *env_vars)
 	return (EXIT_SUCCESS);
 }
 
-bool	is_valid_argument(char *argv)
+static bool	is_valid_argument(char *argv)
 {
 	bool	is_valid;
 
