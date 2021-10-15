@@ -18,9 +18,9 @@ bool	is_valid_argument(char *argv)
 	i = 0;
 	while (i < len)
 	{
-		if (i == 0 && !ft_isalpha(argv[i]))
+		if (i == 0 && !ft_isalpha(argv[i]) && argv[i] != '_')
 			return (print_argument_error(argv));
-		else if (i != 0 && !ft_isalnum(argv[i]))
+		else if (i != 0 && !ft_isalnum(argv[i]) && argv[i] != '_')
 			return (print_argument_error(argv));
 		i++;
 	}
