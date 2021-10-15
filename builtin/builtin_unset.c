@@ -39,7 +39,7 @@ int		builtin_unset(int argc, char **argv, int no_use, t_env_var **env_vars)
 	i = 1;
 	while (argv[i])
 	{
-		if (is_valid_argument(argv[i], ft_strlen(argv[i])))
+		if (is_valid_argument(argv[i], ft_strlen(argv[i]), UNSET_ARG_ERROR))
 		{
 			key = ft_strdup(argv[i]);
 			if (!key)

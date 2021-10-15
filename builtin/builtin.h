@@ -7,6 +7,9 @@
 
 #define BUILTIN_MALLOC_ERROR -1
 
+#define EXPORT_ARG_ERROR 0
+#define UNSET_ARG_ERROR 1
+
 #include "../libft/libft.h"
 #include "../utils/utils.h"
 #include "../execute/execute.h"
