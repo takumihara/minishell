@@ -8,9 +8,8 @@ static bool	print_argument_error(char *argv)
 	return (false);
 }
 
-bool	is_valid_argument(char *argv)
+bool	is_valid_argument(char *argv, size_t len)
 {
-	const size_t	len = ft_strlen(argv);
 	size_t			i;
 
 	if (!len)

@@ -150,7 +150,7 @@ int	builtin_export(int argc, char **argv, int no_use, t_env_var **env_vars)
 	i = 1;
 	while (i < argc)
 	{
-		if (is_valid_argument(argv[i]))
+		if (is_valid_argument(argv[i], key_strlen(argv[i])))
 		{
 			if (set_key_value(&key, &value, argv[i]) == BUILTIN_MALLOC_ERROR)
 				return (BUILTIN_MALLOC_ERROR);
