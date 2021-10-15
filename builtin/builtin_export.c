@@ -70,21 +70,6 @@ int	print_declaration(t_env_var *env_vars)
 	return (EXIT_SUCCESS);
 }
 
-static bool	is_valid_argument(char *argv)
-{
-	bool	is_valid;
-
-	is_valid = true;
-	if (argv[0] == '=' || argv[0] == '\0')
-	{
-		ft_putstr_fd("minishell: export: `", STDERR_FILENO);
-		ft_putchar_fd(argv[0], STDERR_FILENO);
-		ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
-		is_valid = false;
-	}
-	return (is_valid);
-}
-
 t_env_var	*search_env_key(char *key, t_env_var *env_vars, bool *exist)
 {
 	while (env_vars)
@@ -165,7 +150,7 @@ int	builtin_export(int argc, char **argv, int no_use, t_env_var **env_vars)
 	i = 1;
 	while (i < argc)
 	{
-		if (is_valid_argument(argv[i]))
+		if (is_valid_argument(argv[i], key_strlen(argv[i]), EXPORT_ARG_ERROR))
 		{
 			if (set_key_value(&key, &value, argv[i]) == BUILTIN_MALLOC_ERROR)
 				return (BUILTIN_MALLOC_ERROR);
