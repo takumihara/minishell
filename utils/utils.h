@@ -5,7 +5,6 @@
 # include <unistd.h>
 
 # include "../libft/libft.h"
-# include "../builtin/builtin.h"
 
 bool	assign_mem(void **dst, void *src);
 char	*strappend(char *dst, const char *src, size_t l);
