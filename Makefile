@@ -20,7 +20,7 @@ OBJS    	= $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.c=.o)))
 LIBFT_PATH	= libft
 
 CC      	= gcc
-CFLAG   	= -Wall -Wextra -Werror -fsanitize=address
+CFLAGS   	= -Wall -Wextra -Werror -fsanitize=address
 
 LIB			= -L$(LIBFT_PATH) -lft
 INCLUDE		=
@@ -36,13 +36,13 @@ all: $(NAME) run
 
 $(NAME): $(OBJS)
 	@make -C $(LIBFT_PATH)
-	$(CC) $(CFLAG) $^ -o $@ $(INCLUDE) $(LIB)
+	$(CC) $(CFLAGS) $^ -o $@ $(INCLUDE) $(LIB)
 
 bonus: $(NAME)
 
 $(OBJDIR)/%.o: %.c
 	@if [ ! -d $(dir $@) ];then mkdir $(dir $@); fi
-	$(CC) $(CFLAG) -o $@ -c $<
+	$(CC) $(CFLAGS) -o $@ -c $<
 
 clean:
 	@make clean -C $(LIBFT_PATH)
