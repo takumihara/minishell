@@ -26,9 +26,6 @@
 # define CHILD_PROCESS_NOT_CREATED 0
 # define NOT_LAST_COMMAND 0
 
-# define NO_ERR 0
-# define ERR_REDIRECT 1
-
 typedef struct s_pipeline		t_pipeline;
 typedef struct s_subshell		t_subshell;
 typedef struct s_compound_list	t_compound_list;
@@ -45,6 +42,12 @@ typedef enum e_list_type {
 	T_SUBSHELL,
 	T_PIPELINE,
 }	t_list_type;
+
+typedef enum e_simple_command_err {
+	NO_ERR,
+	REDIRECT_ERR,
+	EXPANSION_ERR,
+}	t_simple_command_err;
 
 typedef struct s_executor {
 	t_ast_node	*root; // for free()
@@ -72,12 +75,12 @@ struct s_compound_list {
 };
 
 struct s_simple_command {
-	t_ast_node			*root;
-	int					argc;
-	char				**argv;
-	t_redirect_out 		*r_out;
-	t_redirect_in 		*r_in;
-	int					err;
+	t_ast_node				*root;
+	int						argc;
+	char					**argv;
+	t_redirect_out 			*r_out;
+	t_redirect_in 			*r_in;
+	t_simple_command_err	err;
 };
 
 struct s_redirect_out {

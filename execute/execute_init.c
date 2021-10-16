@@ -26,7 +26,6 @@ int command_line(t_executor *e, t_ast_node *node)
 	{
 		if (is_execute_condition(e->condition, e->exit_status))
 		{
-			expand(node->left, e->env_vars, e->exit_status);
 			pipeline(e, &e->pipeline, node->left);
 			e->exit_status = execute_pipeline(e, e->pipeline);
 			delete_list(e->pipeline, T_PIPELINE);
@@ -58,6 +57,7 @@ void	pipeline(t_executor *e, t_pipeline **pipeline_, t_ast_node *node)
 	// expected node: COMMAND_ARG_NODE, REDIRECT*, PIPE_NODE, SUBSHELL
 	if (!new_t_pipeline(pipeline_))
 		exit(ex_perror(e, "malloc"));
+
 	// call expand()
 	if (node->type == PIPE_NODE)
 	{
@@ -116,6 +116,11 @@ void	simple_command(t_executor *e, t_simple_command **sc, t_ast_node *node)
 	if (!new_t_simple_command(sc))
 		exit(ex_perror(e, "malloc"));
 	(*sc)->root = node;
+	if (!expand(node, e->env_vars, e->exit_status))
+	{
+		(*sc)->err = EXPANSION_ERR;
+		return ;
+	}
 	// expected node: COMMAND_ARG_NODE, REDIRECT*
 	while (node != NULL)
 	{

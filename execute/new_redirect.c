@@ -19,7 +19,7 @@ bool	new_t_redirect_out(t_simple_command *sc, char *filename, t_node_type type)
 	{
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		perror(filename);
-		sc->err = ERR_REDIRECT;
+		sc->err = REDIRECT_ERR;
 	}
 	(*r_out)->next = NULL;
 	return (true);
@@ -56,7 +56,7 @@ bool	new_t_redirect_in(t_executor *e, t_simple_command *sc, char *data, t_node_t
 		{
 			ft_putstr_fd("minishell: ", STDERR_FILENO);
 			perror(data);
-			sc->err = ERR_REDIRECT;
+			sc->err = REDIRECT_ERR;
 		}
 	}
 	else if (type == HEREDOC_NODE)
