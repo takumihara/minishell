@@ -113,13 +113,17 @@ char	*expand_environment_variable(char *data, size_t replace_start, t_expander *
 	char			*key;
 	char			*value;
 
-	key = malloc(sizeof(char) * (var_len + 1));
-	if (!key)
-		exit(expand_perror(e, "malloc"));
-	ft_memmove(key, var_start, var_len);
-	key[var_len] = '\0';
-	value = get_env_value(key, e->env_vars);
-	free(key);
+	if (*var_start == '?')
+		value = get_env_value("?", e->env_vars);
+	else{
+		key = malloc(sizeof(char) * (var_len + 1));
+		if (!key)
+			exit(expand_perror(e, "malloc"));
+		ft_memmove(key, var_start, var_len);
+		key[var_len] = '\0';
+		value = get_env_value(key, e->env_vars);
+		free(key);
+	}
 	if (value)
 		return (str_insert(data, replace_start, value, ft_strlen(value)));
 	else

@@ -5,6 +5,8 @@ size_t	var_strlen(const char *str)
 	size_t	len;
 
 	len = 0;
+	if (*str == '?')
+		return (1);
 	while (!ft_strchr(EXPANSION_DELIMITER, str[len]))
 		len++;
 	return (len);
