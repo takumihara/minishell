@@ -45,8 +45,3 @@ echo \$USER
 echo \\$USER
 echo \\\$USER
 echo \\\\$USER
-echo ""
-echo "" a
-echo "" a ""
-echo "" a "" b
-
