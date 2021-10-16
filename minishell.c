@@ -62,6 +62,7 @@ int minishell(char *line)
 		add_history(line);
 		free(line);
 	}
+	ft_putstr_fd("exit\n", STDERR_FILENO);
 	return (exit_status);
 }
 
