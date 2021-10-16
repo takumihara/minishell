@@ -52,12 +52,34 @@ t_ast_node	*search_command_arg_node(t_expander *e, t_ast_node *node)
 	return (node);
 }
 
+int	quotation_status(char c, int status)
+{
+	if (c == '\"')
+	{
+		if (status == IN_DOUBLE_QUOTE)
+			status = OUTSIDE;
+		else if (status == IN_SINGLE_QUOTE)
+			status = IN_SINGLE_QUOTE;
+		else
+			status = IN_DOUBLE_QUOTE;
+	}
+	else if (c == '\'')
+	{
+		if (status == IN_DOUBLE_QUOTE)
+			status = IN_DOUBLE_QUOTE;
+		else if (status == IN_SINGLE_QUOTE)
+			status = OUTSIDE;
+		else
+			status = IN_SINGLE_QUOTE;
+	}
+	return (status);
+}
+
 char	*expand_word(t_expander *e, char delimiter)
 {
 	char	*data;
+	int		status;
 	size_t	i;
-	size_t	double_quote;
-	size_t	single_quote;
 
 	data = e->node->data;
 	if (!data)
@@ -65,17 +87,13 @@ char	*expand_word(t_expander *e, char delimiter)
 	if (!is_expandable_string(data, delimiter))
 		return (data);
 	i = 0;
-	double_quote = 0;
-	single_quote = 0;
+	status = OUTSIDE;
 	while (data[i])
 	{
-		if (in_quotes_type(data[i], single_quote) == DOUBLE_QUOTE)
-			double_quote++;
-		else if (in_quotes_type(data[i], double_quote) == SINGLE_QUOTE)
-			single_quote++;
-		if (data[i] == '$' && single_quote % 2 == 0 && delimiter == '$')
+		status = quotation_status(data[i], status);
+		if (data[i] == '$' && delimiter == '$' && status != IN_SINGLE_QUOTE)
 			data = expand_environment_variable(data, i, e);
-		else if (data[i] == '*' && double_quote % 2 == 0 && single_quote % 2 == 0 && delimiter == '*')
+		else if (data[i] == '*' && delimiter == '*' && status == OUTSIDE)
 			data = expand_wildcard(data, i, e);
 		if (!data)
 			return (NULL);
