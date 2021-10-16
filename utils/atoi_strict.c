@@ -15,7 +15,7 @@ bool	atoi_strict(const char *str, int *num)
 		return (false);
 	while (ft_isdigit(*str))
 	{
-		if ((converted * 10 + *str - '0') / 10 != converted)
+		if ((sign * converted * 10 + sign * (*str - '0')) / 10 != sign * converted)
 			return (false);
 		converted = converted * 10 + *str - '0';
 		str++;
