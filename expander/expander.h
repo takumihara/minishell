@@ -21,6 +21,10 @@
 # define SINGLE_QUOTE 1
 # define NOT_QUOTE 2
 
+# define OUTSIDE 0
+# define IN_DOUBLE_QUOTE 1
+# define IN_SINGLE_QUOTE 2
+
 typedef struct s_expander t_expander;
 
 extern char	**environ;
