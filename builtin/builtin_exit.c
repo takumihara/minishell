@@ -12,10 +12,10 @@ int builtin_exit(int argc, char **argv, int last_exit_status, t_env_var **env_va
 	{
 		if (!atoi_strict(argv[1], &num))
 		{
-			ft_putendl_fd("minishell: exit: ", STDERR_FILENO);
-			ft_putendl_fd(argv[1], STDERR_FILENO);
+			ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
+			ft_putstr_fd(argv[1], STDERR_FILENO);
 			ft_putendl_fd(": numeric argument required", STDERR_FILENO);
-			return (EXIT_STATUS_OUT_OF_RANGE);
+			exit(EXIT_STATUS_OUT_OF_RANGE);
 		}
 		exit((unsigned char)num); //todo: free?
 	}
