@@ -107,6 +107,11 @@ int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bo
 	pid_t	pid;
 
 	execute_redirect(sc);
+	if (sc->argc == 0)
+	{
+		e->exit_status = EXIT_SUCCESS;
+		return (CHILD_PROCESS_NOT_CREATED);
+	}
 	if (!is_pipe && execute_builtin(e, sc->argc, sc->argv, is_last))
 		return (CHILD_PROCESS_NOT_CREATED);
 	pid = fork();
