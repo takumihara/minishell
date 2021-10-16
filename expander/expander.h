@@ -40,7 +40,7 @@ struct s_expander {
 t_ast_node	*expand(t_ast_node *root, t_env_var **env_vars, int exit_status);
 
 // expander_utils.c
-bool		new_expander(t_expander **e, t_ast_node *root, t_env_var *env_vars, int exit_status);
+bool		new_expander(t_expander **e, t_ast_node *root, t_env_var *env_vars);
 bool		is_expandable_string(char *str, char delimiter);
 int			expand_perror(t_expander *e, const char *s);
 void		*expand_redirect_error(char *original_data);
