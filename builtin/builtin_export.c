@@ -31,7 +31,7 @@ char	**sort_env_var(char **array, t_env_var *env_vars, size_t len)
 	i = 0;
 	while (env_vars)
 	{
-		if (ft_strcmp("_", env_vars->key))
+		if (ft_strcmp("_", env_vars->key) && ft_strcmp("?", env_vars->key))
 		{
 			array[i] = env_vars->key;
 			i++;
@@ -70,54 +70,6 @@ int	print_declaration(t_env_var *env_vars)
 	return (EXIT_SUCCESS);
 }
 
-t_env_var	*search_env_key(char *key, t_env_var *env_vars, bool *exist)
-{
-	while (env_vars)
-	{
-		if (!ft_strcmp(key, env_vars->key))
-		{
-			*exist = true;
-			return (env_vars);
-		}
-		if (!env_vars->next)
-			break ;
-		env_vars = env_vars->next;
-	}
-	*exist = false;
-	return (env_vars);
-}
-
-int	register_env_var(char *key, char *value, t_env_var **env_vars)
-{
-	t_env_var	*target_var;
-	bool		exist;
-
-	target_var = search_env_key(key, *env_vars, &exist);
-	if (exist)
-	{
-		free(key);
-		if (value)
-		{
-			free(target_var->value);
-			target_var->value = value;
-		}
-	}
-	else
-	{
-		if (target_var)
-			target_var->next = init_env_var(key, value);
-		else if (!*env_vars)
-			*env_vars = init_env_var(key, value);
-		if ((target_var && !target_var->next) || !*env_vars)
-		{
-			free(key);
-			free(value);
-			return (BUILTIN_MALLOC_ERROR);
-		}
-	}
-	return (EXIT_SUCCESS);
-}
-
 int	set_key_value(char **key, char **value, char *src)
 {
 	*key = ft_strndup(src, key_strlen(src));
@@ -152,9 +104,9 @@ int	builtin_export(int argc, char **argv, int no_use, t_env_var **env_vars)
 	{
 		if (is_valid_argument(argv[i], key_strlen(argv[i]), EXPORT_ARG_ERROR))
 		{
-			if (set_key_value(&key, &value, argv[i]) == BUILTIN_MALLOC_ERROR)
+			if (set_key_value(&key, &value, argv[i]) == MALLOC_ERROR)
 				return (BUILTIN_MALLOC_ERROR);
-			else if (register_env_var(key, value, env_vars) == BUILTIN_MALLOC_ERROR)
+			else if (register_env_var(key, value, env_vars) == MALLOC_ERROR)
 				return (BUILTIN_MALLOC_ERROR);
 		}
 		else
