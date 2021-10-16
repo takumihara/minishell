@@ -15,8 +15,12 @@ typedef struct s_env_var {
 	struct s_env_var	*next;
 }	t_env_var;
 
+// env_list.c
 t_env_var	*init_env_var(char *key, char *value);
 int			delete_env_lst(t_env_var *env_vars, char *key, char *value);
 t_env_var	*init_env_lst(void);
+
+// env_utils.c
+char		*get_env_value(char *key, t_env_var *env_var);
 
 #endif
