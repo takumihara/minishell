@@ -11,7 +11,7 @@
 #include "lexer/lexer.h"
 #include "expander/expander.h"
 #include "execute/execute.h"
-
+#include "utils/get_next_line.h"
 
 //	rl_on_new_line();
 //	rl_replace_line("", 0); // <- 現状、何故かこの関数だけがコンパイルエラーとなり動かない
@@ -38,12 +38,19 @@ int minishell(char *line)
 {
 	t_env_var	*env_vars;
 	int 		exit_status;
+	int on = 1;
 
 	env_vars = init_env_lst();
 
 	// todo: null check
 	if (register_env_var(ft_strdup("?"), ft_strdup("0"), &env_vars) == MALLOC_ERROR)
 		exit(delete_env_lst(env_vars, NULL, NULL));
+	if (line)
+		exit(execute(parse(lex(line)), &env_vars));
+	ioctl(STDIN_FILENO, FIONBIO, &on);
+	get_next_line(STDIN_FILENO, &line);
+	if (line[0])
+		exit(execute(parse(lex(line)), &env_vars));
 	exit_status = EXIT_SUCCESS;
 	set_signal_handler();
 	while (1)
