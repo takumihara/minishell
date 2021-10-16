@@ -40,7 +40,6 @@ int command_line(t_executor *e, t_ast_node *node)
 	{
 		if (is_execute_condition(e->condition, e->exit_status))
 		{
-			expand(node, e->env_vars, e->exit_status);
 			pipeline(e, &e->pipeline, node);
 			e->exit_status = execute_pipeline(e, e->pipeline);
 			delete_list(e->pipeline, T_PIPELINE);
