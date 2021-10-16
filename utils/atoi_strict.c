@@ -20,6 +20,8 @@ bool	atoi_strict(const char *str, int *num)
 		converted = converted * 10 + *str - '0';
 		str++;
 	}
+	while (('\t' <= *str && *str <= '\r') || *str == ' ')
+		str++;
 	if (*str == '\0')
 	{
 		*num = (int)(sign * converted);
