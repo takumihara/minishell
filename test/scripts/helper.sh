@@ -123,7 +123,7 @@ exec_bash () {
 	if [ $cflag -ne 0 ]; then
 		bash -c "$1"
 	else
-		echo "$1; exit" | bash
+		echo "$1 && exit || exit" | bash
 	fi
 }
 
@@ -132,7 +132,7 @@ exec_minishell () {
 	if [ $cflag -ne 0 ]; then
 		${MINISHELL_PATH} -c "$1"
 	else
-		echo "$1 && exit" | ${MINISHELL_PATH}
+		echo "$1 && exit || exit" | ${MINISHELL_PATH}
 	fi
 }
 

@@ -22,12 +22,20 @@ int	execute(t_ast_node *root, t_env_var **env_vars)
 
 int command_line(t_executor *e, t_ast_node *node)
 {
+	char	*key;
+	char	*value;
 	if (node->type == AND_IF_NODE || node->type == OR_IF_NODE)
 	{
 		if (is_execute_condition(e->condition, e->exit_status))
 		{
 			pipeline(e, &e->pipeline, node->left);
 			e->exit_status = execute_pipeline(e, e->pipeline);
+			//todo: null check
+			key = ft_strdup("?");
+			if (!key) {}
+			value = ft_itoa(e->exit_status);
+			if (!value) {}
+			if (register_env_var(key, value, e->env_vars) == MALLOC_ERROR) {}
 			delete_list(e->pipeline, T_PIPELINE);
 		}
 		if (node->type == AND_IF_NODE)
@@ -42,6 +50,11 @@ int command_line(t_executor *e, t_ast_node *node)
 		{
 			pipeline(e, &e->pipeline, node);
 			e->exit_status = execute_pipeline(e, e->pipeline);
+			key = ft_strdup("?");
+			if (!key) {}
+			value = ft_itoa(e->exit_status);
+			if (!value) {}
+			if (register_env_var(key, value, e->env_vars) == MALLOC_ERROR) {}
 			delete_list(e->pipeline, T_PIPELINE);
 		}
 		return (e->exit_status);
