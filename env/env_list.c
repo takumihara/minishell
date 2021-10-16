@@ -15,7 +15,7 @@ t_env_var *init_env_var(char *key, char *value)
     return (env_var);
 }
 
-void	*delete_env_lst(t_env_var *env_vars, char *key, char *value)
+int	delete_env_lst(t_env_var *env_vars, char *key, char *value)
 {
 	t_env_var	*next_env_var;
 
@@ -29,7 +29,7 @@ void	*delete_env_lst(t_env_var *env_vars, char *key, char *value)
 		free(env_vars);
 		env_vars = next_env_var;
 	}
-	return (NULL);
+	return (EXIT_FAILURE);
 }
 
 t_env_var	*init_env_lst(void)
@@ -46,10 +46,10 @@ t_env_var	*init_env_lst(void)
 		key = ft_strndup(*environ, strchr(*environ, '=') - *environ);
 		value = ft_strdup(ft_strchr(*environ, '=') + 1);
 		if (!key || !value)
-			return (delete_env_lst(vars.next, key, value));
+			exit(delete_env_lst(vars.next, key, value));
 		tmp->next = init_env_var(key, value);
 		if (!tmp->next)
-			return (delete_env_lst(vars.next, key, value));
+			exit(delete_env_lst(vars.next, key, value));
 		tmp = tmp->next;
 		environ++;
 	}
