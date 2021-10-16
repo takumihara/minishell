@@ -40,11 +40,9 @@ int minishell(char *line)
 	int 		exit_status;
 
 	env_vars = init_env_lst();
-	exit_status = 0;
-	if (!env_vars)
-		return (EXIT_FAILURE);
+	exit_status = EXIT_SUCCESS;
 	if (line)
-		return (execute(expand(parse(lex(line)), &env_vars, 0), &env_vars));
+		return (execute(parse(lex(line)), &env_vars));
 	set_signal_handler();
 	while (1)
 	{
@@ -60,12 +58,11 @@ int minishell(char *line)
 			continue;
 		}
 		// todo: No need to pass arguments `char **env`?
-		node = expand(node, &env_vars, exit_status);
 		exit_status = execute(node, &env_vars);
 		add_history(line);
 		free(line);
 	}
-	return (EXIT_SUCCESS);
+	return (exit_status);
 }
 
 int	main(int argc, char **argv)

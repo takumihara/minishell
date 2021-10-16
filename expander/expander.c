@@ -13,6 +13,7 @@ t_ast_node	*expand(t_ast_node *root, t_env_var **env_vars, int exit_status)
 {
 	t_expander	*e;
 
+	(void)exit_status;
 	if (!root)
 		return (NULL);
 	if (!new_expander(&e, root, *env_vars))
