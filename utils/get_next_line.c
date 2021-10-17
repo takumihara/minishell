@@ -17,7 +17,7 @@ static t_gnl_status	process_buffer(char buff[], char **line)
 	*line = strappend(*line, buff, ft_strlen(buff));
 	if (!*line)
 		return (GNL_STATUS_ERROR_MALLOC);
-	return (GNL_STATUS_NOT_FINISHED);
+	return (GNL_NOT_RETURNING);
 }
 
 int	get_next_line(int fd, char **line)
@@ -29,10 +29,10 @@ int	get_next_line(int fd, char **line)
 	*line = ft_strdup("");
 	if (!*line)
 		return (GNL_STATUS_ERROR_MALLOC);
-	status = GNL_STATUS_NOT_FINISHED;
+	status = GNL_NOT_RETURNING;
 	if (buff[0])
 		status = process_buffer(buff, line);
-	if (status != GNL_STATUS_NOT_FINISHED)
+	if (status != GNL_NOT_RETURNING)
 		return (status);
 	while (1)
 	{
@@ -43,7 +43,7 @@ int	get_next_line(int fd, char **line)
 		if (read_bytes == 0)
 			return (GNL_STATUS_DONE);
 		status = process_buffer(buff, line);
-		if (status != GNL_STATUS_NOT_FINISHED)
+		if (status != GNL_NOT_RETURNING)
 			return (status);
 	}
 }

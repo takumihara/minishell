@@ -38,7 +38,6 @@ int minishell(char *line)
 {
 	t_env_var	*env_vars;
 	int 		exit_status;
-	int on = 1;
 
 	env_vars = init_env_lst();
 
@@ -46,10 +45,6 @@ int minishell(char *line)
 	if (register_env_var(ft_strdup("?"), ft_strdup("0"), &env_vars) == MALLOC_ERROR)
 		exit(delete_env_lst(env_vars, NULL, NULL));
 	if (line)
-		exit(execute(parse(lex(line)), &env_vars));
-	ioctl(STDIN_FILENO, FIONBIO, &on);
-	get_next_line(STDIN_FILENO, &line);
-	if (line[0])
 		exit(execute(parse(lex(line)), &env_vars));
 	exit_status = EXIT_SUCCESS;
 	set_signal_handler();
@@ -77,7 +72,21 @@ int minishell(char *line)
 
 int	main(int argc, char **argv)
 {
+	int				on;
+	char			*line;
+
 	if (argc == 3 && !ft_strcmp(argv[1], "-c"))
-		return (minishell(argv[2]));
-	return (minishell(NULL));
+		return (minishell(ft_strdup(argv[2])));
+	else
+	{
+		on = 1;
+		ioctl(STDIN_FILENO, FIONBIO, &on);
+		// todo: gnl status
+		// todo: what if there are two lines
+		get_next_line(STDIN_FILENO, &line);
+		if (line[0])
+			return (minishell(line));
+		free(line);
+		return (minishell(NULL));
+	}
 }
