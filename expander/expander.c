@@ -29,8 +29,10 @@ t_ast_node	*expand(t_ast_node *root, t_env_var **env_vars, int exit_status)
 
 t_ast_node	*search_command_arg_node(t_expander *e, t_ast_node *node)
 {
-	char	*original_data;
+	char		*original_data;
+	t_ast_node	*head;
 
+	head = node;
 	if (!node)
 		return (e->node);
 	if (!search_command_arg_node(e, node->right)
@@ -49,8 +51,12 @@ t_ast_node	*search_command_arg_node(t_expander *e, t_ast_node *node)
 	if (!node)
 		return (NULL);
 	free(original_data);
-	node->data = remove_quotes(node->data, e);
-	return (node);
+	while (node)
+	{
+		node->data = remove_quotes(node->data, e);
+		node = node->right;
+	}
+	return (head);
 }
 
 int	quotation_status(char c, int status)
