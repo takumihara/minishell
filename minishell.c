@@ -11,7 +11,7 @@
 #include "lexer/lexer.h"
 #include "expander/expander.h"
 #include "execute/execute.h"
-
+#include "utils/get_next_line.h"
 
 //	rl_on_new_line();
 //	rl_replace_line("", 0); // <- 現状、何故かこの関数だけがコンパイルエラーとなり動かない
@@ -44,6 +44,8 @@ int minishell(char *line)
 	// todo: null check
 	if (register_env_var(ft_strdup("?"), ft_strdup("0"), &env_vars) == MALLOC_ERROR)
 		exit(delete_env_lst(env_vars, NULL, NULL));
+	if (line)
+		exit(execute(parse(lex(line)), &env_vars));
 	exit_status = EXIT_SUCCESS;
 	set_signal_handler();
 	while (1)
@@ -70,7 +72,21 @@ int minishell(char *line)
 
 int	main(int argc, char **argv)
 {
+	int				on;
+	char			*line;
+
 	if (argc == 3 && !ft_strcmp(argv[1], "-c"))
-		return (minishell(argv[2]));
-	return (minishell(NULL));
+		return (minishell(ft_strdup(argv[2])));
+	else
+	{
+		on = 1;
+		ioctl(STDIN_FILENO, FIONBIO, &on);
+		// todo: gnl status
+		// todo: what if there are two lines
+		get_next_line(STDIN_FILENO, &line);
+		if (line[0])
+			return (minishell(line));
+		free(line);
+		return (minishell(NULL));
+	}
 }
