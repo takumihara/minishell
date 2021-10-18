@@ -121,7 +121,17 @@ int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bo
 			close(pipefd[READ]);
 		if (execute_builtin(e, sc->argc, sc->argv, is_last))
 			exit(EXIT_SUCCESS);
-		if (execvp(sc->argv[0], sc->argv) == -1)
+		if (!ft_strchr(sc->argv[0], '/'))
+		{
+			if (!get_cmd_path(e, &sc->argv[0]))
+			{
+				ft_putstr_fd("minishell: ", STDERR_FILENO);
+				ft_putstr_fd(sc->argv[0], STDERR_FILENO);
+				ft_putstr_fd(": command not found", STDERR_FILENO);
+			}
+		}
+//		if (execvp(sc->argv[0], sc->argv) == -1)
+		if (execve(sc->argv[0], sc->argv, environ) == -1)
 		{
 			ft_putstr_fd("minishell: ", 2);
 			ft_putstr_fd(sc->argv[0], 2);

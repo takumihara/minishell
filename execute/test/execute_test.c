@@ -1,32 +1,40 @@
 #include "../execute.h"
+#include "../../env/env.h"
 #include "../../lexer/lexer.h"
 #include "../../parser/parser.h"
 
-#define GENERAL_CASE -1
-#define ERROR_CASE -2
-
 #define BLUE    "\033[34m"      /* Blue */
 
-typedef struct s_test {
-	t_node_type expected_type;
-	int expected_level;
-	char expected_literal[52];
-} test;
+int main()
+{
+	t_env_var	*env_vars;
+//	t_executor *e;
 
-void test_execution(char input[], test *expected, int test_type);
-
-int main(int argc, char **argv) {
-	if (argc != 2) {
-		printf("argument num wrong");
-		return(1);
+	env_vars = init_env_lst();
+	if (register_env_var(ft_strdup("?"), ft_strdup("0"), &env_vars) == MALLOC_ERROR)
+		exit(delete_env_lst(env_vars, NULL, NULL));
+//	if (!new_executor(&e, NULL, &env_vars))
+//		exit(EXIT_FAILURE);
+	char *path_from_env = get_env_value("PATH", env_vars);
+	char **paths = split_path_from_env(path_from_env);
+	for (int i = 0; paths[i]; i++) {
+		printf("paths[%d]: %s \n", i, paths[i]);
 	}
-	t_token *token = lex(argv[1]);
-	t_ast_node *node = parse(token);
-	if (!node)
-	{
-		fprintf(stderr, RED "parse() returned NULL!\n" RESET);
-		return (1);
-	}
-	execute(node);
+//	get_cmd_path(e, "cat")
 }
+
+//int main(int argc, char **argv) {
+//	if (argc != 2) {
+//		printf("argument num wrong");
+//		return(1);
+//	}
+//	t_token *token = lex(argv[1]);
+//	t_ast_node *node = parse(token);
+//	if (!node)
+//	{
+//		fprintf(stderr, RED "parse() returned NULL!\n" RESET);
+//		return (1);
+//	}
+//	execute(node);
+//}
 

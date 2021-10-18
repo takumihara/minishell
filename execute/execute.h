@@ -120,4 +120,8 @@ bool	new_t_redirect_in(t_executor *e, t_simple_command *sc, char *data, t_node_t
 // execute_command.c
 int		execute_pipeline(t_executor *e, t_pipeline *c);
 
+// get_cmd_path.c
+char **split_path_from_env(const char *path_from_env);
+bool	get_cmd_path(t_executor *e, char **command);
+
 #endif //MINISHELL_EXECUTE_H

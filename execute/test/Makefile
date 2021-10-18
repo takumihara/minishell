@@ -1,12 +1,19 @@
 NAME = a.out
 
+CURRENT_PATH	= .
 EXECUTE_PATH	= ..
+EXPANDER_PATH	= ../../expander
 PARSER_PATH		= ../../parser
 LEXER_PATH		= ../../lexer
 AST_PATH		= ../../ast
 UTILS_PATH		= ../../utils
-SRC_PATHS		= . $(EXECUTE_PATH) $(PARSER_PATH) $(LEXER_PATH) $(AST_PATH) $(UTILS_PATH)
+BUILTIN_PATH	= ../../builtin
+ENV_PATH		= ../../env
+
+SRC_PATHS		= $(CURRENT_PATH) $(EXPANDER_PATH) $(BUILTIN_PATH) $(EXECUTE_PATH) $(PARSER_PATH) $(LEXER_PATH) $(AST_PATH) $(UTILS_PATH) $(ENV_PATH)
 SRCS			= $(foreach path, $(SRC_PATHS), $(wildcard $(path)/*.c))
+
+VPATH		= $(CURRENT_PATH):$(BUILTIN_PATH):$(EXECUTE_PATH):$(PARSER_PATH):$(LEXER_PATH):$(AST_PATH):$(UTILS_PATH):$(ENV_PATH):$(EXPANDER_PATH)
 
 OBJDIR  = ./obj
 OBJS    = $(addprefix $(OBJDIR)/, $(notdir $(SRCS:%.c=%.o)))
@@ -25,26 +32,6 @@ $(NAME): $(OBJS)
 	$(CC) $(CFLAG) $(INCLUDE) $^ -o $@ -L$(LIBFT_PATH) -lft
 
 $(OBJDIR)/%.o: %.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAG) -o $@ -c $<
-
-$(OBJDIR)/%.o: $(EXECUTE_PATH)/%.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAG) -o $@ -c $<
-
-$(OBJDIR)/%.o: $(PARSER_PATH)/%.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAG) -o $@ -c $<
-
-$(OBJDIR)/%.o: $(LEXER_PATH)/%.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAG) -o $@ -c $<
-
-$(OBJDIR)/%.o: $(AST_PATH)/%.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAG) -o $@ -c $<
-
-$(OBJDIR)/%.o: $(UTILS_PATH)/%.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAG) -o $@ -c $<
 
