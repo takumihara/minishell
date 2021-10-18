@@ -19,7 +19,7 @@ char *debug_node_type[20] = {
 		"HEREDOC_NODE",
 		"REDIRECT_OPERAND_NODE",
 		"SUBSHELL_NODE",
-		"SUBSHELL_NEWLINE_NODE",
+		"SUBSHELL_NEWLINE_MS_NODE",
 };
 
 typedef struct s_test {
@@ -173,7 +173,7 @@ int main() {
 		char input[] = "(echo hello \n echo success)";
 		test expected[] = {
 				{SUBSHELL_NODE,         0, ""},
-				{SUBSHELL_NEWLINE_NODE, 1, ""},
+				{SUBSHELL_NEWLINE_MS_NODE, 1, ""},
 				{COMMAND_ARG_NODE,      2, "echo"},
 				{COMMAND_ARG_NODE,      3, "hello"},
 				{COMMAND_ARG_NODE,      2, "echo"},

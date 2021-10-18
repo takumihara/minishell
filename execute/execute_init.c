@@ -113,7 +113,7 @@ void	init_compound_list(t_executor *e, t_compound_list **cl, t_ast_node *node)
 		(*cl)->condition = CONDITION_OR_IF;
 		(*cl)->compound_list_next = node->right;
 	}
-	else if (node->type == SUBSHELL_NEWLINE_NODE)
+	else if (node->type == SUBSHELL_NEWLINE_MS_NODE)
 	{
 		pipeline(e, &(*cl)->pipeline, node->left);
 		(*cl)->condition = CONDITION_NL;

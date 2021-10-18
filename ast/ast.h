@@ -19,7 +19,7 @@ typedef enum e_node_type {
 	HEREDOC_NODE,
 	REDIRECT_OPERAND_NODE,
 	SUBSHELL_NODE,
-	SUBSHELL_NEWLINE_NODE,
+	SUBSHELL_NEWLINE_MS_NODE,
 }	t_node_type;
 
 struct s_ast_node {

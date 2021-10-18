@@ -29,8 +29,8 @@ typedef enum e_token_type {
 	ENVIRONMENT,
 	NOT_CLOSED,
 	REDIRECT_MODIFIER,
-	SUBSHELL_NEWLINE,
-	NEWLINE,
+	SUBSHELL_NEWLINE_MS,
+	NEWLINE_MS,
 }	t_token_type;
 
 typedef struct s_string {
