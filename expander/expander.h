@@ -44,10 +44,12 @@ bool		new_expander(t_expander **e, t_ast_node *root, t_env_var *env_vars);
 bool		is_expandable_string(char *str, char delimiter);
 int			expand_perror(t_expander *e, const char *s);
 void		*expand_redirect_error(char *original_data);
+int			quotation_status(char c, int status);
 
 // expander_env.c
 size_t		var_strlen(const char *str);
 char		*str_insert(char *data, size_t replace_start, char *env_value, size_t env_value_len);
+bool		is_expandable_env_var(char start, int status);
 
 // expander_wildcard.c
 char		*append_wildcard_strings(char *dst, char *src, const char *data, t_expander *e);
@@ -58,7 +60,7 @@ char		*sort_strings(char *src, t_expander *e);
 // expander_quote.c
 bool		is_quote(const char c);
 size_t		unquoted_strlen(const char *str);
-bool		is_contain_quotes(const char *str);
+bool		contain_quotes(const char *str);
 char		*unquoted_memmove(char *dst, char *src);
 int			in_quotes_type(char c, size_t count);
 

@@ -27,7 +27,7 @@ size_t	unquoted_strlen(const char *str)
 	return (len);
 }
 
-bool	is_contain_quotes(const char *str)
+bool	contain_quotes(const char *str)
 {
 	return (ft_strchr(str, '\'') || ft_strchr(str, '\"'));
 }

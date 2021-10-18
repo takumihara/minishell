@@ -3,7 +3,7 @@
 t_ast_node	*search_command_arg_node(t_expander *e, t_ast_node *node);
 char		*expand_word(t_expander *e, char delimiter);
 char		*expand_quotes_string(char *data, size_t replace_start, char quote_type);
-char		*expand_environment_variable(char *data, size_t replace_starts, t_expander *e);
+char		*expand_environment_variable(char *data, size_t replace_starts, t_expander *e, int status);
 char		*expand_wildcard(char *data, size_t pre_len, t_expander *e);
 t_ast_node	*word_splitting(t_ast_node *node, t_expander *e, char *original_data);
 char		*remove_quotes(char *data, t_expander *e);
@@ -51,35 +51,7 @@ t_ast_node	*search_command_arg_node(t_expander *e, t_ast_node *node)
 	if (!node)
 		return (NULL);
 	free(original_data);
-	while (node)
-	{
-		node->data = remove_quotes(node->data, e);
-		node = node->right;
-	}
 	return (head);
-}
-
-int	quotation_status(char c, int status)
-{
-	if (c == '\"')
-	{
-		if (status == IN_DOUBLE_QUOTE)
-			status = OUTSIDE;
-		else if (status == IN_SINGLE_QUOTE)
-			status = IN_SINGLE_QUOTE;
-		else
-			status = IN_DOUBLE_QUOTE;
-	}
-	else if (c == '\'')
-	{
-		if (status == IN_DOUBLE_QUOTE)
-			status = IN_DOUBLE_QUOTE;
-		else if (status == IN_SINGLE_QUOTE)
-			status = OUTSIDE;
-		else
-			status = IN_SINGLE_QUOTE;
-	}
-	return (status);
 }
 
 char	*expand_word(t_expander *e, char delimiter)
@@ -99,7 +71,7 @@ char	*expand_word(t_expander *e, char delimiter)
 	{
 		status = quotation_status(data[i], status);
 		if (data[i] == '$' && delimiter == '$' && status != IN_SINGLE_QUOTE)
-			data = expand_environment_variable(data, i, e);
+			data = expand_environment_variable(data, i, e, status);
 		else if (data[i] == '*' && delimiter == '*' && status == OUTSIDE)
 			data = expand_wildcard(data, i, e);
 		if (!data)
@@ -112,16 +84,19 @@ char	*expand_word(t_expander *e, char delimiter)
 }
 
 // todo: $? expands exit status
-char	*expand_environment_variable(char *data, size_t replace_start, t_expander *e)
+char	*expand_environment_variable(char *data, size_t replace_start, t_expander *e, int status)
 {
 	const char		*var_start = &data[replace_start + 1];
 	const size_t	var_len = var_strlen(var_start);
 	char			*key;
 	char			*value;
 
+	if (!is_expandable_env_var(*var_start, status))
+		return (data);
 	if (*var_start == '?')
 		value = get_env_value("?", e->env_vars);
-	else{
+	else
+	{
 		key = malloc(sizeof(char) * (var_len + 1));
 		if (!key)
 			exit(expand_perror(e, "malloc"));
@@ -196,12 +171,13 @@ t_ast_node	*word_splitting(t_ast_node *node, t_expander *e, char *original_data)
 			node->data = split[i];
 			if (node->type != COMMAND_ARG_NODE && ft_strcmp(node->data, original_data))
 				return (expand_redirect_error(original_data));
+			node->data = remove_quotes(split[i], e);
 		}
 		else
 		{
 			if (!new_ast_node(&result))
 				exit(expand_perror(e, "malloc"));
-			result->data = split[i];
+			result->data = remove_quotes(split[i], e);
 			result->type = COMMAND_ARG_NODE;
 			node->right = result;
 			node = node->right;
@@ -217,7 +193,7 @@ char	*remove_quotes(char *data, t_expander *e)
 	size_t	unquoted_len;
 	char	*unquoted_str;
 
-	if (!is_contain_quotes(data))
+	if (!contain_quotes(data))
 		return (data);
 	unquoted_len = unquoted_strlen(data);
 	unquoted_str = malloc(sizeof(char) * (unquoted_len + 1));

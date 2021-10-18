@@ -33,3 +33,18 @@ char	*str_insert(char *data, size_t replace_start, char *env_value, size_t env_v
 	expanded_str[expansion_len] = '\0';
 	return (data);
 }
+
+bool	is_expandable_env_var(char start, int status)
+{
+	if (status == OUTSIDE)
+	{
+		if (start == '\0')
+			return (false);
+	}
+	else if (status == IN_DOUBLE_QUOTE)
+	{
+		if (start == '\'' || start == '\"')
+			return (false);
+	}
+	return (true);
+}
