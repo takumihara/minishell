@@ -26,10 +26,6 @@ static void	signal_handler(int signo)
 		rl_replace_line("", 0);
 		rl_redisplay();
 	}
-	else if (signo == SIGQUIT)
-	{
-		rl_redisplay();
-	}
 }
 
 void	set_signal_handler(void)
