@@ -5,22 +5,77 @@
 
 #define BLUE    "\033[34m"      /* Blue */
 
+void test_split_path_from_env_normal();
+void test_split_path_from_env_colon();
+void print_err_cnt();
+int err_cnt;
+
 int main()
 {
-	t_env_var	*env_vars;
-//	t_executor *e;
+	test_split_path_from_env_normal();
+	test_split_path_from_env_colon();
+	print_err_cnt();
+}
 
+void test_split_path_from_env_normal()
+{
+	t_env_var	*env_vars;
+	char		*path_from_env;
+	char		**paths;
+	char		**expected;
+
+	// basic test (w/o :)
 	env_vars = init_env_lst();
 	if (register_env_var(ft_strdup("?"), ft_strdup("0"), &env_vars) == MALLOC_ERROR)
 		exit(delete_env_lst(env_vars, NULL, NULL));
-//	if (!new_executor(&e, NULL, &env_vars))
-//		exit(EXIT_FAILURE);
-	char *path_from_env = get_env_value("PATH", env_vars);
-	char **paths = split_path_from_env(path_from_env);
-	for (int i = 0; paths[i]; i++) {
-		printf("paths[%d]: %s \n", i, paths[i]);
+	path_from_env = get_env_value("PATH", env_vars);
+	paths = split_path_from_env(path_from_env);
+	expected = ft_split(path_from_env, ':');
+
+	for (int i = 0; expected[i]; i++) {
+		if (ft_strcmp(expected[i], paths[i]))
+		{
+			printf("expected=%s got=%s\n", expected[i], paths[i]);
+			err_cnt++;
+		}
 	}
-//	get_cmd_path(e, "cat")
+	free_2d_array((void ***) &paths);
+	free_2d_array((void ***) &expected);
+	delete_env_lst(env_vars, NULL, NULL);
+	env_vars = NULL;
+	path_from_env = NULL;
+	paths = NULL;
+	system("leaks a.out");
+
+}
+
+void test_split_path_from_env_colon()
+{
+	char *path_from_env = ft_strdup(":hello::test:test:test::");
+	char *cur_path = getcwd(NULL, 0);
+	char *expected[10] = {cur_path, "hello", cur_path, "test", "test", "test", cur_path, cur_path, NULL };
+
+	char **paths = split_path_from_env(path_from_env);
+	for (int i = 0; expected[i]; i++) {
+		if (ft_strcmp(expected[i], paths[i]))
+		{
+			printf("expected=%s got=%s\n", expected[i], paths[i]);
+			err_cnt++;
+		}
+	}
+	free_2d_array((void ***) &paths);
+	free(cur_path);
+	free(path_from_env);
+	path_from_env = NULL;
+	paths = NULL;
+	system("leaks a.out");
+}
+
+void print_err_cnt() {
+	if (err_cnt == 0)
+		printf(BLUE "TOTAL ERROR COUNT: 0 \n" RESET);
+	else
+		printf(RED "TOTAL ERROR COUNT: %d \n" RESET, err_cnt);
 }
 
 //int main(int argc, char **argv) {

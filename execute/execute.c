@@ -130,7 +130,6 @@ int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bo
 				ft_putstr_fd(": command not found", STDERR_FILENO);
 			}
 		}
-//		if (execvp(sc->argv[0], sc->argv) == -1)
 		if (execve(sc->argv[0], sc->argv, environ) == -1)
 		{
 			ft_putstr_fd("minishell: ", 2);

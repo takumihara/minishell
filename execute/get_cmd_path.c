@@ -29,6 +29,7 @@ static char **create_paths(const char *path_from_env, t_sep_list *sep_list, size
 	char	**paths;
 	size_t	start;
 	int		i;
+	size_t	len;
 
 	paths = malloc(sizeof(*paths) * (list_len + 1));
 	if (!paths)
@@ -38,7 +39,11 @@ static char **create_paths(const char *path_from_env, t_sep_list *sep_list, size
 	i = 0;
 	while (sep_list)
 	{
-		paths[i++] = ft_substr(path_from_env, start + 1, sep_list->sep_index - start - 1);
+		len = sep_list->sep_index - start - 1;
+		if (len == 0)
+			paths[i++] = getcwd(NULL, 0);//todo: check when can the returned value be NULL
+		else
+			paths[i++] = ft_substr(path_from_env, start + 1, len);
 		start = sep_list->sep_index;
 		sep_list = sep_list->next;
 	}
@@ -115,7 +120,8 @@ bool get_cmd_path(t_executor *e, char **command)
 			break ;
 		free(path);
 	}
-	free(command);
+	free(*command);
+	*command = path; // todo: argv[0] vs path
 	free_2d_array((void ***) &paths);
-	return (path);
+	return (true);
 }
