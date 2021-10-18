@@ -51,35 +51,12 @@ t_ast_node	*search_command_arg_node(t_expander *e, t_ast_node *node)
 	if (!node)
 		return (NULL);
 	free(original_data);
-	while (node)
-	{
-		node->data = remove_quotes(node->data, e);
-		node = node->right;
-	}
+	// while (node)
+	// {
+	// 	node->data = remove_quotes(node->data, e);
+	// 	node = node->right;
+	// }
 	return (head);
-}
-
-int	quotation_status(char c, int status)
-{
-	if (c == '\"')
-	{
-		if (status == IN_DOUBLE_QUOTE)
-			status = OUTSIDE;
-		else if (status == IN_SINGLE_QUOTE)
-			status = IN_SINGLE_QUOTE;
-		else
-			status = IN_DOUBLE_QUOTE;
-	}
-	else if (c == '\'')
-	{
-		if (status == IN_DOUBLE_QUOTE)
-			status = IN_DOUBLE_QUOTE;
-		else if (status == IN_SINGLE_QUOTE)
-			status = OUTSIDE;
-		else
-			status = IN_SINGLE_QUOTE;
-	}
-	return (status);
 }
 
 char	*expand_word(t_expander *e, char delimiter)
@@ -196,12 +173,13 @@ t_ast_node	*word_splitting(t_ast_node *node, t_expander *e, char *original_data)
 			node->data = split[i];
 			if (node->type != COMMAND_ARG_NODE && ft_strcmp(node->data, original_data))
 				return (expand_redirect_error(original_data));
+			node->data = remove_quotes(split[i], e);
 		}
 		else
 		{
 			if (!new_ast_node(&result))
 				exit(expand_perror(e, "malloc"));
-			result->data = split[i];
+			result->data = remove_quotes(split[i], e);
 			result->type = COMMAND_ARG_NODE;
 			node->right = result;
 			node = node->right;
