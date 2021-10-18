@@ -42,7 +42,7 @@ bonus: $(NAME)
 
 $(OBJDIR)/%.o: %.c
 	@if [ ! -d $(dir $@) ];then mkdir $(dir $@); fi
-	$(CC) $(CFLAGS) -o $@ -c $<
+	$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
 
 clean:
 	@make clean -C $(LIBFT_PATH)
