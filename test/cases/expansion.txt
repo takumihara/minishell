@@ -33,3 +33,9 @@ export str='   a  bb  ccc   ' && echo   """"$str""""
 export str='   a  bb  ccc   ' && echo   a""""$str""""b
 export str='   a  bb  ccc   ' && echo   a """"$str""""   b
 export str='   a  bb  ccc   ' && echo $"str" "$'str'"   ""$str""   "$str" '$str'
+echo $
+echo "$"
+echo "$'PATH'"
+echo "$a'PATH'"
+echo "'PATH'$"
+echo "'PATH'$a"
