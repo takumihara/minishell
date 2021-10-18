@@ -9,10 +9,10 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	if (!s)
 		return (NULL);
 	len_s = ft_strlen(s);
-	if (len_s < (start + len) && start < len_s)
-		len = len_s - start;
-	else if (start >= len_s)
+	if (start >= len_s)
 		return (ft_calloc(1, sizeof(char)));
+	if (len_s < (start + len))
+		len = len_s - start;
 	rtn = (char *)ft_calloc(len + 1, sizeof(char));
 	if (!rtn)
 		return (NULL);
