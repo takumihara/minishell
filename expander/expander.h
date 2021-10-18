@@ -49,6 +49,7 @@ int			quotation_status(char c, int status);
 // expander_env.c
 size_t		var_strlen(const char *str);
 char		*str_insert(char *data, size_t replace_start, char *env_value, size_t env_value_len);
+bool		is_expandable_env_var(char start, int status);
 
 // expander_wildcard.c
 char		*append_wildcard_strings(char *dst, char *src, const char *data, t_expander *e);

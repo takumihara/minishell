@@ -3,7 +3,7 @@
 t_ast_node	*search_command_arg_node(t_expander *e, t_ast_node *node);
 char		*expand_word(t_expander *e, char delimiter);
 char		*expand_quotes_string(char *data, size_t replace_start, char quote_type);
-char		*expand_environment_variable(char *data, size_t replace_starts, t_expander *e);
+char		*expand_environment_variable(char *data, size_t replace_starts, t_expander *e, int status);
 char		*expand_wildcard(char *data, size_t pre_len, t_expander *e);
 t_ast_node	*word_splitting(t_ast_node *node, t_expander *e, char *original_data);
 char		*remove_quotes(char *data, t_expander *e);
@@ -51,11 +51,6 @@ t_ast_node	*search_command_arg_node(t_expander *e, t_ast_node *node)
 	if (!node)
 		return (NULL);
 	free(original_data);
-	// while (node)
-	// {
-	// 	node->data = remove_quotes(node->data, e);
-	// 	node = node->right;
-	// }
 	return (head);
 }
 
@@ -76,7 +71,7 @@ char	*expand_word(t_expander *e, char delimiter)
 	{
 		status = quotation_status(data[i], status);
 		if (data[i] == '$' && delimiter == '$' && status != IN_SINGLE_QUOTE)
-			data = expand_environment_variable(data, i, e);
+			data = expand_environment_variable(data, i, e, status);
 		else if (data[i] == '*' && delimiter == '*' && status == OUTSIDE)
 			data = expand_wildcard(data, i, e);
 		if (!data)
@@ -89,16 +84,19 @@ char	*expand_word(t_expander *e, char delimiter)
 }
 
 // todo: $? expands exit status
-char	*expand_environment_variable(char *data, size_t replace_start, t_expander *e)
+char	*expand_environment_variable(char *data, size_t replace_start, t_expander *e, int status)
 {
 	const char		*var_start = &data[replace_start + 1];
 	const size_t	var_len = var_strlen(var_start);
 	char			*key;
 	char			*value;
 
+	if (!is_expandable_env_var(*var_start, status))
+		return (data);
 	if (*var_start == '?')
 		value = get_env_value("?", e->env_vars);
-	else{
+	else
+	{
 		key = malloc(sizeof(char) * (var_len + 1));
 		if (!key)
 			exit(expand_perror(e, "malloc"));
