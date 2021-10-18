@@ -59,7 +59,7 @@ char		*sort_strings(char *src, t_expander *e);
 // expander_quote.c
 bool		is_quote(const char c);
 size_t		unquoted_strlen(const char *str);
-bool		is_contain_quotes(const char *str);
+bool		contain_quotes(const char *str);
 char		*unquoted_memmove(char *dst, char *src);
 int			in_quotes_type(char c, size_t count);
 

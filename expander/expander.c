@@ -195,7 +195,7 @@ char	*remove_quotes(char *data, t_expander *e)
 	size_t	unquoted_len;
 	char	*unquoted_str;
 
-	if (!is_contain_quotes(data))
+	if (!contain_quotes(data))
 		return (data);
 	unquoted_len = unquoted_strlen(data);
 	unquoted_str = malloc(sizeof(char) * (unquoted_len + 1));
