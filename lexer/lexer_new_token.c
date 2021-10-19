@@ -57,7 +57,7 @@ t_token	*new_token_newline(t_lexer *l)
 
 	newline_num = 0;
 	newline_type = ILLEGAL;
-	while (l->ch != '\n')
+	while (l->ch == '\n')
 	{
 		read_char(l);
 		newline_num++;

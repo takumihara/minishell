@@ -533,6 +533,7 @@ int main()
 				{STRING, "echo"},
 				{SUBSHELL_NEWLINE_MS, "\n"},
 				{STRING, "$PATH"},
+				{SUBSHELL_NEWLINE_MS, "\n"},
 				{RPAREN, ")"},
 				{EOL, "\0"},
 				{TEST_EOL, ""},
@@ -563,6 +564,7 @@ int main()
 				{SUBSHELL_NEWLINE_MS, "\n\n\n"},
 				{STRING, "echo"},
 				{STRING, "hello"},
+				{SUBSHELL_NEWLINE_MS, "\n\n\n"},
 				{RPAREN, ")"},
 				{EOL, "\0"},
 				{TEST_EOL, ""},
@@ -605,7 +607,7 @@ int main()
 				{STRING, "echo"},
 				{STRING, "hello"},
 				{REDIRECT_APPEND, ">>"},
-				{NEWLINE_MS, "\n"},
+				{NEWLINE_MS, "\n\n"},
 				{STRING, "cd"},
 				{STRING, ".."},
 				{EOL, "\0"},
@@ -629,6 +631,8 @@ int main()
 		};
 		compare_literal_and_type(input, debug_token_type, NEWLINE_MS, test);
 	}
+
+	system("leaks a.out");
 
 }
 
