@@ -63,6 +63,8 @@ size_t		unquoted_strlen(const char *str);
 bool		contain_quotes(const char *str);
 char		*unquoted_memmove(char *dst, char *src);
 int			in_quotes_type(char c, size_t count);
+bool		is_valid_empty(char *str);
+void		remove_substr(char *str);
 
 // expander_splitting.c
 char		**split_by_space_skip_quotes(char const *str, const char *delims);

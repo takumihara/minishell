@@ -63,3 +63,53 @@ char	*unquoted_memmove(char *dst, char *src)
 	*dst = '\0';
 	return (dst_start);
 }
+
+bool		is_valid_empty(char *str)
+{
+	const size_t	original_len = ft_strlen(str);
+	size_t			quotes_len;
+	int				status;
+
+	if (!(ft_strstr(str, "\"\"") || ft_strstr(str, "\'\'")))
+		return (true);
+	status = OUTSIDE;
+	quotes_len = 0;
+	while (*str)
+	{
+		if (status == OUTSIDE)
+		{
+			if (str == ft_strstr(str, "\"\"") || str == ft_strstr(str, "\'\'"))
+			{
+				str = str + 2;
+				quotes_len = quotes_len + 2;	
+				continue ;
+			}
+		}
+		status = quotation_status(*str, status);
+		str++;
+	}
+	if (original_len != quotes_len)
+		return (false);
+	return (true);
+}
+
+void	remove_substr(char *str)
+{
+	const size_t	len = ft_strlen(str);
+	int				status;
+
+	status = OUTSIDE;
+	while (*str)
+	{
+		if (status == OUTSIDE)
+		{
+			if (str == ft_strstr(str, "\"\"") || str == ft_strstr(str, "\'\'"))
+			{
+				ft_strlcpy(str, str + 2, len + 1);
+				continue ;
+			}
+		}
+		status = quotation_status(*str, status);
+		str++;
+	}
+}
