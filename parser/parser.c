@@ -77,13 +77,16 @@ static t_ast_node *redirection(t_parser *p);
 
 void	*parse(t_token *token)
 {
+	t_token		*head;
 	t_parser	*p;
 	t_ast_node	*node;
 	char		*err_msg;
 
+	head = token;
 	if (!assign_mem((void **) &p, new_parser(token)))
 		return (NULL);
 	node = command_line(p);
+	token_lstclear(head);
 	err_msg = handle_err(p, node);
 	if (err_msg)
 		return ((void *)err_msg);
@@ -95,18 +98,20 @@ void	*parse(t_token *token)
 
 t_ast_node *parse(t_token *token)
 {
+	t_token			*head;
 	t_parser		*p;
 	t_ast_node		*root;
 
+	head = token;
 	if (!assign_mem((void **) &p, new_parser(token)))
 		return (NULL);
 	root = command_line(p);
+	token_lstclear(head);
 	if (handle_err(p, root))
 	{
 		delete_ast_nodes(root, NULL);
 		root = NULL;
 	}
-	token_lstclear(p->token);
 	free(p);
 	return (root);
 }

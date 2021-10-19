@@ -94,7 +94,6 @@ bool	handle_err(t_parser *p, t_ast_node *root)
 	else if (p->err == ERR_MALLOC)
 	{
 		perror("malloc");
-		token_lstclear(p->token);
 		free(p);
 		delete_ast_nodes(root, NULL);
 		exit(EXIT_FAILURE);
