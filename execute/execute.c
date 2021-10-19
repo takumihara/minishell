@@ -1,4 +1,5 @@
 #include "execute.h"
+#include "exit_status.h"
 
 int execute_command(t_executor *e, void *command, int type, bool is_last, bool is_pipe, int	pipefd[]);
 int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bool is_pipe, int	pipefd[]);
@@ -105,6 +106,8 @@ int execute_compound_list(t_executor *e, t_compound_list *cl)
 int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bool is_pipe, int	pipefd[])
 {
 	pid_t	pid;
+	char	*path;
+	char	**envp;
 
 	execute_redirect(sc);
 	if (sc->argc == 0)
@@ -114,6 +117,7 @@ int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bo
 	}
 	if (!is_pipe && execute_builtin(e, sc->argc, sc->argv, is_last))
 		return (CHILD_PROCESS_NOT_CREATED);
+	envp = create_envp(e);
 	pid = fork();
 	if (pid == CHILD_PROCESS)
 	{
@@ -122,21 +126,13 @@ int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bo
 		if (execute_builtin(e, sc->argc, sc->argv, is_last))
 			exit(EXIT_SUCCESS);
 		if (!ft_strchr(sc->argv[0], '/'))
-		{
-			if (!get_cmd_path(e, &sc->argv[0]))
-			{
-				ft_putstr_fd("minishell: ", STDERR_FILENO);
-				ft_putstr_fd(sc->argv[0], STDERR_FILENO);
-				ft_putstr_fd(": command not found", STDERR_FILENO);
-			}
-		}
-		if (execve(sc->argv[0], sc->argv, environ) == -1)
-		{
-			ft_putstr_fd("minishell: ", 2);
-			ft_putstr_fd(sc->argv[0], 2);
-			ft_putstr_fd(": command not found\n", 2);
-			exit(INEXECUTABLE);
-		}
+			path = get_cmd_path(e, sc->argv[0]);
+		else
+			path = sc->argv[0];
+		if (!path)
+			handle_exec_error(sc->argv[0], false);
+		if (execve(path, sc->argv, envp) == -1)
+			handle_exec_error(path, true);
 	}
 	else if (pid < 0)
 		exit(ex_perror(e, "minishell: fork"));

@@ -1,0 +1,8 @@
+#ifndef EXIT_STATUS_H
+#define EXIT_STATUS_H
+
+#define ES_PERMISSION_DENIED 126
+#define ES_COMMAND_NOT_FOUND 127
+#define ES_NO_SUCH_FILE 127
+
+#endif //EXIT_STATUS_H

@@ -1,33 +1,35 @@
 #include "../execute.h"
-#include "../../env/env.h"
-#include "../../lexer/lexer.h"
-#include "../../parser/parser.h"
+#include "../../builtin/builtin.h"
 
 #define BLUE    "\033[34m"      /* Blue */
 
-void test_split_path_from_env_normal();
+void test_split_path_from_env_normal(t_env_var *env_vars);
 void test_split_path_from_env_colon();
 void print_err_cnt();
+void test_create_envp(char **expected, t_env_var *env_vars);
+
 int err_cnt;
 
-int main()
+int main(int argc, char **argv, char **envp)
 {
-	test_split_path_from_env_normal();
+	(void)argc;
+	(void)argv;
+	t_env_var	*env_vars = init_env_lst();
+	if (register_env_var(ft_strdup("?"), ft_strdup("0"), &env_vars) == MALLOC_ERROR)
+		exit(delete_env_lst(env_vars, NULL, NULL));
+	test_split_path_from_env_normal(env_vars);
 	test_split_path_from_env_colon();
+	test_create_envp(envp, env_vars);
 	print_err_cnt();
 }
 
-void test_split_path_from_env_normal()
+void test_split_path_from_env_normal(t_env_var *env_vars)
 {
-	t_env_var	*env_vars;
 	char		*path_from_env;
 	char		**paths;
 	char		**expected;
 
-	// basic test (w/o :)
-	env_vars = init_env_lst();
-	if (register_env_var(ft_strdup("?"), ft_strdup("0"), &env_vars) == MALLOC_ERROR)
-		exit(delete_env_lst(env_vars, NULL, NULL));
+
 	path_from_env = get_env_value("PATH", env_vars);
 	paths = split_path_from_env(path_from_env);
 	expected = ft_split(path_from_env, ':');
@@ -41,12 +43,9 @@ void test_split_path_from_env_normal()
 	}
 	free_2d_array((void ***) &paths);
 	free_2d_array((void ***) &expected);
-	delete_env_lst(env_vars, NULL, NULL);
-	env_vars = NULL;
 	path_from_env = NULL;
 	paths = NULL;
 	system("leaks a.out");
-
 }
 
 void test_split_path_from_env_colon()
@@ -68,6 +67,23 @@ void test_split_path_from_env_colon()
 	free(path_from_env);
 	path_from_env = NULL;
 	paths = NULL;
+	system("leaks a.out");
+}
+
+void test_create_envp(char **expected, t_env_var *env_vars)
+{
+	t_executor *e;
+	char		**envp;
+
+	new_executor(&e, NULL, &env_vars);
+	envp = create_envp(e);
+	for (int i = 0; expected[i] && envp[i]; i++) {
+		if (ft_strcmp(expected[i], envp[i]))
+		{
+			printf("expected=%s got=%s\n", expected[i], envp[i]);
+			err_cnt++;
+		}
+	}
 	system("leaks a.out");
 }
 

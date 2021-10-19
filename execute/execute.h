@@ -15,9 +15,6 @@
 # define CONDITION_OR_IF 1
 # define CONDITION_NL 2
 
-# define NOTFOUND 126
-# define INEXECUTABLE 127
-
 # define READ 0
 # define WRITE 1
 
@@ -122,6 +119,12 @@ int		execute_pipeline(t_executor *e, t_pipeline *c);
 
 // get_cmd_path.c
 char **split_path_from_env(const char *path_from_env);
-bool	get_cmd_path(t_executor *e, char **command);
+char	*get_cmd_path(t_executor *e, char *command);
+
+// create_envp.c
+char	**create_envp(t_executor *e);
+
+// handle_exec_error.c
+void	handle_exec_error(char *path, bool is_exec_run);
 
 #endif //MINISHELL_EXECUTE_H
