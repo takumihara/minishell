@@ -119,7 +119,6 @@ char	*get_cmd_path(t_executor *e, char *command)
 			return (NULL);
 		}
 		path = strjoin_three(paths[i], "/", command);
-		printf("path: %s \n", path);
 		if (access(path, F_OK) == 0)
 			break ;
 		free(path);

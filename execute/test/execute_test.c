@@ -3,10 +3,10 @@
 
 #define BLUE    "\033[34m"      /* Blue */
 
-void test_split_path_from_env_normal();
+void test_split_path_from_env_normal(t_env_var *env_vars);
 void test_split_path_from_env_colon();
 void print_err_cnt();
-void test_create_envp(char **expected);
+void test_create_envp(char **expected, t_env_var *env_vars);
 
 int err_cnt;
 
@@ -14,22 +14,22 @@ int main(int argc, char **argv, char **envp)
 {
 	(void)argc;
 	(void)argv;
-	test_split_path_from_env_normal();
+	t_env_var	*env_vars = init_env_lst();
+	if (register_env_var(ft_strdup("?"), ft_strdup("0"), &env_vars) == MALLOC_ERROR)
+		exit(delete_env_lst(env_vars, NULL, NULL));
+	test_split_path_from_env_normal(env_vars);
 	test_split_path_from_env_colon();
-	test_create_envp(envp);
+	test_create_envp(envp, env_vars);
 	print_err_cnt();
 }
 
-void test_split_path_from_env_normal()
+void test_split_path_from_env_normal(t_env_var *env_vars)
 {
-	t_env_var	*env_vars;
 	char		*path_from_env;
 	char		**paths;
 	char		**expected;
 
-	env_vars = init_env_lst();
-	if (register_env_var(ft_strdup("?"), ft_strdup("0"), &env_vars) == MALLOC_ERROR)
-		exit(delete_env_lst(env_vars, NULL, NULL));
+
 	path_from_env = get_env_value("PATH", env_vars);
 	paths = split_path_from_env(path_from_env);
 	expected = ft_split(path_from_env, ':');
@@ -43,12 +43,9 @@ void test_split_path_from_env_normal()
 	}
 	free_2d_array((void ***) &paths);
 	free_2d_array((void ***) &expected);
-	delete_env_lst(env_vars, NULL, NULL);
-	env_vars = NULL;
 	path_from_env = NULL;
 	paths = NULL;
-//	system("leaks a.out");
-
+	system("leaks a.out");
 }
 
 void test_split_path_from_env_colon()
@@ -70,35 +67,24 @@ void test_split_path_from_env_colon()
 	free(path_from_env);
 	path_from_env = NULL;
 	paths = NULL;
-//	system("leaks a.out");
+	system("leaks a.out");
 }
 
-void test_create_envp(char **expected)
+void test_create_envp(char **expected, t_env_var *env_vars)
 {
 	t_executor *e;
 	char		**envp;
-	t_env_var	*env_vars = init_env_lst();
 
 	new_executor(&e, NULL, &env_vars);
-		printf("DEBUG \n");
 	envp = create_envp(e);
-	for (int i = 0; envp[i]; i++) {
-		printf("%d: %s\n", i, envp[i]);
+	for (int i = 0; expected[i] && envp[i]; i++) {
+		if (ft_strcmp(expected[i], envp[i]))
+		{
+			printf("expected=%s got=%s\n", expected[i], envp[i]);
+			err_cnt++;
+		}
 	}
-//	printf("expected=%s got=%s\n", expected[0], envp[0]);
-	(void)envp;
-	(void)expected;
-//	if (expected)
-//		printf("expected[0]=%s\n", expected[0]);
-//	for (int i = 0; envp[i]; i++) {
-//		if (!expected[i])
-//			break;
-//		if (ft_strcmp(expected[i], envp[i]))
-//		{
-//			printf("expected=%s got=%s\n", expected[i], envp[i]);
-//			err_cnt++;
-//		}
-//	}
+	system("leaks a.out");
 }
 
 void print_err_cnt() {
