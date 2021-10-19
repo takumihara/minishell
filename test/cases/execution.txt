@@ -1,0 +1,1 @@
+echo "bash -c 'env -i ./minishell' && echo hello"

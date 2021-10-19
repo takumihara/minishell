@@ -1,5 +1,8 @@
 #include "execute.h"
 
+#define EXIT_STATUS_COMMAND_NOT_FOUND 127
+#define EXIT_STATUS_NO_SUCH_FILE 127
+
 int execute_command(t_executor *e, void *command, int type, bool is_last, bool is_pipe, int	pipefd[]);
 int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bool is_pipe, int	pipefd[]);
 int execute_subshell(t_executor *e, t_subshell *ss);
@@ -127,15 +130,16 @@ int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bo
 			{
 				ft_putstr_fd("minishell: ", STDERR_FILENO);
 				ft_putstr_fd(sc->argv[0], STDERR_FILENO);
-				ft_putstr_fd(": command not found", STDERR_FILENO);
+				ft_putendl_fd(": command not found", STDERR_FILENO);
+				exit(EXIT_STATUS_COMMAND_NOT_FOUND);
 			}
 		}
-		if (execve(sc->argv[0], sc->argv, environ) == -1)
+		if (execve(sc->argv[0], sc->argv, create_envp(e)) == -1)
 		{
 			ft_putstr_fd("minishell: ", 2);
 			ft_putstr_fd(sc->argv[0], 2);
-			ft_putstr_fd(": command not found\n", 2);
-			exit(INEXECUTABLE);
+			ft_putendl_fd(": No such file or directory", 2);
+			exit(EXIT_STATUS_NO_SUCH_FILE);
 		}
 	}
 	else if (pid < 0)
