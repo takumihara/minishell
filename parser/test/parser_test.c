@@ -319,19 +319,16 @@ int main() {
 		};
 		test_parser(input, expected, REDIRECT_IN, sizeof(expected) / sizeof(test));
 	}
-//	{
-//		char input[] = "(echo hello) 3>>res";
-//		test expected[] = {
-//				{SUBSHELL_NODE, 0, ""},
-//				{COMMAND_ARG_NODE, 1, "echo"},
-//				{REDIRECT_IN_NODE, 2, "hello"},
-//				{REDIRECT_IN_NODE, 2, "hello"},
-//		};
-//		test_parser(input, expected, SUBSHELL_NODE, 0);
-//	}
+	{
+		char input[] = "(echo hello) 3>>res";
+		test expected[] = {
+				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `3'\n"},
+		};
+		test_parser(input, expected, ERROR_CASE, 0);
+	}
 
 	print_err_cnt();
-	system("leaks a.out");
+//	system("leaks a.out");
 //	system("leaks minishell");
 }
 
