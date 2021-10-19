@@ -82,15 +82,15 @@ bool	handle_err(t_parser *p, t_ast_node *root)
 {
 	if (p->err == ERR_UNEXPECTED_TOKEN)
 	{
-		write(STDERR_FILENO, "minishell: syntax error near unexpected token `", 48);
+		ft_putstr_fd("minishell: syntax error near unexpected token `", STDERR_FILENO);
 		if (p->token->type == NEWLINE_MS || p->token->type == SUBSHELL_NEWLINE_MS)
-			write(STDERR_FILENO, "newline", 7);
+			ft_putstr_fd("newline", STDERR_FILENO);
 		else
 			write(STDERR_FILENO, p->token->literal.start, p->token->literal.len);
-		write(STDERR_FILENO, "'\n", 2);
+		ft_putstr_fd("'\n", STDERR_FILENO);
 	}
 	else if (p->err == ERR_UNEXPECTED_EOF)
-		write(STDERR_FILENO, "minishell: syntax error: unexpected end of file\n", 48);
+		ft_putstr_fd("minishell: syntax error: unexpected end of file\n", STDERR_FILENO);
 	else if (p->err == ERR_MALLOC)
 	{
 		perror("malloc");
