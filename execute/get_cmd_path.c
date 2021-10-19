@@ -95,7 +95,7 @@ char **split_path_from_env(const char *path_from_env)
 	return (paths);
 }
 
-bool get_cmd_path(t_executor *e, char **command)
+char	*get_cmd_path(t_executor *e, char *command)
 {
 	char 	*path_from_env;
 	char	**paths;
@@ -104,24 +104,26 @@ bool get_cmd_path(t_executor *e, char **command)
 
 	path_from_env = get_env_value("PATH", *e->env_vars);
 	if (!path_from_env)
-		return (true);
+		return (ft_strdup(""));
 	paths = split_path_from_env(path_from_env);
 	if (!paths)
 		exit(EXIT_FAILURE); //todo: free process
 	if (!paths[0])
-		return (true);
+		return (ft_strdup(""));
 	i = -1;
 	while (1)
 	{
 		if (!paths[++i])
-			return (false);
-		path = ft_strjoin(paths[i], ft_strjoin("/", *command));
+		{
+			free_2d_array((void ***) &paths);
+			return (NULL);
+		}
+		path = strjoin_three(paths[i], "/", command);
+		printf("path: %s \n", path);
 		if (access(path, F_OK) == 0)
 			break ;
 		free(path);
 	}
-	free(*command);
-	*command = path; // todo: argv[0] vs path
 	free_2d_array((void ***) &paths);
-	return (true);
+	return (path);
 }

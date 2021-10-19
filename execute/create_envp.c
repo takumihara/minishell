@@ -43,5 +43,6 @@ char	**create_envp(t_executor *e)
 		}
 		iterator = iterator->next;
 	}
+	envp[++index] = NULL;
 	return (envp);
 }

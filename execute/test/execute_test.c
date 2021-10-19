@@ -6,15 +6,17 @@
 void test_split_path_from_env_normal();
 void test_split_path_from_env_colon();
 void print_err_cnt();
-void test_create_envp();
+void test_create_envp(char **expected);
 
 int err_cnt;
 
-int main()
+int main(int argc, char **argv, char **envp)
 {
+	(void)argc;
+	(void)argv;
 	test_split_path_from_env_normal();
 	test_split_path_from_env_colon();
-//	test_create_envp();
+	test_create_envp(envp);
 	print_err_cnt();
 }
 
@@ -45,7 +47,7 @@ void test_split_path_from_env_normal()
 	env_vars = NULL;
 	path_from_env = NULL;
 	paths = NULL;
-	system("leaks a.out");
+//	system("leaks a.out");
 
 }
 
@@ -68,31 +70,36 @@ void test_split_path_from_env_colon()
 	free(path_from_env);
 	path_from_env = NULL;
 	paths = NULL;
-	system("leaks a.out");
+//	system("leaks a.out");
 }
 
-//void test_create_envp()
-//{
-//	t_executor *e;
-//	char		**envp;
-//	char		*expected[10] = {"key=value", NULL };
-//	t_env_var	*env_vars = init_env_var("key", "value");
-//	set_key_value(&key, &value, argv[i]);
-//	return (BUILTIN_MALLOC_ERROR);
-//	else if (register_env_var(key, value, env_vars) == MALLOC_ERROR)
-//	init_env_var("second_key", "second_value");
-//
-//	t_env_var *p_env_vars = &env_vars;
-//	new_executor(&e, NULL, &p_env_vars);
-//	envp = create_envp(e);
+void test_create_envp(char **expected)
+{
+	t_executor *e;
+	char		**envp;
+	t_env_var	*env_vars = init_env_lst();
+
+	new_executor(&e, NULL, &env_vars);
+		printf("DEBUG \n");
+	envp = create_envp(e);
+	for (int i = 0; envp[i]; i++) {
+		printf("%d: %s\n", i, envp[i]);
+	}
+//	printf("expected=%s got=%s\n", expected[0], envp[0]);
+	(void)envp;
+	(void)expected;
+//	if (expected)
+//		printf("expected[0]=%s\n", expected[0]);
 //	for (int i = 0; envp[i]; i++) {
+//		if (!expected[i])
+//			break;
 //		if (ft_strcmp(expected[i], envp[i]))
 //		{
 //			printf("expected=%s got=%s\n", expected[i], envp[i]);
 //			err_cnt++;
 //		}
 //	}
-//}
+}
 
 void print_err_cnt() {
 	if (err_cnt == 0)

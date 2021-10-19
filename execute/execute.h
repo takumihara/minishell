@@ -119,7 +119,7 @@ int		execute_pipeline(t_executor *e, t_pipeline *c);
 
 // get_cmd_path.c
 char **split_path_from_env(const char *path_from_env);
-bool	get_cmd_path(t_executor *e, char **command);
+char	*get_cmd_path(t_executor *e, char *command);
 
 // create_envp.c
 char	**create_envp(t_executor *e);
