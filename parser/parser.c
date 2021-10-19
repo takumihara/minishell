@@ -132,10 +132,15 @@ t_ast_node	*command_line(t_parser *p)
 		result->type = AND_IF_NODE;
 	else if (consume_token(p, OR_IF, NULL))
 		result->type = OR_IF_NODE;
-	else
+	else if (p->token->type == EOL)
 	{
 		free(result);
 		return (pipeline_);
+	}
+	else
+	{
+		p->err = ERR_UNEXPECTED_TOKEN;
+		return (delete_ast_nodes(pipeline_, result));
 	}
 	if (!assign_ast_node(&commandline_, command_line(p)))
 	{
