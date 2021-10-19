@@ -17,7 +17,7 @@ size_t	env_vars_len(t_env_var *env_vars)
 	len = 0;
 	while (env_vars)
 	{
-		if (ft_strcmp("_", env_vars->key))
+		if (ft_strcmp("_", env_vars->key) && ft_strcmp("?", env_vars->key))
 			len++;
 		env_vars = env_vars->next;
 	}
@@ -95,18 +95,18 @@ int	builtin_export(int argc, char **argv, int no_use, t_env_var **env_vars)
 	int		exit_status;
 
 	(void)no_use;
-	value = NULL;
 	exit_status = EXIT_SUCCESS;
 	if (argc == 1)
 		return (print_declaration(*env_vars));
 	i = 1;
 	while (i < argc)
 	{
+		value = NULL;
 		if (is_valid_argument(argv[i], key_strlen(argv[i]), EXPORT_ARG_ERROR))
 		{
 			if (set_key_value(&key, &value, argv[i]) == MALLOC_ERROR)
 				return (BUILTIN_MALLOC_ERROR);
-			else if (register_env_var(key, value, env_vars) == MALLOC_ERROR)
+			if (register_env_var(key, value, env_vars) == MALLOC_ERROR)
 				return (BUILTIN_MALLOC_ERROR);
 		}
 		else
