@@ -59,7 +59,7 @@ char	*handle_err(t_parser *p, t_ast_node *root)
 	if (p->err == ERR_UNEXPECTED_TOKEN)
 	{
 		rtn = ft_strdup("minishell: syntax error near unexpected token `");
-		if (p->token->type == NEWLINE_MS || p->token->type == SUBSHELL_NEWLINE_MS)
+		if (p->token->type == NEWLINE_MS || p->token->type == SUBSHELL_NEWLINE_MS || p->token->type == EOL)
 			rtn = strappend(rtn, "newline", 7);
 		else
 			rtn = strappend(rtn, p->token->literal.start, p->token->literal.len);
@@ -83,7 +83,7 @@ bool	handle_err(t_parser *p, t_ast_node *root)
 	if (p->err == ERR_UNEXPECTED_TOKEN)
 	{
 		ft_putstr_fd("minishell: syntax error near unexpected token `", STDERR_FILENO);
-		if (p->token->type == NEWLINE_MS || p->token->type == SUBSHELL_NEWLINE_MS)
+		if (p->token->type == NEWLINE_MS || p->token->type == SUBSHELL_NEWLINE_MS || p->token->type == EOL)
 			ft_putstr_fd("newline", STDERR_FILENO);
 		else
 			write(STDERR_FILENO, p->token->literal.start, p->token->literal.len);

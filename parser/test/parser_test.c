@@ -154,15 +154,15 @@ int main() {
 		};
 		test_parser(input, expected, COMMAND_ARG_NODE, sizeof(expected) / sizeof(test));
 	}
-	{
-		char input[] = "(\n\n\n echo hello \n\n\n)";
-		test expected[] = {
-				{SUBSHELL_NODE,    0, ""},
-				{COMMAND_ARG_NODE, 1, "echo"},
-				{COMMAND_ARG_NODE, 2, "hello"},
-		};
-		test_parser(input, expected, SUBSHELL_NODE, sizeof(expected) / sizeof(test));
-	}
+//	{
+//		char input[] = "(\n\n\n echo hello \n\n\n)";
+//		test expected[] = {
+//				{SUBSHELL_NODE,    0, ""},
+//				{COMMAND_ARG_NODE, 1, "echo"},
+//				{COMMAND_ARG_NODE, 2, "hello"},
+//		};
+//		test_parser(input, expected, SUBSHELL_NODE, sizeof(expected) / sizeof(test));
+//	}
 	{
 		char input[] = "(echo hello \n echo success)";
 		test expected[] = {
@@ -294,7 +294,21 @@ int main() {
 		test_parser(input, expected, ERROR_CASE, 0);
 	}
 	{
+		char input[] = "(echo hello > res1 <<";
+		test expected[] = {
+				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `newline'\n"},
+		};
+		test_parser(input, expected, ERROR_CASE, 0);
+	}
+	{
 		char input[] = "(echo hello > res1 \n";
+		test expected[] = {
+				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
+		};
+		test_parser(input, expected, ERROR_CASE, 0);
+	}
+	{
+		char input[] = "(echo hello > res1";
 		test expected[] = {
 				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
 		};
