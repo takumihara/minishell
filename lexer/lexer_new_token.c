@@ -63,9 +63,9 @@ t_token	*new_token_newline(t_lexer *l)
 		newline_num++;
 	}
 	if (l->is_subshell)
-		newline_type = SUBSHELL_NEWLINE;
+		newline_type = SUBSHELL_NEWLINE_MS;
 	else if (l->is_redirect)
-		newline_type = NEWLINE;
+		newline_type = NEWLINE_MS;
 	token = new_token(newline_type, l, newline_num, len_start);
 	return (token);
 }

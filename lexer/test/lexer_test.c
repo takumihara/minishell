@@ -51,8 +51,8 @@ char *debug_token_type[30] = {
 		"ENVIRONMENT",
 		"NOT_CLOSED",
 		"REDIRECT_MODIFIER",
-		"SUBSHELL_NEWLINE",
-		"NEWLINE",
+		"SUBSHELL_NEWLINE_MS",
+		"NEWLINE_MS",
 };
 
 void	compare_literal_and_type(char *input, char **debug_token_type, int expected_type, t_test *test);
@@ -529,9 +529,9 @@ int main()
 		char input[] = "(\n\necho\n $PATH\n)";
 		struct test test[] = {
 				{LPAREN, "("},
-				{SUBSHELL_NEWLINE, "\n\n"},
+				{SUBSHELL_NEWLINE_MS, "\n\n"},
 				{STRING, "echo"},
-				{SUBSHELL_NEWLINE, "\n"},
+				{SUBSHELL_NEWLINE_MS, "\n"},
 				{STRING, "$PATH"},
 				{RPAREN, ")"},
 				{EOL, "\0"},
@@ -546,7 +546,7 @@ int main()
 				{LPAREN, "("},
 				{STRING, "echo"},
 				{STRING, "hello"},
-				{SUBSHELL_NEWLINE, "\n"},
+				{SUBSHELL_NEWLINE_MS, "\n"},
 				{STRING, "echo"},
 				{STRING, "success;"},
 				{RPAREN, ")"},
@@ -560,7 +560,7 @@ int main()
 		char input[] = "(\n\n\n echo hello \n\n\n)";
 		struct test test[] = {
 				{LPAREN, "("},
-				{SUBSHELL_NEWLINE, "\n\n\n"},
+				{SUBSHELL_NEWLINE_MS, "\n\n\n"},
 				{STRING, "echo"},
 				{STRING, "hello"},
 				{RPAREN, ")"},
@@ -576,13 +576,13 @@ int main()
 				{STRING, "echo"},
 				{STRING, "hello"},
 				{REDIRECT_OUT, ">"},
-				{NEWLINE, "\n"},
+				{NEWLINE_MS, "\n"},
 				{STRING, "cd"},
 				{STRING, ".."},
 				{EOL, "\0"},
 				{TEST_EOL, ""},
 		};
-		compare_literal_and_type(input, debug_token_type, NEWLINE, test);
+		compare_literal_and_type(input, debug_token_type, NEWLINE_MS, test);
 	}
 
 	{
@@ -591,13 +591,13 @@ int main()
 				{STRING, "echo"},
 				{STRING, "hello"},
 				{REDIRECT_IN, "<"},
-				{NEWLINE, "\n"},
+				{NEWLINE_MS, "\n"},
 				{STRING, "cd"},
 				{STRING, ".."},
 				{EOL, "\0"},
 				{TEST_EOL, ""},
 		};
-		compare_literal_and_type(input, debug_token_type, NEWLINE, test);
+		compare_literal_and_type(input, debug_token_type, NEWLINE_MS, test);
 	}
 	{
 		char input[] = "echo hello >>\n\n cd ..";
@@ -605,13 +605,13 @@ int main()
 				{STRING, "echo"},
 				{STRING, "hello"},
 				{REDIRECT_APPEND, ">>"},
-				{NEWLINE, "\n"},
+				{NEWLINE_MS, "\n"},
 				{STRING, "cd"},
 				{STRING, ".."},
 				{EOL, "\0"},
 				{TEST_EOL, ""},
 		};
-		compare_literal_and_type(input, debug_token_type, NEWLINE, test);
+		compare_literal_and_type(input, debug_token_type, NEWLINE_MS, test);
 	}
 	{
 		char input[] = "echo hello <<\n end ||\n cd ..";
@@ -619,7 +619,7 @@ int main()
 				{STRING, "echo"},
 				{STRING, "hello"},
 				{HEREDOC, "<<"},
-				{NEWLINE, "\n"},
+				{NEWLINE_MS, "\n"},
 				{STRING, "end"},
 				{OR_IF, "||"},
 				{STRING, "cd"},
@@ -627,7 +627,7 @@ int main()
 				{EOL, "\0"},
 				{TEST_EOL, ""},
 		};
-		compare_literal_and_type(input, debug_token_type, NEWLINE, test);
+		compare_literal_and_type(input, debug_token_type, NEWLINE_MS, test);
 	}
 
 }

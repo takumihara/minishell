@@ -186,7 +186,7 @@ t_ast_node *subshell(t_parser *p)
 	if (!consume_token(p, LPAREN, NULL))
 		return (NULL);
 	p->is_subshell = true;
-	consume_token(p, SUBSHELL_NEWLINE, NULL);
+	consume_token(p, SUBSHELL_NEWLINE_MS, NULL);
 	if (!assign_ast_node(&compound_list_, compound_list(p)))
 	{
 		if (!p->err)
@@ -220,8 +220,8 @@ t_ast_node *compound_list(t_parser *p)
 		result->type = AND_IF_NODE;
 	else if (consume_token(p, OR_IF, NULL))
 		result->type = OR_IF_NODE;
-	else if (consume_token(p, SUBSHELL_NEWLINE, NULL))
-		result->type = SUBSHELL_NEWLINE_NODE;
+	else if (consume_token(p, SUBSHELL_NEWLINE_MS, NULL))
+		result->type = SUBSHELL_NEWLINE_MS_NODE;
 	else
 	{
 		free(result);
