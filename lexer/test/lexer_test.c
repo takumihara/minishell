@@ -188,11 +188,11 @@ int main()
 		char input[] = "echo \'hello";
 		struct test test[] = {
 				{STRING, "echo"},
-				{STRING, "\'hello"},
+				{ILLEGAL, "\'hello"},
 				{EOL, "\0"},
 				{TEST_EOL, ""},
 		};
-		compare_literal_and_type(input, debug_token_type, STRING, test);
+		compare_literal_and_type(input, debug_token_type, ILLEGAL, test);
 	}
 
 	{
@@ -221,22 +221,22 @@ int main()
 		char input[] = "echo \"hello";
 		struct test test[] = {
 				{STRING, "echo"},
-				{STRING, "\"hello"},
+				{ILLEGAL, "\"hello"},
 				{EOL, "\0"},
 				{TEST_EOL, ""},
 		};
-		compare_literal_and_type(input, debug_token_type, STRING, test);
+		compare_literal_and_type(input, debug_token_type, ILLEGAL, test);
 	}
 
 	{
 		char input[] = "echo \"$PATH";
 		struct test test[] = {
 				{STRING, "echo"},
-				{STRING, "\"$PATH"},
+				{ILLEGAL, "\"$PATH"},
 				{EOL, "\0"},
 				{TEST_EOL, ""},
 		};
-		compare_literal_and_type(input, debug_token_type, STRING, test);
+		compare_literal_and_type(input, debug_token_type, ILLEGAL, test);
 	}
 	
 	{
