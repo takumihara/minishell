@@ -39,3 +39,18 @@ echo "$'PATH'"
 echo "$a'PATH'"
 echo "'PATH'$"
 echo "'PATH'$a"
+echo """"
+echo "" a
+echo """" a
+echo """ a "
+echo ""a"" b
+echo a"" b
+echo ""''
+echo ""'' a
+echo ""a'' b
+echo ""$HOGE'' a
+echo ""$USER'' a
+echo "''"$USER'' a
+echo "''"'' a
+echo "a b"$USER"" c
+echo ""''a""'' b
