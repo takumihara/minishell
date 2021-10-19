@@ -12,7 +12,8 @@ OBJS    		= $(addprefix $(OBJDIR)/, $(notdir $(SRCS:%.c=%.o)))
 LEXER_OBJS		= $(addprefix $(LEXER_OBJDIR)/, $(notdir $(LEXER_SRCS:%.c=%.o)))
 
 CC      = gcc
-CFLAG   = -Wall -Wextra -Werror -fsanitize=address
+# CFLAG   = -Wall -Wextra -Werror -fsanitize=address
+CFLAG   = -Wall -Wextra -Werror
 
 LIBFT_PATH = ../../libft
 INCLUDE		= -I../../lexer -I../../token

@@ -23,7 +23,10 @@ t_token	*skip_space(t_lexer *l)
 	while (ft_isspace(l->ch))
 	{
 		if ((l->is_subshell || l->is_redirect) && l->ch == '\n')
+		{
 			token = new_token_newline(l);
+			return (token);
+		}
 		read_char(l);
 	}
 	l->is_redirect = false;
