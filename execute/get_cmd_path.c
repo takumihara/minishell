@@ -18,37 +18,34 @@ static t_sep_list *new_sep_list(int sep_index)
 
 	new = malloc(sizeof(*new));
 	if (!new)
-		return (NULL);
+		perror_exit("malloc", EXIT_FAILURE);
 	new->next = NULL;
 	new->sep_index = sep_index;
 	return (new);
 }
 
-static char **create_paths(const char *path_from_env, t_sep_list *sep_list, size_t list_len)
+static void create_paths(char **paths, const char *path_from_env, t_sep_list *sep_list)
 {
-	char	**paths;
 	size_t	start;
 	int		i;
 	size_t	len;
 
-	paths = malloc(sizeof(*paths) * (list_len + 1));
-	if (!paths)
-		return (NULL);
 	start = sep_list->sep_index;
 	sep_list = sep_list->next;
-	i = 0;
+	i = -1;
 	while (sep_list)
 	{
 		len = sep_list->sep_index - start - 1;
 		if (len == 0)
-			paths[i++] = getcwd(NULL, 0);//todo: check when can the returned value be NULL
+			paths[++i] = ft_strdup(".");
 		else
-			paths[i++] = ft_substr(path_from_env, start + 1, len);
+			paths[++i] = ft_substr(path_from_env, start + 1, len);
+		if (!paths[i])
+			perror_exit("malloc", EXIT_FAILURE);
 		start = sep_list->sep_index;
 		sep_list = sep_list->next;
 	}
-	paths[i] = NULL;
-	return (paths);
+	paths[++i] = NULL;
 }
 
 static t_sep_list *create_sep_list(const char *path_from_env, int *list_len)
@@ -58,8 +55,6 @@ static t_sep_list *create_sep_list(const char *path_from_env, int *list_len)
 	int			i;
 
 	head = new_sep_list(-1);
-	if (!head)
-		return (NULL);
 	tail = head;
 	i = -1;
 	*list_len = 1;
@@ -68,11 +63,6 @@ static t_sep_list *create_sep_list(const char *path_from_env, int *list_len)
 		if (path_from_env[i] == ':')
 		{
 			tail->next = new_sep_list(i);
-			if (!tail->next)
-			{
-				destroy_sep_list(head);
-				return (NULL);
-			}
 			tail = tail->next;
 			*list_len += 1;
 		}
@@ -88,9 +78,10 @@ char **split_path_from_env(const char *path_from_env)
 	int			list_len;
 
 	sep_list = create_sep_list(path_from_env, &list_len);
-	if (!sep_list)
-		return (NULL);
-	paths = create_paths(path_from_env, sep_list, list_len);
+	paths = malloc(sizeof(*paths) * (list_len + 1));
+	if (!paths)
+		perror_exit("malloc", EXIT_FAILURE);
+	create_paths(paths, path_from_env, sep_list);
 	destroy_sep_list(sep_list);
 	return (paths);
 }
@@ -104,12 +95,10 @@ char	*get_cmd_path(t_executor *e, char *command)
 
 	path_from_env = get_env_value("PATH", *e->env_vars);
 	if (!path_from_env)
-		return (ft_strdup(""));
+		return (ft_strdup(command));
 	paths = split_path_from_env(path_from_env);
-	if (!paths)
-		exit(EXIT_FAILURE); //todo: free process
 	if (!paths[0])
-		return (ft_strdup(""));
+		return (ft_strdup(command));
 	i = -1;
 	while (1)
 	{

@@ -9,7 +9,7 @@ char	*strjoin_three(const char *s1, const char *s2, const char *s3)
 
 	joined = malloc(sizeof(*joined) * (len_s1 + len_s2 + len_s3 + 1));
 	if (!joined)
-		return (NULL);
+		perror_exit("malloc", EXIT_FAILURE);
 	ft_strlcpy(joined, s1, len_s1 + len_s2 + len_s3 + 1);
 	ft_strlcat(joined, s2, len_s1 + len_s2 + len_s3 + 1);
 	ft_strlcat(joined, s3, len_s1 + len_s2 + len_s3 + 1);

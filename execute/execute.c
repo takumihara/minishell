@@ -1,7 +1,5 @@
 #include "execute.h"
-
-#define EXIT_STATUS_COMMAND_NOT_FOUND 127
-#define EXIT_STATUS_NO_SUCH_FILE 127
+#include "exit_status.h"
 
 int execute_command(t_executor *e, void *command, int type, bool is_last, bool is_pipe, int	pipefd[]);
 int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bool is_pipe, int	pipefd[]);
@@ -128,23 +126,13 @@ int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bo
 		if (execute_builtin(e, sc->argc, sc->argv, is_last))
 			exit(EXIT_SUCCESS);
 		if (!ft_strchr(sc->argv[0], '/'))
-		{
 			path = get_cmd_path(e, sc->argv[0]);
-			if (!path)
-			{
-				ft_putstr_fd("minishell: ", STDERR_FILENO);
-				ft_putstr_fd(sc->argv[0], STDERR_FILENO);
-				ft_putendl_fd(": command not found", STDERR_FILENO);
-				exit(EXIT_STATUS_COMMAND_NOT_FOUND);
-			}
-		}
+		else
+			path = sc->argv[0];
+		if (!path)
+			handle_exec_error(sc->argv[0], false);
 		if (execve(path, sc->argv, envp) == -1)
-		{
-			ft_putstr_fd("minishell: ", 2);
-			ft_putstr_fd(sc->argv[0], 2);
-			ft_putendl_fd(": No such file or directory", 2);
-			exit(EXIT_STATUS_NO_SUCH_FILE);
-		}
+			handle_exec_error(path, true);
 	}
 	else if (pid < 0)
 		exit(ex_perror(e, "minishell: fork"));

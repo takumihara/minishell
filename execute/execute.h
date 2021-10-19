@@ -124,4 +124,7 @@ char	*get_cmd_path(t_executor *e, char *command);
 // create_envp.c
 char	**create_envp(t_executor *e);
 
+// handle_exec_error.c
+void	handle_exec_error(char *path, bool is_exec_run);
+
 #endif //MINISHELL_EXECUTE_H
