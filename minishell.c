@@ -15,6 +15,7 @@
 #include "expander/expander.h"
 #include "execute/execute.h"
 #include "utils/get_next_line.h"
+#include "execute/exit_status.h"
 
 // 何らかのSIGNAL(Ctrl-C(SIGINT), Ctrl-\(SIGQUIT))を受け取った時の挙動を定義する
 static void	signal_handler(int signo)
@@ -66,6 +67,8 @@ int minishell(char *line)
 		if (!node)
 		{
 			free(line);
+			if (register_env_var(ft_strdup("?"), ft_strdup(ES_SYNTAX_ERROR), &env_vars) == MALLOC_ERROR)
+				exit(delete_env_lst(env_vars, NULL, NULL));
 			continue;
 		}
 		exit_status = execute(node, &env_vars);

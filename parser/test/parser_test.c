@@ -131,19 +131,13 @@ int main() {
 		};
 		test_parser(input, expected, SUBSHELL_NODE, sizeof(expected) / sizeof(test));
 	}
-//	{
-//		char input[] = "(echo success) < input > res >> res1 << EOL";
-//		test expected[] = {
-//				{SUBSHELL_NODE,        0, ""},
-//				{COMMAND_ARG_NODE,     1, "echo"},
-//				{COMMAND_ARG_NODE,     2, "success"},
-//				{REDIRECT_IN_NODE,     1, "input"},
-//				{REDIRECT_OUT_NODE,    2, "res"},
-//				{REDIRECT_APPEND_NODE, 3, "res1"},
-//				{HEREDOC_NODE,         4, "EOL"},
-//		};
-//		test_parser(input, expected, SUBSHELL_NODE, sizeof(expected) / sizeof(test));
-//	}
+	{
+		char input[] = "(echo success) < input > res >> res1 << EOL";
+		test expected[] = {
+				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `<'\n"},
+		};
+		test_parser(input, expected, ERROR_CASE, 0);
+	}
 	{
 		char input[] = "echo \"hello\"";
 		test expected[] = {
@@ -160,24 +154,24 @@ int main() {
 		};
 		test_parser(input, expected, COMMAND_ARG_NODE, sizeof(expected) / sizeof(test));
 	}
-	{
-		char input[] = "(\n\n\n echo hello \n\n\n)";
-		test expected[] = {
-				{SUBSHELL_NODE,    0, ""},
-				{COMMAND_ARG_NODE, 1, "echo"},
-				{COMMAND_ARG_NODE, 2, "hello"},
-		};
-		test_parser(input, expected, SUBSHELL_NODE, sizeof(expected) / sizeof(test));
-	}
+//	{
+//		char input[] = "(\n\n\n echo hello \n\n\n)";
+//		test expected[] = {
+//				{SUBSHELL_NODE,    0, ""},
+//				{COMMAND_ARG_NODE, 1, "echo"},
+//				{COMMAND_ARG_NODE, 2, "hello"},
+//		};
+//		test_parser(input, expected, SUBSHELL_NODE, sizeof(expected) / sizeof(test));
+//	}
 	{
 		char input[] = "(echo hello \n echo success)";
 		test expected[] = {
-				{SUBSHELL_NODE,         0, ""},
+				{SUBSHELL_NODE,            0, ""},
 				{SUBSHELL_NEWLINE_MS_NODE, 1, ""},
-				{COMMAND_ARG_NODE,      2, "echo"},
-				{COMMAND_ARG_NODE,      3, "hello"},
-				{COMMAND_ARG_NODE,      2, "echo"},
-				{COMMAND_ARG_NODE,      3, "success"},
+				{COMMAND_ARG_NODE,         2, "echo"},
+				{COMMAND_ARG_NODE,         3, "hello"},
+				{COMMAND_ARG_NODE,         2, "echo"},
+				{COMMAND_ARG_NODE,         3, "success"},
 		};
 		test_parser(input, expected, SUBSHELL_NODE, sizeof(expected) / sizeof(test));
 	}
@@ -300,7 +294,21 @@ int main() {
 		test_parser(input, expected, ERROR_CASE, 0);
 	}
 	{
+		char input[] = "(echo hello > res1 <<";
+		test expected[] = {
+				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `newline'\n"},
+		};
+		test_parser(input, expected, ERROR_CASE, 0);
+	}
+	{
 		char input[] = "(echo hello > res1 \n";
+		test expected[] = {
+				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
+		};
+		test_parser(input, expected, ERROR_CASE, 0);
+	}
+	{
+		char input[] = "(echo hello > res1";
 		test expected[] = {
 				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
 		};
@@ -325,19 +333,17 @@ int main() {
 		};
 		test_parser(input, expected, REDIRECT_IN, sizeof(expected) / sizeof(test));
 	}
-//	{
-//		char input[] = "(echo hello) 3>>res";
-//		test expected[] = {
-//				{SUBSHELL_NODE, 0, ""},
-//				{COMMAND_ARG_NODE, 1, "echo"},
-//				{REDIRECT_IN_NODE, 2, "hello"},
-//				{REDIRECT_IN_NODE, 2, "hello"},
-//		};
-//		test_parser(input, expected, SUBSHELL_NODE, 0);
-//	}
+	{
+		char input[] = "(echo hello) 3>>res";
+		test expected[] = {
+				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `3'\n"},
+		};
+		test_parser(input, expected, ERROR_CASE, 0);
+	}
 
 	print_err_cnt();
-	system("leaks a.out");
+//	system("leaks a.out");
+//	system("leaks minishell");
 }
 
 void test_parser(char input[], test *expected, int test_type, int expected_token_num) {
@@ -351,8 +357,7 @@ void test_parser(char input[], test *expected, int test_type, int expected_token
 	printf("---------------------------------\n");
 	printf("input:%s\n", input);
 
-	t_token *token = lex(input);
-	void *res = parse(token);
+	void *res = parse(lex(input));
 	if (!res) {
 		fprintf(stderr, RED "parse() returned NULL!\n" RESET);
 		err_cnt++;

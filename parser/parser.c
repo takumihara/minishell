@@ -77,16 +77,19 @@ static t_ast_node *redirection(t_parser *p);
 
 void	*parse(t_token *token)
 {
+	t_token		*head;
 	t_parser	*p;
 	t_ast_node	*node;
 	char		*err_msg;
 
+	head = token;
 	if (!assign_mem((void **) &p, new_parser(token)))
 		return (NULL);
 	node = command_line(p);
 	err_msg = handle_err(p, node);
 	if (err_msg)
 		return ((void *)err_msg);
+	token_lstclear(head);
 	free(p);
 	return ((void *)node);
 }
@@ -95,9 +98,11 @@ void	*parse(t_token *token)
 
 t_ast_node *parse(t_token *token)
 {
+	t_token			*head;
 	t_parser		*p;
 	t_ast_node		*root;
 
+	head = token;
 	if (!assign_mem((void **) &p, new_parser(token)))
 		return (NULL);
 	root = command_line(p);
@@ -106,7 +111,7 @@ t_ast_node *parse(t_token *token)
 		delete_ast_nodes(root, NULL);
 		root = NULL;
 	}
-	token_lstclear(p->token);
+	token_lstclear(head);
 	free(p);
 	return (root);
 }
@@ -127,10 +132,15 @@ t_ast_node	*command_line(t_parser *p)
 		result->type = AND_IF_NODE;
 	else if (consume_token(p, OR_IF, NULL))
 		result->type = OR_IF_NODE;
-	else
+	else if (p->token->type == EOL)
 	{
 		free(result);
 		return (pipeline_);
+	}
+	else
+	{
+		p->err = ERR_UNEXPECTED_TOKEN;
+		return (delete_ast_nodes(pipeline_, result));
 	}
 	if (!assign_ast_node(&commandline_, command_line(p)))
 	{
