@@ -1,1 +1,7 @@
 echo "bash -c 'env -i ./minishell' && echo hello"
+touch file && chmod -x file && export PATH=: && file || rm file
+touch file && chmod -x file && ./file
+touch ls && export PATH=: && ls
+touch ls && chmod +x ls && export PATH=: && ls
+touch ls && chmod +x ls && ls
+rm ls file

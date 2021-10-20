@@ -36,8 +36,6 @@ int execute_pipeline(t_executor *e, t_pipeline *pl)
 		child_pid = execute_command(e, pl->command, pl->type, !pl->next, is_pipe, pipefd);
 		if (child_pid != CHILD_PROCESS_NOT_CREATED)
 			child_process_cnt++;
-		else if (pl->next)
-			child_pid = NOT_LAST_COMMAND;
 		pl = pl->next;
 	}
 	ms_dup2(orig_stdfd[READ], STDIN_FILENO);
@@ -132,6 +130,5 @@ int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bo
 		if (execve(path, sc->argv, envp) == -1)
 			handle_exec_error(path, true);
 	}
-	//todo: check islast
 	return (pid);
 }

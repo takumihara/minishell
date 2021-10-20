@@ -79,8 +79,6 @@ int minishell(char *line)
 
 int	main(int argc, char **argv)
 {
-	int				on;
-	int				off;
 	char			*line;
 	t_gnl_status 	status;
 
@@ -88,19 +86,18 @@ int	main(int argc, char **argv)
 		return (minishell(ft_strdup(argv[2])));
 	else
 	{
-		on = 1;
-		ioctl(STDIN_FILENO, FIONBIO, &on);
 		// todo: what if there are two lines
-		status = get_next_line(STDIN_FILENO, &line);
-		if (status == GNL_STATUS_ERROR_READ)
-			perror_exit("read", EXIT_FAILURE);
-		else if (status == GNL_STATUS_ERROR_MALLOC)
-			perror_exit("malloc", EXIT_FAILURE);
-		off = 0;
-		ioctl(STDIN_FILENO, FIONBIO, &off);
-		if (line[0])
-			return (minishell(line));
-		free(line);
+		if (isatty(STDIN_FILENO) == 0)
+		{
+			status = get_next_line(STDIN_FILENO, &line);
+			if (status == GNL_STATUS_ERROR_READ)
+				perror_exit("read", EXIT_FAILURE);
+			else if (status == GNL_STATUS_ERROR_MALLOC)
+				perror_exit("malloc", EXIT_FAILURE);
+			if (line[0])
+				return (minishell(line));
+			free(line);
+		}
 		return (minishell(NULL));
 	}
 }
