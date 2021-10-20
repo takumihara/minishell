@@ -13,12 +13,10 @@ int	execute(t_ast_node *root, t_env_var **env_vars)
 
 	if (!root)
 	{
-		if (register_env_var_from_literal("?", NULL, ES_SYNTAX_ERROR, env_vars) == MALLOC_ERROR)
-			perror_exit("malloc", EXIT_FAILURE);
+		register_env_var_from_literal("?", NULL, ES_SYNTAX_ERROR, env_vars);
 		return (ES_SYNTAX_ERROR);
 	}
-	if (!new_executor(&e, root, env_vars))
-		return (ex_perror(NULL, "malloc"));
+	new_executor(&e, root, env_vars);
 	exit_status = command_line(e, root);
 	delete_ast_nodes(e->root, NULL);
 	free(e);
@@ -33,8 +31,7 @@ int command_line(t_executor *e, t_ast_node *node)
 		{
 			pipeline(e, &e->pipeline, node->left);
 			e->exit_status = execute_pipeline(e, e->pipeline);
-			//todo: null check
-			if (register_env_var_from_literal("?", NULL, e->exit_status, e->env_vars) == MALLOC_ERROR) {}
+			register_env_var_from_literal("?", NULL, e->exit_status, e->env_vars);
 			delete_list(e->pipeline, T_PIPELINE);
 		}
 		if (node->type == AND_IF_NODE)
@@ -49,23 +46,20 @@ int command_line(t_executor *e, t_ast_node *node)
 		{
 			pipeline(e, &e->pipeline, node);
 			e->exit_status = execute_pipeline(e, e->pipeline);
-			if (register_env_var_from_literal("?", NULL, e->exit_status, e->env_vars) == MALLOC_ERROR) {}
+			register_env_var_from_literal("?", NULL, e->exit_status, e->env_vars);
 			delete_list(e->pipeline, T_PIPELINE);
 		}
 		return (e->exit_status);
 	}
 }
 
+// expected node: COMMAND_ARG_NODE, REDIRECT*, PIPE_NODE, SUBSHELL
 void	pipeline(t_executor *e, t_pipeline **pipeline_, t_ast_node *node)
 {
 	t_pipeline *pipeline_next;
 
 	pipeline_next = NULL;
-	// expected node: COMMAND_ARG_NODE, REDIRECT*, PIPE_NODE, SUBSHELL
-	if (!new_t_pipeline(pipeline_))
-		exit(ex_perror(e, "malloc"));
-
-	// call expand()
+	new_t_pipeline(pipeline_);
 	if (node->type == PIPE_NODE)
 	{
 		pipeline(e, &pipeline_next, node->right);
@@ -87,15 +81,13 @@ void	pipeline(t_executor *e, t_pipeline **pipeline_, t_ast_node *node)
 
 void	subshell(t_executor *e, t_subshell **ss, t_ast_node *node)
 {
-	if (!new_t_subshell(ss))
-		exit(ex_perror(e, "malloc"));
+	new_t_subshell(ss);
 	init_compound_list(e, &(*ss)->compound_list, node->left);
 }
 
 void	init_compound_list(t_executor *e, t_compound_list **cl, t_ast_node *node)
 {
-	if (!new_t_compound_list(cl))
-		exit (ex_perror(e, "malloc"));
+	new_t_compound_list(cl);
 	if (node->type == AND_IF_NODE)
 	{
 		pipeline(e, &(*cl)->pipeline, node->left);
@@ -118,33 +110,25 @@ void	init_compound_list(t_executor *e, t_compound_list **cl, t_ast_node *node)
 		pipeline(e, &(*cl)->pipeline, node);
 }
 
+// expected node: COMMAND_ARG_NODE, REDIRECT*
 void	simple_command(t_executor *e, t_simple_command **sc, t_ast_node *node)
 {
-	if (!new_t_simple_command(sc))
-		exit(ex_perror(e, "malloc"));
+	new_t_simple_command(sc);
 	(*sc)->root = node;
 	if (!expand(node, e->env_vars, e->exit_status))
 	{
 		(*sc)->err = EXPANSION_ERR;
 		return ;
 	}
-	// expected node: COMMAND_ARG_NODE, REDIRECT*
 	while (node != NULL)
 	{
 		if (node->type == COMMAND_ARG_NODE)
 			(*sc)->argc++;
 		else if (node->type == REDIRECT_OUT_NODE || node->type == REDIRECT_APPEND_NODE)
-		{
-			if (!new_t_redirect_out(*sc, node->data, node->type))
-				exit(ex_perror(e, "malloc"));
-		}
+			new_t_redirect_out(*sc, node->data, node->type);
 		else if (node->type == REDIRECT_IN_NODE || node->type == HEREDOC_NODE)
-		{
-			if (!new_t_redirect_in(e, *sc, node->data, node->type))
-				exit(ex_perror(e, "malloc"));
-		}
+			new_t_redirect_in(*sc, node->data, node->type);
 		node = node->right;
 	}
-	if (!new_argv(*sc))
-		exit(ex_perror(e, "malloc"));
+	new_argv(*sc);
 }

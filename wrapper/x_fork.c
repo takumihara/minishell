@@ -2,7 +2,7 @@
 
 #include "../utils/utils.h"
 
-pid_t	ms_fork(void)
+pid_t	x_fork(void)
 {
 	pid_t	pid;
 

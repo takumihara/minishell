@@ -1,61 +1,46 @@
 #include "execute.h"
+#include "../wrapper/x.h"
 
-bool	new_t_pipeline(t_pipeline **pipeline)
+void	new_t_pipeline(t_pipeline **pipeline)
 {
-	*pipeline = malloc(sizeof(**pipeline));
-	if (!*pipeline)
-		return (false);
+	*pipeline = x_malloc(sizeof(**pipeline));
 	(*pipeline)->command = NULL;
 	(*pipeline)->type = UNSET;
 	(*pipeline)->next = NULL;
-	return (true);
 }
 
-bool	new_t_subshell(t_subshell **ss)
+void	new_t_subshell(t_subshell **ss)
 {
-	*ss = malloc(sizeof(**ss));
-	if (!*ss)
-		return (false);
+	*ss = x_malloc(sizeof(**ss));
 	(*ss)->compound_list = NULL;
-	return (true);
 }
 
-bool	new_t_compound_list(t_compound_list **cl)
+void	new_t_compound_list(t_compound_list **cl)
 {
-	*cl = malloc(sizeof(**cl));
-	if (!*cl)
-		return (false);
-	 // (*cl)->condition will not be used w/ being initialized in init_compound_list()
+	*cl = x_malloc(sizeof(**cl));
 	(*cl)->pipeline = NULL;
 	(*cl)->compound_list_next = NULL;
 	(*cl)->next = NULL;
-	return (true);
 }
 
-bool	new_t_simple_command(t_simple_command **sc)
+void	new_t_simple_command(t_simple_command **sc)
 {
-	*sc = (t_simple_command *) malloc(sizeof(**sc));
-	if (!(*sc))
-		return (false);
+	*sc = x_malloc(sizeof(**sc));
 	(*sc)->root = NULL;
 	(*sc)->argc = 0;
 	(*sc)->argv = NULL;
 	(*sc)->r_out = NULL;
 	(*sc)->r_in = NULL;
 	(*sc)->err = NO_ERR;
-	return (true);
 }
 
-bool	new_argv(t_simple_command *sc)
+void	new_argv(t_simple_command *sc)
 {
 	t_ast_node	*node;
 	int			i;
 
 	node = sc->root;
-	// todo: free required!
-	sc->argv = malloc(sizeof(*sc->argv) * (sc->argc + 1));
-	if (!sc->argv)
-		return (false);
+	sc->argv = x_malloc(sizeof(*sc->argv) * (sc->argc + 1));
 	i = 0;
 	while (node != NULL)
 	{
@@ -64,6 +49,5 @@ bool	new_argv(t_simple_command *sc)
 		node = node->right;
 	}
 	sc->argv[i] = NULL;
-	return (true);
 }
 

@@ -2,7 +2,7 @@
 
 #include "../utils/utils.h"
 
-int	ms_dup(int fildes)
+int	x_dup(int fildes)
 {
 	int	newfd;
 

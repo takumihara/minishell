@@ -2,7 +2,7 @@
 
 #include "../utils/utils.h"
 
-int ms_pipe(int fildes[2])
+int x_pipe(int fildes[2])
 {
 	int	res;
 

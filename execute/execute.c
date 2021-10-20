@@ -1,6 +1,6 @@
 #include "execute.h"
 #include "exit_status.h"
-#include "../wrapper/wrapper.h"
+#include "../wrapper/x.h"
 
 int execute_command(t_executor *e, void *command, int type, bool is_last, bool is_pipe, int	pipefd[]);
 int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bool is_pipe, int	pipefd[]);
@@ -16,31 +16,31 @@ int execute_pipeline(t_executor *e, t_pipeline *pl)
 	int	statloc;
 	const bool is_pipe = (pl->next != NULL);
 
-	orig_stdfd[READ] = ms_dup(STDIN_FILENO);
-	orig_stdfd[WRITE] = ms_dup(STDOUT_FILENO);
+	orig_stdfd[READ] = x_dup(STDIN_FILENO);
+	orig_stdfd[WRITE] = x_dup(STDOUT_FILENO);
 	pipefd[READ] = STDIN_FILENO;
 	child_process_cnt = 0;
 	while (pl)
 	{
-		ms_dup2(pipefd[READ], STDIN_FILENO);
+		x_dup2(pipefd[READ], STDIN_FILENO);
 		if (pipefd[READ])
 			close(pipefd[READ]);
 		if (pl->next)
 		{
-			ms_pipe(pipefd);
-			ms_dup2(pipefd[WRITE], STDOUT_FILENO);
+			x_pipe(pipefd);
+			x_dup2(pipefd[WRITE], STDOUT_FILENO);
 			close(pipefd[WRITE]);
 		}
 		else
-			ms_dup2(orig_stdfd[WRITE], STDOUT_FILENO);
+			x_dup2(orig_stdfd[WRITE], STDOUT_FILENO);
 		child_pid = execute_command(e, pl->command, pl->type, !pl->next, is_pipe, pipefd);
 		if (child_pid != CHILD_PROCESS_NOT_CREATED)
 			child_process_cnt++;
 		pl = pl->next;
 	}
-	ms_dup2(orig_stdfd[READ], STDIN_FILENO);
+	x_dup2(orig_stdfd[READ], STDIN_FILENO);
 	close(orig_stdfd[READ]);
-	ms_dup2(orig_stdfd[WRITE], STDOUT_FILENO);
+	x_dup2(orig_stdfd[WRITE], STDOUT_FILENO);
 	close(orig_stdfd[WRITE]);
 	while (child_process_cnt--)
 		if (wait(&statloc) == child_pid)
@@ -75,11 +75,10 @@ int execute_compound_list(t_executor *e, t_compound_list *cl)
 	t_executor		*exe_child;
 	int				exit_status;
 
-	pid = ms_fork();
+	pid = x_fork();
 	if (pid == CHILD_PROCESS)
 	{
-		if (!new_executor(&exe_child, NULL, NULL))
-			exit(ex_perror(e, "malloc"));
+		new_executor(&exe_child, NULL, NULL);
 		exe_child->pipeline = cl->pipeline;
 		exit_status = execute_pipeline(exe_child, exe_child->pipeline);
 		if (cl->compound_list_next)
@@ -114,7 +113,7 @@ int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bo
 	if (!is_pipe && execute_builtin(e, sc->argc, sc->argv, is_last))
 		return (CHILD_PROCESS_NOT_CREATED);
 	envp = create_envp(e);
-	pid = ms_fork();
+	pid = x_fork();
 	if (pid == CHILD_PROCESS)
 	{
 		if (is_pipe && !is_last && pipefd[READ])
