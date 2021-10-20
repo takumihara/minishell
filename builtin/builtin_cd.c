@@ -20,7 +20,8 @@ int	builtin_cd(int argc, char **argv, int no_use, t_env_var **env_vars)
 		path = argv[1];
 	if (chdir(path) == -1)
 	{
-		perror("minishell: cd");
+		ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
+		perror(path);
 		return (EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);
