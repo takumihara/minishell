@@ -155,10 +155,9 @@ t_ast_node	*word_splitting(t_ast_node *node, t_expander *e, char *original_data)
 		return (NULL);
 	if (!*node->data && *original_data && node->type != COMMAND_ARG_NODE)
 		return (expand_redirect_error(original_data));
+	remove_null_argument(node->data);
 	if (!*node->data)
 		return (node);
-	if (!is_valid_empty(node->data))
-		remove_invalid_empty(node->data);
 	split = split_by_space_skip_quotes(node->data, " \t\n");
 	if (!split)
 		exit(expand_perror(e, "malloc"));

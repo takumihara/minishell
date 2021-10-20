@@ -64,48 +64,20 @@ char	*unquoted_memmove(char *dst, char *src)
 	return (dst_start);
 }
 
-bool		is_valid_empty(char *str)
+void	remove_null_argument(char *str)
 {
-	const size_t	original_len = ft_strlen(str);
-	size_t			quotes_len;
 	int				status;
 
-	if (!(ft_strstr(str, "\"\"") || ft_strstr(str, "\'\'")))
-		return (true);
-	status = OUTSIDE;
-	quotes_len = 0;
-	while (*str)
-	{
-		if (status == OUTSIDE)
-		{
-			if (str == ft_strstr(str, "\"\"") || str == ft_strstr(str, "\'\'"))
-			{
-				str += 2;
-				quotes_len = quotes_len + 2;
-				continue ;
-			}
-		}
-		status = quotation_status(*str, status);
-		str++;
-	}
-	if (original_len != quotes_len)
-		return (false);
-	return (true);
-}
-
-void	remove_invalid_empty(char *str)
-{
-	const size_t	len = ft_strlen(str);
-	int				status;
-
+	if (ft_strncmp(str, "\"\"", 2) && ft_strncmp(str, "\'\'", 2))
+		return ;
 	status = OUTSIDE;
 	while (*str)
 	{
 		if (status == OUTSIDE)
 		{
-			if (str == ft_strstr(str, "\"\"") || str == ft_strstr(str, "\'\'"))
+			if (!ft_strncmp(str, "\"\"", 2) || !ft_strncmp(str, "\'\'", 2))
 			{
-				ft_strlcpy(str, str + 2, len + 1);
+				ft_memmove(str, str + 2, ft_strlen(str + 2) + 1);
 				continue ;
 			}
 		}
