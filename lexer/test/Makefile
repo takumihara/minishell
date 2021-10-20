@@ -1,42 +1,39 @@
 NAME    = a.out
 
-LEXER_PATH	= ..
+CURRENT_PATH	= .
+LEXER_PATH		= ..
+UTILS_PATH		= ../../utils
 
-SRCS  		= $(wildcard *.c)
-LEXER_SRCS	= $(wildcard $(LEXER_PATH)/*.c)
+SRC_PATHS	= $(CURRENT_PATH) $(LEXER_PATH) $(UTILS_PATH)
+SRCS		= $(foreach path, $(SRC_PATHS), $(wildcard $(path)/*.c))
 
-OBJDIR  		= ./obj
-LEXER_OBJDIR	= $(LEXER_PATH)/obj
+VPATH		= $(CURRENT_PATH):$(LEXER_PATH):$(UTILS_PATH)
 
-OBJS    		= $(addprefix $(OBJDIR)/, $(notdir $(SRCS:%.c=%.o)))
-LEXER_OBJS		= $(addprefix $(LEXER_OBJDIR)/, $(notdir $(LEXER_SRCS:%.c=%.o)))
+OBJDIR  = ./obj
+OBJS    = $(addprefix $(OBJDIR)/, $(notdir $(SRCS:%.c=%.o)))
 
 CC      = gcc
 # CFLAG   = -Wall -Wextra -Werror -fsanitize=address
-CFLAG   = -Wall -Wextra -Werror
+CFLAGS  = -Wall -Wextra -Werror
 
-LIBFT_PATH = ../../libft
-INCLUDE		= -I../../lexer -I../../token
+LIBFT_PATH	= ../../libft
+LIB			= -L$(LIBFT_PATH) -lft
+INCLUDE		=
 
-#all: $(NAME)
-all: run
 
-$(NAME): $(OBJS) $(LEXER_OBJS)
+all: $(NAME) run
+
+$(NAME): $(OBJS)
 	@make -C $(LIBFT_PATH)
-	$(CC) $(CFLAG) $(INCLUDE) $^ -o $@ -L$(LIBFT_PATH) -lft
+	$(CC) $(CFLAG) $^ -o $@ $(INCLUDE) $(LIB)
 
 $(OBJDIR)/%.o: %.c
-	@mkdir -p $(OBJDIR)
-	$(CC) $(CFLAG) -o $@ -c $<
-
-$(LEXER_OBJDIR)/%.o: $(LEXER_PATH)/%.c
-	@mkdir -p $(LEXER_OBJDIR)
+	@if [ ! -d $(dir $@) ];then mkdir $(dir $@); fi
 	$(CC) $(CFLAG) -o $@ -c $<
 
 clean:
 	@make fclean -C $(LIBFT_PATH)
 	$(RM) -r $(OBJDIR)
-	$(RM) -r $(LEXER_OBJDIR)
 
 fclean: clean
 	@make fclean -C $(LIBFT_PATH)
@@ -44,7 +41,7 @@ fclean: clean
 
 re: fclean all
 
-run: $(NAME)
+run:
 	./$(NAME)
 
 .PHONY: all re clean fclean run
