@@ -67,7 +67,7 @@ int minishell(char *line)
 		if (!node)
 		{
 			free(line);
-			if (register_env_var(ft_strdup("?"), ft_strdup(ES_SYNTAX_ERROR), &env_vars) == MALLOC_ERROR)
+			if (register_env_var_from_literal("?", NULL, ES_SYNTAX_ERROR, &env_vars) == MALLOC_ERROR)
 				exit(delete_env_lst(env_vars, NULL, NULL));
 			continue;
 		}
