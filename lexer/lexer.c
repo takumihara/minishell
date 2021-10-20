@@ -1,5 +1,4 @@
 #include "lexer.h"
-#include "../libft/libft.h"
 
 // inputに対して新しくlexer構造体を作成する
 t_lexer *new_lexer(char *input)
@@ -9,7 +8,7 @@ t_lexer *new_lexer(char *input)
 	// todo: FREE required!!
 	l = malloc(sizeof(t_lexer));
 	if (!l)
-		return (NULL);
+		perror_exit("malloc", EXIT_FAILURE);
 	l->input = input;
 	l->position = 0;
 	l->read_position = 0;
@@ -95,16 +94,12 @@ t_token	*lex(char *input)
 	t_lexer	*l;
 
 	l = new_lexer(input);
-	if (!l)
-		return (lexer_perror(l, NULL, input, "malloc"));
 	token.next = NULL;
 	tmp = &token;
 	read_char(l);
 	while (1)
 	{
 		tmp->next = next_token(l);
-		if (!tmp->next)
-			return (lexer_perror(l, token.next, input, "malloc"));
 		if (tmp->next->type == EOL)
 			break ;
 		tmp = tmp->next;

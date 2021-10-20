@@ -1,6 +1,4 @@
-#include <printf.h>
 #include "lexer.h"
-#include "../libft/libft.h"
 
 void	read_char(t_lexer *l)
 {
@@ -38,11 +36,11 @@ t_token	*skip_space(t_lexer *l)
 	return (token);
 }
 
-t_token	*lexer_perror(t_lexer *l, t_token *token, char *input, const char *s)
-{
-	perror(s);
-	token_lstclear(token);
-	free(input);
-	free(l);
-	return (NULL);
-}
+// t_token	*lexer_perror(t_lexer *l, t_token *token, char *input, const char *s)
+// {
+// 	perror(s);
+// 	token_lstclear(token);
+// 	free(input);
+// 	free(l);
+// 	return (NULL);
+// }

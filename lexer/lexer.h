@@ -4,16 +4,12 @@
 # define RESET   "\033[0m"
 # define RED     "\033[31m"      /* Red */
 
-# include "../token/token.h"
 # include <stdlib.h>
 # include <stdio.h>
 # include <stdbool.h>
-// opendir(), readdir() -> wildcard
-# include <sys/types.h>
-# include <dirent.h>
-# include <stdbool.h>
-// todo: remove this
-# include "printf.h"
+# include "../token/token.h"
+# include "../libft/libft.h"
+# include "../utils/utils.h"
 
 # define DELIMITER "|&<>() "
 
@@ -32,10 +28,6 @@ typedef struct s_lexer
 	bool	is_redirect;
 }	t_lexer;
 
-typedef int	t_bool;
-# define FALSE 0
-# define TRUE 1
-
 // lexer.c
 t_lexer	*new_lexer(char *input);
 t_token	*next_token(t_lexer *lexer);
@@ -44,7 +36,7 @@ t_token	*lex(char *input);
 // lexer_utils.c
 void	read_char(t_lexer *lexer);
 t_token	*skip_space(t_lexer *lexer);
-t_token	*lexer_perror(t_lexer *l, t_token *token, char *input, const char *s);
+// t_token	*lexer_perror(t_lexer *l, t_token *token, char *input, const char *s);
 
 // lexer_new_token.c
 t_token	*new_token(t_token_type token_type, t_lexer *l, size_t len, size_t start);
