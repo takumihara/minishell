@@ -52,6 +52,6 @@ run: $(NAME)
 	./$(NAME)
 
 norm:
-	norminette $
+	norminette $(EXECUTE_PATH) $(EXE_WRAP_PATH) | grep Error
 
 .PHONY: all re clean fclean run

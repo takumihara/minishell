@@ -77,41 +77,22 @@ static void execute_builtin_internal(int argc, char **argv, t_executor *e, bool 
 bool	execute_builtin(t_executor *e, int argc, char **argv, bool is_last)
 {
 	if (!ft_strcmp(argv[0], "cd"))
-	{
 		execute_builtin_internal(argc, argv, e, is_last, builtin_cd);
-		return (true);
-	}
 	else if (!ft_strcmp(argv[0], "pwd"))
-	{
 		execute_builtin_internal(argc, argv, e, is_last, builtin_pwd);
-		return (true);
-	}
 	else if (!ft_strcmp(argv[0], "exit"))
-	{
 		execute_builtin_internal(argc, argv, e, is_last, builtin_exit);
-		return (true);
-	}
 	else if (!ft_strcmp(argv[0], "echo"))
-	{
 		execute_builtin_internal(argc, argv, e, is_last, builtin_echo);
-		return (true);
-	}
 	else if (!ft_strcmp(argv[0], "export"))
-	{
 		execute_builtin_internal(argc, argv, e, is_last, builtin_export);
-		return (true);
-	}
 	else if (!ft_strcmp(argv[0], "env"))
-	{
 		execute_builtin_internal(argc, argv, e, is_last, builtin_env);
-		return (true);
-	}
 	else if (!ft_strcmp(argv[0], "unset"))
-	{
 		execute_builtin_internal(argc, argv, e, is_last, builtin_unset);
-		return (true);
-	}
-	return (false);
+	else
+		return (false);
+	return (true);
 }
 
 bool	is_execute_condition(int condition, int exit_status)

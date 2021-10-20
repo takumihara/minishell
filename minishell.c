@@ -80,6 +80,7 @@ int minishell(char *line)
 int	main(int argc, char **argv)
 {
 	int				on;
+	int				off;
 	char			*line;
 
 	if (argc == 3 && !ft_strcmp(argv[1], "-c"))
@@ -91,6 +92,8 @@ int	main(int argc, char **argv)
 		// todo: gnl status
 		// todo: what if there are two lines
 		get_next_line(STDIN_FILENO, &line);
+		off = 0;
+		ioctl(STDIN_FILENO, FIONBIO, &off);
 		if (line[0])
 			return (minishell(line));
 		free(line);
