@@ -63,3 +63,29 @@ char	*unquoted_memmove(char *dst, char *src)
 	*dst = '\0';
 	return (dst_start);
 }
+
+void	remove_null_argument(char *str)
+{
+	int		status;
+	size_t	i;
+
+	i = 0;
+	while (!ft_strncmp(&str[i], "\"\"", 2) || !ft_strncmp(&str[i], "\'\'", 2))
+		i += 2;
+	if (str[i] == '\0')
+		return ;
+	status = OUTSIDE;
+	while (*str)
+	{
+		if (status == OUTSIDE)
+		{
+			if (!ft_strncmp(str, "\"\"", 2) || !ft_strncmp(str, "\'\'", 2))
+			{
+				ft_memmove(str, str + 2, ft_strlen(str + 2) + 1);
+				continue ;
+			}
+		}
+		status = quotation_status(*str, status);
+		str++;
+	}
+}
