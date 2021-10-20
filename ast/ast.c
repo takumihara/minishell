@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "ast.h"
+#include "../wrapper/x.h"
 
 void	set_ast_nodes(t_ast_node *root, t_ast_node *left, t_ast_node *right)
 {
@@ -20,16 +21,13 @@ void	*delete_ast_nodes(t_ast_node *node1, t_ast_node *node2)
 	return (NULL);
 }
 
-bool	new_ast_node(t_ast_node **node)
+void	new_ast_node(t_ast_node **node)
 {
-	*node = (t_ast_node *)malloc(sizeof(**node));
-	if (!*node)
-		return (false);
+	*node = x_malloc(sizeof(**node));
 	(*node)->left = NULL;
 	(*node)->right = NULL;
 	(*node)->data = NULL;
 	(*node)->type = UNSET_NODE;
-	return (true);
 }
 
 bool	assign_ast_node(t_ast_node **dst, t_ast_node *src)

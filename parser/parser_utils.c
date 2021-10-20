@@ -1,12 +1,11 @@
 #include "parser.h"
+#include "../wrapper/x.h"
 
 t_parser	*new_parser(t_token *token)
 {
 	t_parser	*parser;
 
-	parser = malloc(sizeof(t_parser));
-	if (!parser)
-		return (NULL);
+	parser = x_malloc(sizeof(t_parser));
 	parser->token = token;
 	parser->err = 0;
 	parser->is_subshell = false;

@@ -83,8 +83,7 @@ void	*parse(t_token *token)
 	char		*err_msg;
 
 	head = token;
-	if (!assign_mem((void **) &p, new_parser(token)))
-		return (NULL);
+	p = new_parser(token);
 	node = command_line(p);
 	err_msg = handle_err(p);
 	token_lstclear(head);
@@ -106,8 +105,7 @@ t_ast_node *parse(t_token *token)
 	t_ast_node		*root;
 
 	head = token;
-	if (!assign_mem((void **) &p, new_parser(token)))
-		return (NULL);
+	p = new_parser(token);
 	root = command_line(p);
 	if (handle_err(p))
 	{
@@ -129,8 +127,7 @@ t_ast_node	*command_line(t_parser *p)
 
 	if (!assign_ast_node(&pipeline_, pipeline(p)))
 		return (NULL);
-	if (!new_ast_node(&result))
-		return (delete_ast_nodes(pipeline_, NULL));
+	new_ast_node(&result);
 	if (consume_token(p, AND_IF, NULL))
 		result->type = AND_IF_NODE;
 	else if (consume_token(p, OR_IF, NULL))
@@ -170,8 +167,7 @@ t_ast_node *pipeline(t_parser *p)
 			p->err = ERR_UNEXPECTED_EOF;
 		return (delete_ast_nodes(command_, NULL));
 	}
-	if (!new_ast_node(&result))
-		return (delete_ast_nodes(command_, pipeline_));
+	new_ast_node(&result);
 	result->type = PIPE_NODE;
 	set_ast_nodes(result, command_, pipeline_);
 	return (result);
@@ -213,8 +209,7 @@ t_ast_node *subshell(t_parser *p)
 		return (delete_ast_nodes(compound_list_, NULL));
 	}
 	p->is_subshell = false;
-	if (!new_ast_node(&result))
-		return (delete_ast_nodes(compound_list_, NULL));
+	new_ast_node(&result);
 	result->type = SUBSHELL_NODE;
 	set_ast_nodes(result, compound_list_, NULL);
 	return (result);
@@ -228,8 +223,7 @@ t_ast_node *compound_list(t_parser *p)
 
 	if (!assign_ast_node(&pipeline_, pipeline(p)))
 		return (NULL);
-	if (!new_ast_node(&result))
-		return (delete_ast_nodes(pipeline_, NULL));
+	new_ast_node(&result);
 	if (consume_token(p, AND_IF, NULL))
 		result->type = AND_IF_NODE;
 	else if (consume_token(p, OR_IF, NULL))
@@ -283,8 +277,7 @@ t_ast_node *word(t_parser *p)
 {
 	t_ast_node		*simple_command_element;
 
-	if (!new_ast_node(&simple_command_element))
-		return (NULL);
+	new_ast_node(&simple_command_element);
 	if (!consume_token(p, STRING, simple_command_element))
 	{
 		if (p->token->type == LPAREN || (p->token->type == RPAREN && !p->is_subshell))
@@ -299,8 +292,7 @@ t_ast_node *redirection(t_parser *p)
 {
 	t_ast_node	*redirection;
 
-	if (!new_ast_node(&redirection))
-		return (NULL);
+	new_ast_node(&redirection);
 	if (p->err)
 		return (NULL);
 	if (consume_token(p, REDIRECT_IN, NULL))
