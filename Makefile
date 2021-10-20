@@ -58,4 +58,7 @@ re: fclean all
 run:
 	./$(NAME)
 
+norm:
+	norminette $(SRC_PATHS) | grep Error
+
 .PHONY: all bonus clean fclean re run
