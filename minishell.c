@@ -49,8 +49,7 @@ int minishell(char *line)
 
 	env_vars = init_env_lst();
 
-	// todo: null check
-	if (register_env_var(ft_strdup("?"), ft_strdup("0"), &env_vars) == MALLOC_ERROR)
+	if (register_env_var_from_literal("?", "0", 0, &env_vars) == MALLOC_ERROR)
 		exit(delete_env_lst(env_vars, NULL, NULL));
 	if (line)
 		exit(execute(parse(lex(line)), &env_vars));

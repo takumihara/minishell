@@ -26,4 +26,7 @@ t_env_var	*init_env_lst(void);
 char		*get_env_value(char *key, t_env_var *env_var);
 int			register_env_var(char *key, char *value, t_env_var **env_vars);
 
+// register_env_var_from_literal.c
+int			register_env_var_from_literal(const char *str_key, const char *str_value, int num_value, t_env_var **env_vars);
+
 #endif
