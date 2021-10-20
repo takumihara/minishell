@@ -166,7 +166,8 @@ t_ast_node *pipeline(t_parser *p)
 		return (command_);
 	if (!assign_ast_node(&pipeline_, pipeline(p)))
 	{
-		p->err = ERR_UNEXPECTED_EOF;
+		if (!p->err)
+			p->err = ERR_UNEXPECTED_EOF;
 		return (delete_ast_nodes(command_, NULL));
 	}
 	if (!new_ast_node(&result))

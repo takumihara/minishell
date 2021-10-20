@@ -275,7 +275,7 @@ int main() {
 	{
 		char input[] = "echo hello |)";
 		test expected[] = {
-				{UNSET_NODE, 0, "minishell: syntax error: unexpected end of file\n"},
+				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `)'\n"},
 		};
 		test_parser(input, expected, ERROR_CASE, 0);
 	}
@@ -337,6 +337,13 @@ int main() {
 		char input[] = "(echo hello) 3>>res";
 		test expected[] = {
 				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `3'\n"},
+		};
+		test_parser(input, expected, ERROR_CASE, 0);
+	}
+	{
+		char input[] = "echo | )";
+		test expected[] = {
+				{UNSET_NODE, 0, "minishell: syntax error near unexpected token `)'\n"},
 		};
 		test_parser(input, expected, ERROR_CASE, 0);
 	}
