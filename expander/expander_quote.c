@@ -81,7 +81,7 @@ bool		is_valid_empty(char *str)
 			if (str == ft_strstr(str, "\"\"") || str == ft_strstr(str, "\'\'"))
 			{
 				str = str + 2;
-				quotes_len = quotes_len + 2;	
+				quotes_len = quotes_len + 2;
 				continue ;
 			}
 		}
@@ -93,7 +93,7 @@ bool		is_valid_empty(char *str)
 	return (true);
 }
 
-void	remove_substr(char *str)
+void	remove_invalid_empty(char *str)
 {
 	const size_t	len = ft_strlen(str);
 	int				status;
