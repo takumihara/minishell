@@ -1,5 +1,5 @@
 #include <string.h>
-#include "../parser.h"
+#include "../internal/internal.h"
 
 #define GENERAL_CASE -1
 #define ERROR_CASE -2
