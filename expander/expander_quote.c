@@ -66,9 +66,13 @@ char	*unquoted_memmove(char *dst, char *src)
 
 void	remove_null_argument(char *str)
 {
-	int				status;
+	int		status;
+	size_t	i;
 
-	if (ft_strncmp(str, "\"\"", 2) && ft_strncmp(str, "\'\'", 2))
+	i = 0;
+	while (!ft_strncmp(&str[i], "\"\"", 2) || !ft_strncmp(&str[i], "\'\'", 2))
+		i += 2;
+	if (str[i] == '\0')
 		return ;
 	status = OUTSIDE;
 	while (*str)

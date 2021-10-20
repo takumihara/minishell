@@ -54,3 +54,4 @@ echo "''"$USER'' a
 echo "''"'' a
 echo "a b"$USER"" c
 echo ""''a""'' b
+export str='   a  bb  ccc   ' && echo $str""
