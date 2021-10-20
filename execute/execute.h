@@ -20,7 +20,6 @@
 # define CHILD_PROCESS 0
 
 # define CHILD_PROCESS_NOT_CREATED 0
-# define NOT_LAST_COMMAND 0
 
 typedef struct s_pipeline		t_pipeline;
 typedef struct s_subshell		t_subshell;
@@ -93,25 +92,25 @@ struct s_redirect_in {
 int		execute(t_ast_node *root, t_env_var **env_vars);
 void	init_compound_list(t_executor *e, t_compound_list **cl, t_ast_node *node);
 // execute_init_utils.c
-bool	new_t_pipeline(t_pipeline **pipeline);
-bool	new_t_subshell(t_subshell **ss);
-bool	new_t_compound_list(t_compound_list **cl);
-bool	new_t_simple_command(t_simple_command **sc);
-bool	new_argv(t_simple_command *sc);
+void	new_t_pipeline(t_pipeline **pipeline);
+void	new_t_subshell(t_subshell **ss);
+void	new_t_compound_list(t_compound_list **cl);
+void	new_t_simple_command(t_simple_command **sc);
+void	new_argv(t_simple_command *sc);
 
 
 // execute_utils.c
-bool	new_executor(t_executor **e, t_ast_node *root, t_env_var **env_vars);
+void	new_executor(t_executor **e, t_ast_node *root, t_env_var **env_vars);
 void	delete_executor(t_executor **e);
-int		ex_perror(t_executor *e, const char *s);
+//int		ex_perror(t_executor *e, const char *s);
 void	delete_list(void *element, t_list_type type);
 bool	execute_builtin(t_executor *e, int argc, char **argv, bool islast);
 bool	is_execute_condition(int condition, int exit_status);
 void	execute_redirect(t_simple_command *sc);
 
 // new_redirect.c
-bool	new_t_redirect_out(t_simple_command *sc, char *filename, t_node_type type);
-bool	new_t_redirect_in(t_executor *e, t_simple_command *sc, char *data, t_node_type type);
+void	new_t_redirect_out(t_simple_command *sc, char *filename, t_node_type type);
+void	new_t_redirect_in(t_simple_command *sc, char *data, t_node_type type);
 
 // execute_command.c
 int		execute_pipeline(t_executor *e, t_pipeline *c);

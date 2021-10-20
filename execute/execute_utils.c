@@ -1,16 +1,14 @@
 #include "execute.h"
+#include "../wrapper/x.h"
 
-bool	new_executor(t_executor **e, t_ast_node *root, t_env_var **env_vars)
+void	new_executor(t_executor **e, t_ast_node *root, t_env_var **env_vars)
 {
-	*e = (t_executor *)malloc(sizeof(**e));
-	if (!*e)
-		return (false);
+	*e = (t_executor *)x_malloc(sizeof(**e));
 	(*e)->root = root;
 	(*e)->exit_status = EXIT_SUCCESS;
 	(*e)->condition = CONDITION_AND_IF;
 	(*e)->pipeline = NULL;
 	(*e)->env_vars = env_vars;
-	return (true);
 }
 
 void	delete_executor(t_executor **e)
@@ -58,13 +56,13 @@ void	delete_list(void *element, t_list_type type)
 	free(element);
 }
 
-int	ex_perror(t_executor *e, const char *s)
-{
-	perror(s);
-	if (e)
-		delete_executor(&e);
-	return (EXIT_FAILURE);
-}
+//int	ex_perror(t_executor *e, const char *s)
+//{
+//	perror(s);
+//	if (e)
+//		delete_executor(&e);
+//	return (EXIT_FAILURE);
+//}
 
 static void execute_builtin_internal(int argc, char **argv, t_executor *e, bool islast, int (*fn)(int, char**, int, t_env_var**))
 {

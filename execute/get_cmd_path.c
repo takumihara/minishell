@@ -1,4 +1,5 @@
 #include "get_cmd_path.h"
+#include "../wrapper/x.h"
 
 static void	destroy_sep_list(t_sep_list *head)
 {
@@ -16,9 +17,7 @@ static t_sep_list *new_sep_list(int sep_index)
 {
 	t_sep_list	*new;
 
-	new = malloc(sizeof(*new));
-	if (!new)
-		perror_exit("malloc", EXIT_FAILURE);
+	new = x_malloc(sizeof(*new));
 	new->next = NULL;
 	new->sep_index = sep_index;
 	return (new);
@@ -37,11 +36,9 @@ static void create_paths(char **paths, const char *path_from_env, t_sep_list *se
 	{
 		len = sep_list->sep_index - start - 1;
 		if (len == 0)
-			paths[++i] = ft_strdup(".");
+			paths[++i] = x_strdup(".");
 		else
-			paths[++i] = ft_substr(path_from_env, start + 1, len);
-		if (!paths[i])
-			perror_exit("malloc", EXIT_FAILURE);
+			paths[++i] = x_substr(path_from_env, start + 1, len);
 		start = sep_list->sep_index;
 		sep_list = sep_list->next;
 	}
@@ -78,9 +75,7 @@ char **split_path_from_env(const char *path_from_env)
 	int			list_len;
 
 	sep_list = create_sep_list(path_from_env, &list_len);
-	paths = malloc(sizeof(*paths) * (list_len + 1));
-	if (!paths)
-		perror_exit("malloc", EXIT_FAILURE);
+	paths = x_malloc(sizeof(*paths) * (list_len + 1));
 	create_paths(paths, path_from_env, sep_list);
 	destroy_sep_list(sep_list);
 	return (paths);
@@ -95,10 +90,10 @@ char	*get_cmd_path(t_executor *e, char *command)
 
 	path_from_env = get_env_value("PATH", *e->env_vars);
 	if (!path_from_env)
-		return (ft_strdup(command));
+		return (x_strdup(command));
 	paths = split_path_from_env(path_from_env);
 	if (!paths[0])
-		return (ft_strdup(command));
+		return (x_strdup(command));
 	i = -1;
 	while (1)
 	{
