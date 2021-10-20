@@ -53,7 +53,7 @@ int minishell(char *line)
 	if (register_env_var_from_literal("?", "0", 0, &env_vars) == MALLOC_ERROR)
 		exit(delete_env_lst(env_vars, NULL, NULL));
 	if (line)
-		exit(execute(parse(lex(line)), &env_vars));
+		return (execute(parse(lex(line)), &env_vars));
 	exit_status = EXIT_SUCCESS;
 	set_signal_handler();
 	while (1)
@@ -64,13 +64,6 @@ int minishell(char *line)
 		// line can be NULL when Ctrl+d
 		t_token *token = lex(line);
 		t_ast_node *node = parse(token);
-		if (!node)
-		{
-			free(line);
-			if (register_env_var(ft_strdup("?"), ft_strdup(ES_SYNTAX_ERROR), &env_vars) == MALLOC_ERROR)
-				exit(delete_env_lst(env_vars, NULL, NULL));
-			continue;
-		}
 		exit_status = execute(node, &env_vars);
 		add_history(line);
 		free(line);
@@ -83,6 +76,7 @@ int	main(int argc, char **argv)
 {
 	char			*line;
 	t_gnl_status 	status;
+	int				exit_status;
 
 	if (argc == 3 && !ft_strcmp(argv[1], "-c"))
 		return (minishell(ft_strdup(argv[2])));
@@ -97,7 +91,11 @@ int	main(int argc, char **argv)
 			else if (status == GNL_STATUS_ERROR_MALLOC)
 				perror_exit("malloc", EXIT_FAILURE);
 			if (line[0])
-				return (minishell(line));
+			{
+				exit_status = minishell(line);
+				free(line);
+				return (exit_status);
+			}
 			free(line);
 		}
 		return (minishell(NULL));

@@ -1,4 +1,5 @@
 #include "execute.h"
+#include "exit_status.h"
 
 static int command_line(t_executor *e, t_ast_node *node);
 static void pipeline(t_executor *e, t_pipeline **pipeline, t_ast_node *node);
@@ -11,7 +12,11 @@ int	execute(t_ast_node *root, t_env_var **env_vars)
 	int			exit_status;
 
 	if (!root)
-		return (EXIT_FAILURE);
+	{
+		if (register_env_var_from_literal("?", NULL, ES_SYNTAX_ERROR, env_vars) == MALLOC_ERROR)
+			perror_exit("malloc", EXIT_FAILURE);
+		return (ES_SYNTAX_ERROR);
+	}
 	if (!new_executor(&e, root, env_vars))
 		return (ex_perror(NULL, "malloc"));
 	exit_status = command_line(e, root);

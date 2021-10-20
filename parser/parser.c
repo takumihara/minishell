@@ -86,11 +86,14 @@ void	*parse(t_token *token)
 	if (!assign_mem((void **) &p, new_parser(token)))
 		return (NULL);
 	node = command_line(p);
-	err_msg = handle_err(p, node);
-	if (err_msg)
-		return ((void *)err_msg);
+	err_msg = handle_err(p);
 	token_lstclear(head);
 	free(p);
+	if (err_msg)
+	{
+		delete_ast_nodes(node, NULL);
+		return ((void *) err_msg);
+	}
 	return ((void *)node);
 }
 
@@ -106,7 +109,7 @@ t_ast_node *parse(t_token *token)
 	if (!assign_mem((void **) &p, new_parser(token)))
 		return (NULL);
 	root = command_line(p);
-	if (handle_err(p, root))
+	if (handle_err(p))
 	{
 		delete_ast_nodes(root, NULL);
 		root = NULL;
@@ -163,7 +166,8 @@ t_ast_node *pipeline(t_parser *p)
 		return (command_);
 	if (!assign_ast_node(&pipeline_, pipeline(p)))
 	{
-		p->err = ERR_UNEXPECTED_EOF;
+		if (!p->err)
+			p->err = ERR_UNEXPECTED_EOF;
 		return (delete_ast_nodes(command_, NULL));
 	}
 	if (!new_ast_node(&result))
@@ -283,7 +287,7 @@ t_ast_node *word(t_parser *p)
 		return (NULL);
 	if (!consume_token(p, STRING, simple_command_element))
 	{
-		if (!p->err && (p->token->type == LPAREN || (p->token->type == RPAREN && !p->is_subshell)))
+		if (p->token->type == LPAREN || (p->token->type == RPAREN && !p->is_subshell))
 			p->err = ERR_UNEXPECTED_TOKEN;
 		return (delete_ast_nodes(simple_command_element, NULL));
 	}

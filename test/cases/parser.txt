@@ -1,0 +1,16 @@
+echo "cannot_test && (echo hello"
+echo hello)
+echo hello(
+echo "tester_bug (echo success) &&"
+( && )
+error && ( \n )
+echo success > &&
+echo success > ||
+(echo hello > res1 >> ||
+echo "tester_bug echo hello ||"
+echo "tester_bug echo hello |"
+echo hello |)
+echo "tester_bug echo hello | echo hello | echo hello |"
+echo "(echo hello > res1 <<"
+echo "(echo hello > res1"
+echo | )
