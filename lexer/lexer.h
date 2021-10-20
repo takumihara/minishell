@@ -10,6 +10,7 @@
 # include "../token/token.h"
 # include "../libft/libft.h"
 # include "../utils/utils.h"
+# include "../wrapper/x.h"
 
 # define DELIMITER "|&<>() "
 

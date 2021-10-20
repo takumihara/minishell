@@ -4,9 +4,7 @@ t_token	*new_token(t_token_type token_type, t_lexer *l, size_t len, size_t len_s
 {
 	t_token	 *token;
 
-	token = (t_token *)malloc(sizeof(t_token));
-	if (!token)
-		perror_exit("malloc", EXIT_FAILURE);
+	token = x_malloc(sizeof(t_token));
 	token->type = token_type;
 	token->literal.start = &(l->input[len_start]);
 	token->literal.len = len;
@@ -25,9 +23,7 @@ t_token	*new_token_string(t_lexer *l)
 	bool			closed;
 
 	closed = true;
-	token = (t_token *)malloc(sizeof(t_token));
-	if (!token)
-		perror_exit("malloc", EXIT_FAILURE);
+	token = x_malloc(sizeof(t_token));
 	while (!ft_strchr(DELIMITER, l->ch))
 	{
 		if (l->ch == '\'' || l->ch == '\"')

@@ -6,9 +6,7 @@ t_lexer *new_lexer(char *input)
 	t_lexer *l;
 
 	// todo: FREE required!!
-	l = malloc(sizeof(t_lexer));
-	if (!l)
-		perror_exit("malloc", EXIT_FAILURE);
+	l = x_malloc(sizeof(t_lexer));
 	l->input = input;
 	l->position = 0;
 	l->read_position = 0;
