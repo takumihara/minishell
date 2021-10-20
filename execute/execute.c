@@ -1,5 +1,6 @@
 #include "execute.h"
 #include "exit_status.h"
+#include "wrapper/wrapper.h"
 
 int execute_command(t_executor *e, void *command, int type, bool is_last, bool is_pipe, int	pipefd[]);
 int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bool is_pipe, int	pipefd[]);
@@ -15,23 +16,23 @@ int execute_pipeline(t_executor *e, t_pipeline *pl)
 	int	statloc;
 	const bool is_pipe = (pl->next != NULL);
 
-	orig_stdfd[READ] = dup(STDIN_FILENO);
-	orig_stdfd[WRITE] = dup(STDOUT_FILENO);
+	orig_stdfd[READ] = ms_dup(STDIN_FILENO);
+	orig_stdfd[WRITE] = ms_dup(STDOUT_FILENO);
 	pipefd[READ] = STDIN_FILENO;
 	child_process_cnt = 0;
 	while (pl)
 	{
-		dup2(pipefd[READ], STDIN_FILENO);
+		ms_dup2(pipefd[READ], STDIN_FILENO);
 		if (pipefd[READ])
 			close(pipefd[READ]);
 		if (pl->next)
 		{
-			pipe(pipefd);
-			dup2(pipefd[WRITE], STDOUT_FILENO);
+			ms_pipe(pipefd);
+			ms_dup2(pipefd[WRITE], STDOUT_FILENO);
 			close(pipefd[WRITE]);
 		}
 		else
-			dup2(orig_stdfd[WRITE], STDOUT_FILENO);
+			ms_dup2(orig_stdfd[WRITE], STDOUT_FILENO);
 		child_pid = execute_command(e, pl->command, pl->type, !pl->next, is_pipe, pipefd);
 		if (child_pid != CHILD_PROCESS_NOT_CREATED)
 			child_process_cnt++;
@@ -39,9 +40,9 @@ int execute_pipeline(t_executor *e, t_pipeline *pl)
 			child_pid = NOT_LAST_COMMAND;
 		pl = pl->next;
 	}
-	dup2(orig_stdfd[READ], STDIN_FILENO);
+	ms_dup2(orig_stdfd[READ], STDIN_FILENO);
 	close(orig_stdfd[READ]);
-	dup2(orig_stdfd[WRITE], STDOUT_FILENO);
+	ms_dup2(orig_stdfd[WRITE], STDOUT_FILENO);
 	close(orig_stdfd[WRITE]);
 	while (child_process_cnt--)
 		if (wait(&statloc) == child_pid)
@@ -61,13 +62,12 @@ int execute_command(t_executor *e, void *command, int type, bool is_last, bool i
 		}
 		return (execute_simple_command(e, (t_simple_command *)command, is_last, is_pipe, pipefd));
 	}
-	else // subshell
+	else
 		return (execute_subshell(e, (t_subshell *)command));
 }
 
 int execute_subshell(t_executor *e, t_subshell *ss)
 {
-	// redirection list process
 	return (execute_compound_list(e, ss->compound_list));
 }
 
@@ -77,7 +77,7 @@ int execute_compound_list(t_executor *e, t_compound_list *cl)
 	t_executor		*exe_child;
 	int				exit_status;
 
-	pid = fork();
+	pid = ms_fork();
 	if (pid == CHILD_PROCESS)
 	{
 		if (!new_executor(&exe_child, NULL, NULL))
@@ -97,8 +97,6 @@ int execute_compound_list(t_executor *e, t_compound_list *cl)
 		free(exe_child);
 		exit(exit_status);
 	}
-	else if (pid < 0)
-		exit(ex_perror(e, "fork"));
 	return (pid);
 }
 
@@ -118,7 +116,7 @@ int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bo
 	if (!is_pipe && execute_builtin(e, sc->argc, sc->argv, is_last))
 		return (CHILD_PROCESS_NOT_CREATED);
 	envp = create_envp(e);
-	pid = fork();
+	pid = ms_fork();
 	if (pid == CHILD_PROCESS)
 	{
 		if (is_pipe && !is_last && pipefd[READ])
@@ -134,8 +132,6 @@ int execute_simple_command(t_executor *e, t_simple_command *sc, bool is_last, bo
 		if (execve(path, sc->argv, envp) == -1)
 			handle_exec_error(path, true);
 	}
-	else if (pid < 0)
-		exit(ex_perror(e, "minishell: fork"));
 	//todo: check islast
 	return (pid);
 }
