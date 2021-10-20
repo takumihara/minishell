@@ -80,7 +80,7 @@ bool		is_valid_empty(char *str)
 		{
 			if (str == ft_strstr(str, "\"\"") || str == ft_strstr(str, "\'\'"))
 			{
-				str = str + 2;
+				str += 2;
 				quotes_len = quotes_len + 2;
 				continue ;
 			}
