@@ -1,2 +1,19 @@
 mkdir dir && cd dir && pwd
 mkdir dir || cd dir && pwd
+mkdir dir && cd dir && cd . && pwd
+mkdir dir && cd dir && cd ./ && pwd
+mkdir dir && cd dir && cd .. && pwd
+mkdir dir && cd dir && cd ../ && pwd
+touch testfile && cd testfile
+cd NO_SUCH_FILE && pwd
+cd NO_SUCH_FILE || pwd
+cd hello world && pwd
+cd hello world || pwd
+cd / && cd ../../akjwyefgjkwveyjfgweyugyuwegf76t273/../../ &&pwd
+mkdir dir && cd dir && cd ../nosuchdir/../dir && pwd || pwd
+mkdir hello && cd hello world && pwd || pwd
+cd / && pwd
+cd /bin && pwd
+cd /bin/../ && pwd
+mkdir dir && cd DIR && pwd || pwd
+mkdir DIR && cd dir && pwd || pwd
