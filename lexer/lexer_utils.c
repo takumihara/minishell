@@ -1,6 +1,4 @@
-#include <printf.h>
 #include "lexer.h"
-#include "../libft/libft.h"
 
 void	read_char(t_lexer *l)
 {
@@ -25,24 +23,24 @@ t_token	*skip_space(t_lexer *l)
 		if ((l->is_subshell || l->is_redirect) && l->ch == '\n')
 		{
 			token = new_token_newline(l);
+			if (l->ch == ')')
+			{
+				free(token);
+				token = NULL;
+			}
 			return (token);
 		}
 		read_char(l);
 	}
 	l->is_redirect = false;
-	if (l->ch == ')')
-	{
-		free(token);
-		token = NULL;
-	}
 	return (token);
 }
 
-t_token	*lexer_perror(t_lexer *l, t_token *token, char *input, const char *s)
-{
-	perror(s);
-	token_lstclear(token);
-	free(input);
-	free(l);
-	return (NULL);
-}
+// t_token	*lexer_perror(t_lexer *l, t_token *token, char *input, const char *s)
+// {
+// 	perror(s);
+// 	token_lstclear(token);
+// 	free(input);
+// 	free(l);
+// 	return (NULL);
+// }

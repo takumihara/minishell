@@ -1,6 +1,4 @@
-#include <printf.h>
 #include "lexer.h"
-#include "../libft/libft.h"
 
 void	token_lstclear(t_token *lst)
 {

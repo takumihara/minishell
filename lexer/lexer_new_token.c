@@ -1,6 +1,4 @@
-#include <printf.h>
 #include "lexer.h"
-#include "../libft/libft.h"
 
 t_token	*new_token(t_token_type token_type, t_lexer *l, size_t len, size_t len_start)
 {
@@ -8,7 +6,7 @@ t_token	*new_token(t_token_type token_type, t_lexer *l, size_t len, size_t len_s
 
 	token = (t_token *)malloc(sizeof(t_token));
 	if (!token)
-		return (NULL);
+		perror_exit("malloc", EXIT_FAILURE);
 	token->type = token_type;
 	token->literal.start = &(l->input[len_start]);
 	token->literal.len = len;
@@ -29,7 +27,7 @@ t_token	*new_token_string(t_lexer *l)
 	closed = true;
 	token = (t_token *)malloc(sizeof(t_token));
 	if (!token)
-		return (NULL);
+		perror_exit("malloc", EXIT_FAILURE);
 	while (!ft_strchr(DELIMITER, l->ch))
 	{
 		if (l->ch == '\'' || l->ch == '\"')
