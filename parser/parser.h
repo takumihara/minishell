@@ -12,9 +12,6 @@
 
 # define ERR_UNEXPECTED_TOKEN 1
 # define ERR_UNEXPECTED_EOF 2
-# define ERR_MALLOC 3
-
-# define EXIT_STATUS_PARSER 258
 
 //# define TEST
 
@@ -37,9 +34,9 @@ bool	consume_token(t_parser *p, t_token_type expected_type, t_ast_node *node);
 t_ast_node	*route_expressions(t_parser *p, t_ast_node *(*f[])(t_parser *), int element_num);
 
 #ifdef TEST
-char	*handle_err(t_parser *p, t_ast_node *root);
+char	*handle_err(t_parser *p);
 #else
-bool	handle_err(t_parser *p, t_ast_node *root);
+bool	handle_err(t_parser *p);
 #endif
 
 // t_string related functions

@@ -22,10 +22,7 @@ bool	consume_token(t_parser *p, t_token_type expected_type, t_ast_node *node)
 	{
 		node->data = ft_strndup(p->token->literal.start, p->token->literal.len);
 		if (!node->data)
-		{
-			p->err = ERR_MALLOC;
-			return (false);
-		}
+			perror_exit("malloc", EXIT_FAILURE);
 	}
 	p->token = p->token->next;
 	return (true);
@@ -52,10 +49,11 @@ t_ast_node	*route_expressions(t_parser *p, t_ast_node *(*f[])(t_parser *), int e
 
 #ifdef TEST
 
-char	*handle_err(t_parser *p, t_ast_node *root)
+char	*handle_err(t_parser *p)
 {
 	char	*rtn;
 
+	rtn = NULL;
 	if (p->err == ERR_UNEXPECTED_TOKEN)
 	{
 		rtn = ft_strdup("minishell: syntax error near unexpected token `");
@@ -67,18 +65,12 @@ char	*handle_err(t_parser *p, t_ast_node *root)
 	}
 	else if (p->err == ERR_UNEXPECTED_EOF)
 		rtn = ft_strdup("minishell: syntax error: unexpected end of file\n");
-	if (p->err)
-	{
-		free(p);
-		delete_ast_nodes(root, NULL);
-		return (rtn);
-	}
-	return (NULL);
+	return (rtn);
 }
 
 #else
 
-bool	handle_err(t_parser *p, t_ast_node *root)
+bool	handle_err(t_parser *p)
 {
 	if (p->err == ERR_UNEXPECTED_TOKEN)
 	{
@@ -87,22 +79,12 @@ bool	handle_err(t_parser *p, t_ast_node *root)
 			ft_putstr_fd("newline", STDERR_FILENO);
 		else
 			write(STDERR_FILENO, p->token->literal.start, p->token->literal.len);
-		ft_putstr_fd("'\n", STDERR_FILENO);
+		ft_putendl_fd("'", STDERR_FILENO);
 	}
 	else if (p->err == ERR_UNEXPECTED_EOF)
-		ft_putstr_fd("minishell: syntax error: unexpected end of file\n", STDERR_FILENO);
-	else if (p->err == ERR_MALLOC)
-	{
-		perror("malloc");
-		free(p);
-		delete_ast_nodes(root, NULL);
-		exit(EXIT_FAILURE);
-	}
+		ft_putendl_fd("minishell: syntax error: unexpected end of file", STDERR_FILENO);
 	if (p->err)
-	{
-		//todo: change exit status `EXIT_STATUS_PARSER`
 		return (true);
-	}
 	return (false);
 }
 
