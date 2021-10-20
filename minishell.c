@@ -82,6 +82,7 @@ int	main(int argc, char **argv)
 	int				on;
 	int				off;
 	char			*line;
+	t_gnl_status 	status;
 
 	if (argc == 3 && !ft_strcmp(argv[1], "-c"))
 		return (minishell(ft_strdup(argv[2])));
@@ -89,9 +90,12 @@ int	main(int argc, char **argv)
 	{
 		on = 1;
 		ioctl(STDIN_FILENO, FIONBIO, &on);
-		// todo: gnl status
 		// todo: what if there are two lines
-		get_next_line(STDIN_FILENO, &line);
+		status = get_next_line(STDIN_FILENO, &line);
+		if (status == GNL_STATUS_ERROR_READ)
+			perror_exit("read", EXIT_FAILURE);
+		else if (status == GNL_STATUS_ERROR_MALLOC)
+			perror_exit("malloc", EXIT_FAILURE);
 		off = 0;
 		ioctl(STDIN_FILENO, FIONBIO, &off);
 		if (line[0])
