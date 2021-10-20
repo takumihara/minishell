@@ -81,21 +81,25 @@ int minishell(char *line)
 
 int	main(int argc, char **argv)
 {
-	int				on;
 	char			*line;
+	t_gnl_status 	status;
 
 	if (argc == 3 && !ft_strcmp(argv[1], "-c"))
 		return (minishell(ft_strdup(argv[2])));
 	else
 	{
-		on = 1;
-		ioctl(STDIN_FILENO, FIONBIO, &on);
-		// todo: gnl status
 		// todo: what if there are two lines
-		get_next_line(STDIN_FILENO, &line);
-		if (line[0])
-			return (minishell(line));
-		free(line);
+		if (isatty(STDIN_FILENO) == 0)
+		{
+			status = get_next_line(STDIN_FILENO, &line);
+			if (status == GNL_STATUS_ERROR_READ)
+				perror_exit("read", EXIT_FAILURE);
+			else if (status == GNL_STATUS_ERROR_MALLOC)
+				perror_exit("malloc", EXIT_FAILURE);
+			if (line[0])
+				return (minishell(line));
+			free(line);
+		}
 		return (minishell(NULL));
 	}
 }

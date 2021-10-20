@@ -2,6 +2,7 @@ NAME = a.out
 
 CURRENT_PATH	= .
 EXECUTE_PATH	= ..
+EXE_WRAP_PATH	= ../wrapper
 EXPANDER_PATH	= ../../expander
 PARSER_PATH		= ../../parser
 LEXER_PATH		= ../../lexer
@@ -10,10 +11,10 @@ UTILS_PATH		= ../../utils
 BUILTIN_PATH	= ../../builtin
 ENV_PATH		= ../../env
 
-SRC_PATHS		= $(CURRENT_PATH) $(EXPANDER_PATH) $(BUILTIN_PATH) $(EXECUTE_PATH) $(PARSER_PATH) $(LEXER_PATH) $(AST_PATH) $(UTILS_PATH) $(ENV_PATH)
+SRC_PATHS		= $(CURRENT_PATH) $(EXPANDER_PATH) $(EXE_WRAP_PATH) $(BUILTIN_PATH) $(EXECUTE_PATH) $(PARSER_PATH) $(LEXER_PATH) $(AST_PATH) $(UTILS_PATH) $(ENV_PATH)
 SRCS			= $(foreach path, $(SRC_PATHS), $(wildcard $(path)/*.c))
 
-VPATH		= $(CURRENT_PATH):$(BUILTIN_PATH):$(EXECUTE_PATH):$(PARSER_PATH):$(LEXER_PATH):$(AST_PATH):$(UTILS_PATH):$(ENV_PATH):$(EXPANDER_PATH)
+VPATH		= $(CURRENT_PATH):$(BUILTIN_PATH):$(EXECUTE_PATH):$(EXE_WRAP_PATH):$(PARSER_PATH):$(LEXER_PATH):$(AST_PATH):$(UTILS_PATH):$(ENV_PATH):$(EXPANDER_PATH)
 
 OBJDIR  = ./obj
 OBJS    = $(addprefix $(OBJDIR)/, $(notdir $(SRCS:%.c=%.o)))
@@ -49,5 +50,8 @@ re: fclean all
 
 run: $(NAME)
 	./$(NAME)
+
+norm:
+	norminette $(EXECUTE_PATH) $(EXE_WRAP_PATH) | grep Error
 
 .PHONY: all re clean fclean run

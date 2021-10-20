@@ -4,7 +4,6 @@
 # include <stdlib.h>
 # include <stdbool.h>
 # include <fcntl.h>
-# include <unistd.h>
 
 # include "../ast/ast.h"
 # include "../libft/libft.h"

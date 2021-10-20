@@ -51,8 +51,7 @@ void test_split_path_from_env_normal(t_env_var *env_vars)
 void test_split_path_from_env_colon()
 {
 	char *path_from_env = ft_strdup(":hello::test:test:test::");
-	char *cur_path = getcwd(NULL, 0);
-	char *expected[10] = {cur_path, "hello", cur_path, "test", "test", "test", cur_path, cur_path, NULL };
+	char *expected[10] = {".", "hello", ".", "test", "test", "test", ".", ".", NULL };
 
 	char **paths = split_path_from_env(path_from_env);
 	for (int i = 0; expected[i]; i++) {
@@ -63,7 +62,6 @@ void test_split_path_from_env_colon()
 		}
 	}
 	free_2d_array((void ***) &paths);
-	free(cur_path);
 	free(path_from_env);
 	path_from_env = NULL;
 	paths = NULL;
