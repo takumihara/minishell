@@ -22,6 +22,8 @@ void	new_expander(t_expander **e, t_env_var *env_vars)
 
 t_ast_node	*expand_redirect_error(char *original_data, t_ast_node *node, t_expander *e)
 {
+	if (e->err != NO_ERR)
+		free(e->err_data);
 	e->err = AMBIGUOUS_REDIRECT_ERR;
 	e->err_data = x_strdup(original_data);
 	return (node);
