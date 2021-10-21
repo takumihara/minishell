@@ -54,6 +54,7 @@ char	*expand_word(t_expander *e, char delimiter)
 	size_t	i;
 
 	data = e->node->data;
+	// todo: need this? Is there a possibility that data is NULL?
 	if (!data)
 		return (NULL);
 	i = 0;
@@ -88,9 +89,7 @@ char	*expand_environment_variable(char *data, size_t replace_start, t_expander *
 		value = get_env_value("?", e->env_vars);
 	else
 	{
-		key = malloc(sizeof(char) * (var_len + 1));
-		if (!key)
-			exit(expand_perror(e, "malloc"));
+		key = x_malloc(sizeof(*key) * (var_len + 1));
 		ft_memmove(key, var_start, var_len);
 		key[var_len] = '\0';
 		value = get_env_value(key, e->env_vars);
