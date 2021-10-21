@@ -13,6 +13,7 @@ ls *
 echo *.'c'
 echo mini*
 echo hello > res*
+cat < $TEST  > res*
 echo hello > $KONIAHI
 export str= str2 && export | grep str
 export str="   o   test   " && ech$str
