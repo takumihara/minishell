@@ -29,7 +29,7 @@ void search_command_arg_node(t_expander *e, t_ast_node *node)
 	t_ast_node	*head;
 
 	head = node;
-	if (!node || !node->data)
+	if (!node)
 		return ;
 	search_command_arg_node(e, node->right);
 	search_command_arg_node(e, node->left);
@@ -44,7 +44,6 @@ void search_command_arg_node(t_expander *e, t_ast_node *node)
 	if (!node)
 		return ;
 	free(original_data);
-	// return (head);
 }
 
 char	*expand_word(t_expander *e, char delimiter)
@@ -54,9 +53,6 @@ char	*expand_word(t_expander *e, char delimiter)
 	size_t	i;
 
 	data = e->node->data;
-	// todo: need this? Is there a possibility that data is NULL?
-	if (!data)
-		return (NULL);
 	i = 0;
 	status = OUTSIDE;
 	while (data[i])
@@ -66,8 +62,6 @@ char	*expand_word(t_expander *e, char delimiter)
 			data = expand_environment_variable(data, i, e, status);
 		else if (data[i] == '*' && delimiter == '*' && status == OUTSIDE)
 			data = expand_wildcard(data, i);
-		if (!data)
-			return (NULL);
 		if (!data[i])
 			break ;
 		i++;
@@ -75,7 +69,6 @@ char	*expand_word(t_expander *e, char delimiter)
 	return (data);
 }
 
-// todo: $? expands exit status
 char	*expand_environment_variable(char *data, size_t replace_start, t_expander *e, int status)
 {
 	const char		*var_start = &data[replace_start + 1];
