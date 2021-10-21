@@ -1,7 +1,7 @@
 #include "x.h"
 #include <errno.h>
 
-struct dirent	*readdir(DIR *dirp)
+struct dirent	*x_readdir(DIR *dirp)
 {
 	struct dirent	*dp;
 
@@ -9,5 +9,5 @@ struct dirent	*readdir(DIR *dirp)
 	dp = readdir(dirp);
 	if (!dp && errno != 0)
 		perror_exit("readdir", EXIT_FAILURE);
-	return dp;
+	return (dp);
 }
