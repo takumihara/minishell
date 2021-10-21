@@ -4,6 +4,7 @@
 
 #include "exit_status.h"
 #include "../libft/libft.h"
+#include "execute.h"
 
 void	handle_exec_error(char *path, bool is_exec_run)
 {
@@ -16,19 +17,26 @@ void	handle_exec_error(char *path, bool is_exec_run)
 	}
 	else
 	{
-		if (access(path, X_OK) == -1)
-		{
-			ft_putstr_fd("minishell: ", STDERR_FILENO);
-			ft_putstr_fd(path, STDERR_FILENO);
-			ft_putendl_fd(": Permission denied", STDERR_FILENO);
-			exit(ES_PERMISSION_DENIED);
-		}
-		else if (access(path, F_OK) == -1)
+		if (access(path, F_OK) == -1)
 		{
 			ft_putstr_fd("minishell: ", STDERR_FILENO);
 			ft_putstr_fd(path, STDERR_FILENO);
 			ft_putendl_fd(": No such file or directory", STDERR_FILENO);
 			exit(ES_NO_SUCH_FILE);
+		}
+		else if (is_dir(path))
+		{
+			ft_putstr_fd("minishell: ", STDERR_FILENO);
+			ft_putstr_fd(path, STDERR_FILENO);
+			ft_putendl_fd(": is a directory", STDERR_FILENO);
+			exit(ES_IS_A_DIRECTORY);
+		}
+		else if (access(path, X_OK) == -1)
+		{
+			ft_putstr_fd("minishell: ", STDERR_FILENO);
+			ft_putstr_fd(path, STDERR_FILENO);
+			ft_putendl_fd(": Permission denied", STDERR_FILENO);
+			exit(ES_PERMISSION_DENIED);
 		}
 		exit(EXIT_SUCCESS);
 	}
