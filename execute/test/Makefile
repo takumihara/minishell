@@ -2,19 +2,21 @@ NAME = a.out
 
 CURRENT_PATH	= .
 EXECUTE_PATH	= ..
-EXE_WRAP_PATH	= ../wrapper
+EXECUTE_INT_PATH= ../internal
+WRAPPER_PATH	= ../../wrapper
 EXPANDER_PATH	= ../../expander
 PARSER_PATH		= ../../parser
+PARSER_INT_PATH	= ../../parser/internal
 LEXER_PATH		= ../../lexer
 AST_PATH		= ../../ast
 UTILS_PATH		= ../../utils
 BUILTIN_PATH	= ../../builtin
 ENV_PATH		= ../../env
 
-SRC_PATHS		= $(CURRENT_PATH) $(EXPANDER_PATH) $(EXE_WRAP_PATH) $(BUILTIN_PATH) $(EXECUTE_PATH) $(PARSER_PATH) $(LEXER_PATH) $(AST_PATH) $(UTILS_PATH) $(ENV_PATH)
+SRC_PATHS		= $(CURRENT_PATH) $(EXPANDER_PATH) $(WRAPPER_PATH) $(BUILTIN_PATH) $(EXECUTE_PATH) $(EXECUTE_INT_PATH) $(PARSER_PATH) $(PARSER_INT_PATH) $(LEXER_PATH) $(AST_PATH) $(UTILS_PATH) $(ENV_PATH)
 SRCS			= $(foreach path, $(SRC_PATHS), $(wildcard $(path)/*.c))
 
-VPATH		= $(CURRENT_PATH):$(BUILTIN_PATH):$(EXECUTE_PATH):$(EXE_WRAP_PATH):$(PARSER_PATH):$(LEXER_PATH):$(AST_PATH):$(UTILS_PATH):$(ENV_PATH):$(EXPANDER_PATH)
+VPATH		= $(CURRENT_PATH):$(BUILTIN_PATH):$(EXECUTE_PATH):$(EXECUTE_INT_PATH):$(WRAPPER_PATH):$(PARSER_PATH):$(PARSER_INT_PATH):$(LEXER_PATH):$(AST_PATH):$(UTILS_PATH):$(ENV_PATH):$(EXPANDER_PATH)
 
 OBJDIR  = ./obj
 OBJS    = $(addprefix $(OBJDIR)/, $(notdir $(SRCS:%.c=%.o)))
@@ -52,6 +54,6 @@ run: $(NAME)
 	./$(NAME)
 
 norm:
-	norminette $(EXECUTE_PATH) $(EXE_WRAP_PATH) | grep Error
+	norminette $(EXECUTE_PATH)/*.c $(EXECUTE_PATH)/*.h $(EXECUTE_INT_PATH)/*.c $(EXECUTE_INT_PATH)/*.h | grep Error
 
-.PHONY: all re clean fclean run
+.PHONY: all re clean fclean run norm

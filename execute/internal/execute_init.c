@@ -1,29 +1,13 @@
-#include "execute.h"
+#include "../execute.h"
 #include "exit_status.h"
+#include "execute_internal.h"
+#include "../../expander/expander.h"
 
-static int init_command_line(t_executor *e, t_ast_node *node);
-static void pipeline(t_executor *e, t_pipeline **pipeline, t_ast_node *node);
+static void	pipeline(t_executor *e, t_pipeline **pipeline, t_ast_node *node);
 static void	subshell(t_executor *e, t_subshell **ss, t_ast_node *node);
 static void	init_simple_command(t_executor *e, t_simple_command **sc, t_ast_node *node);
 
-int	execute(t_ast_node *root, t_env_var **env_vars)
-{
-	t_executor	*e;
-	int			exit_status;
-
-	if (!root)
-	{
-		register_env_var_from_literal("?", NULL, ES_SYNTAX_ERROR, env_vars);
-		return (ES_SYNTAX_ERROR);
-	}
-	new_executor(&e, root, env_vars);
-	exit_status = init_command_line(e, root);
-	delete_ast_nodes(e->root, NULL);
-	free(e);
-	return (exit_status);
-}
-
-int init_command_line(t_executor *e, t_ast_node *node)
+int	init_command_line(t_executor *e, t_ast_node *node)
 {
 	if (node->type == AND_IF_NODE || node->type == OR_IF_NODE)
 	{
@@ -56,7 +40,7 @@ int init_command_line(t_executor *e, t_ast_node *node)
 // expected node: COMMAND_ARG_NODE, REDIRECT*, PIPE_NODE, SUBSHELL
 void	pipeline(t_executor *e, t_pipeline **pipeline_, t_ast_node *node)
 {
-	t_pipeline *pipeline_next;
+	t_pipeline	*pipeline_next;
 
 	pipeline_next = NULL;
 	new_t_pipeline(pipeline_);
@@ -125,9 +109,9 @@ void	init_simple_command(t_executor *e, t_simple_command **sc, t_ast_node *node)
 		if (node->type == COMMAND_ARG_NODE)
 			(*sc)->argc++;
 		else if (node->type == REDIRECT_OUT_NODE || node->type == REDIRECT_APPEND_NODE)
-			new_t_redirect_out(*sc, node->data, node->type);
+			new_redirect_out(*sc, node->data, node->type);
 		else if (node->type == REDIRECT_IN_NODE || node->type == HEREDOC_NODE)
-			new_t_redirect_in(*sc, node->data, node->type);
+			new_redirect_in(*sc, node->data, node->type);
 		node = node->right;
 	}
 	new_argv(*sc);

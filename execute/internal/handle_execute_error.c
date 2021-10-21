@@ -3,8 +3,9 @@
 #include <stdio.h>
 
 #include "exit_status.h"
-#include "../libft/libft.h"
-#include "execute.h"
+#include "execute_internal.h"
+#include "../../libft/libft.h"
+#include "../execute.h"
 
 void	handle_exec_error(char *path, bool is_exec_run)
 {

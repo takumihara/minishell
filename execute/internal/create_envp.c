@@ -1,12 +1,14 @@
-#include "execute.h"
-#include "../wrapper/x.h"
+#include "../execute.h"
+#include "../../wrapper/x.h"
+#include "execute_internal.h"
 
-static bool is_valid_envp_elem(t_env_var *env_var)
+//todo: idk if this is enough conditions
+static bool	is_valid_envp_elem(t_env_var *env_var)
 {
-	return (ft_strcmp(env_var->key, "?") && env_var->value); //todo: idk if this is enough conditions
+	return (ft_strcmp(env_var->key, "?") && env_var->value);
 }
 
-static int count_env_vars(t_env_var *env_vars)
+static int	count_env_vars(t_env_var *env_vars)
 {
 	int	count;
 
