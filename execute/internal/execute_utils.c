@@ -25,21 +25,11 @@ void	delete_list(void *element, t_list_type type)
 {
 	if (!element)
 		return ;
-	if (type == T_REDIRECT_OUT)
-	{
-		close(((t_redirect_out *)element)->fd);
-		delete_list(((t_redirect_out *)element)->next, T_REDIRECT_OUT);
-	}
-	else if (type == T_REDIRECT_IN)
-	{
-		close(((t_redirect_in *)element)->fd);
-		delete_list(((t_redirect_in *)element)->next, T_REDIRECT_IN);
-	}
 	else if (type == T_SIMPLE_COMMAND)
 	{
 		free(((t_simple_command *)element)->argv);
-		delete_list(((t_simple_command *)element)->r_out, T_REDIRECT_OUT);
-		delete_list(((t_simple_command *)element)->r_in, T_REDIRECT_IN);
+		close(((t_simple_command *)element)->r_out);
+		close(((t_simple_command *)element)->r_in);
 	}
 	else if (type == T_COMPOUND_LIST)
 	{
@@ -108,17 +98,8 @@ bool	is_execute_condition(int condition, int exit_status)
 
 void	execute_redirect(t_simple_command *sc)
 {
-	t_redirect_in	*r_in;
-	t_redirect_out	*r_out;
-
-	r_in = sc->r_in;
-	while (r_in && r_in->next)
-		r_in = r_in->next;
-	if (r_in)
-		dup2(r_in->fd, STDIN_FILENO);
-	r_out = sc->r_out;
-	while (r_out && r_out->next)
-		r_out = r_out->next;
-	if (r_out)
-		dup2(r_out->fd, STDOUT_FILENO);
+	if (sc->r_in != UNSET_FD)
+		x_dup2(sc->r_in, STDIN_FILENO);
+	if (sc->r_out != UNSET_FD)
+		x_dup2(sc->r_out, STDIN_FILENO);
 }
