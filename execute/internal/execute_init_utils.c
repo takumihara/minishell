@@ -1,5 +1,6 @@
-#include "execute.h"
-#include "../wrapper/x.h"
+#include "../execute.h"
+#include "../../wrapper/x.h"
+#include "execute_internal.h"
 
 void	new_t_pipeline(t_pipeline **pipeline)
 {
@@ -50,4 +51,3 @@ void	new_argv(t_simple_command *sc)
 	}
 	sc->argv[i] = NULL;
 }
-

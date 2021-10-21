@@ -1,7 +1,13 @@
-#include "get_cmd_path.h"
-#include "../wrapper/x.h"
+#include "split_path_from_env.h"
+#include "../../wrapper/x.h"
 
-static void	destroy_sep_list(t_sep_list *head)
+static t_sep_list	*create_sep_list(const char *path_from_env, int *list_len);
+static void			destroy_sep_list(t_sep_list *head);
+static t_sep_list	*new_sep_list(int sep_index);
+static void			create_paths(char **paths,
+						const char *path_from_env, t_sep_list *sep_list);
+
+void	destroy_sep_list(t_sep_list *head)
 {
 	t_sep_list	*next;
 
@@ -13,7 +19,7 @@ static void	destroy_sep_list(t_sep_list *head)
 	}
 }
 
-static t_sep_list *new_sep_list(int sep_index)
+t_sep_list	*new_sep_list(int sep_index)
 {
 	t_sep_list	*new;
 
@@ -23,7 +29,8 @@ static t_sep_list *new_sep_list(int sep_index)
 	return (new);
 }
 
-static void create_paths(char **paths, const char *path_from_env, t_sep_list *sep_list)
+void	create_paths(char **paths,
+					 const char *path_from_env, t_sep_list *sep_list)
 {
 	size_t	start;
 	int		i;
@@ -45,7 +52,7 @@ static void create_paths(char **paths, const char *path_from_env, t_sep_list *se
 	paths[++i] = NULL;
 }
 
-static t_sep_list *create_sep_list(const char *path_from_env, int *list_len)
+t_sep_list	*create_sep_list(const char *path_from_env, int *list_len)
 {
 	t_sep_list	*head;
 	t_sep_list	*tail;
@@ -68,7 +75,7 @@ static t_sep_list *create_sep_list(const char *path_from_env, int *list_len)
 	return (head);
 }
 
-char **split_path_from_env(const char *path_from_env)
+char	**split_path_from_env(const char *path_from_env)
 {
 	char		**paths;
 	t_sep_list	*sep_list;
@@ -79,34 +86,4 @@ char **split_path_from_env(const char *path_from_env)
 	create_paths(paths, path_from_env, sep_list);
 	destroy_sep_list(sep_list);
 	return (paths);
-}
-
-char	*get_cmd_path(t_executor *e, char *command)
-{
-	char 	*path_from_env;
-	char	**paths;
-	char	*path;
-	int		i;
-
-	path_from_env = get_env_value("PATH", *e->env_vars);
-	if (!path_from_env)
-		return (x_strdup(command));
-	paths = split_path_from_env(path_from_env);
-	if (!paths[0])
-		return (x_strdup(command));
-	i = -1;
-	while (1)
-	{
-		if (!paths[++i])
-		{
-			free_2d_array((void ***) &paths);
-			return (NULL);
-		}
-		path = strjoin_three(paths[i], "/", command);
-		if (access(path, F_OK) == 0 && !is_dir(path))
-			break ;
-		free(path);
-	}
-	free_2d_array((void ***) &paths);
-	return (path);
 }

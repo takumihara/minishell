@@ -15,7 +15,7 @@
 #include "expander/expander.h"
 #include "execute/execute.h"
 #include "utils/get_next_line.h"
-#include "execute/exit_status.h"
+#include "execute/internal/exit_status.h"
 
 // 何らかのSIGNAL(Ctrl-C(SIGINT), Ctrl-\(SIGQUIT))を受け取った時の挙動を定義する
 static void	signal_handler(int signo)

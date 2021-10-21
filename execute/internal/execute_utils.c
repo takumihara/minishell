@@ -1,9 +1,11 @@
-#include "execute.h"
-#include "../wrapper/x.h"
+#include "../execute.h"
+#include "../../wrapper/x.h"
+#include "execute_internal.h"
+#include "../../builtin/builtin.h"
 
 void	new_executor(t_executor **e, t_ast_node *root, t_env_var **env_vars)
 {
-	*e = (t_executor *)x_malloc(sizeof(**e));
+	*e = x_malloc(sizeof(**e));
 	(*e)->root = root;
 	(*e)->exit_status = EXIT_SUCCESS;
 	(*e)->condition = CONDITION_AND_IF;
@@ -11,13 +13,13 @@ void	new_executor(t_executor **e, t_ast_node *root, t_env_var **env_vars)
 	(*e)->env_vars = env_vars;
 }
 
-void	delete_executor(t_executor **e)
-{
-	delete_list((*e)->pipeline, T_PIPELINE);
-	delete_ast_nodes((*e)->root, NULL);
-	free(*e);
-	*e = NULL;
-}
+//void	delete_executor(t_executor **e)
+//{
+//	delete_list((*e)->pipeline, T_PIPELINE);
+//	delete_ast_nodes((*e)->root, NULL);
+//	free(*e);
+//	*e = NULL;
+//}
 
 void	delete_list(void *element, t_list_type type)
 {
@@ -64,7 +66,7 @@ void	delete_list(void *element, t_list_type type)
 //	return (EXIT_FAILURE);
 //}
 
-static void execute_builtin_internal(int argc, char **argv, t_executor *e, bool islast, int (*fn)(int, char**, int, t_env_var**))
+static void	execute_builtin_internal(int argc, char **argv, t_executor *e, bool islast, int (*fn)(int, char**, int, t_env_var**))
 {
 	if (islast)
 		e->exit_status = fn(argc, argv, e->exit_status, e->env_vars);

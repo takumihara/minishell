@@ -1,7 +1,7 @@
 #include <sys/stat.h>
 #include <stdbool.h>
 
-#include "../wrapper/x.h"
+#include "../../wrapper/x.h"
 
 bool	is_dir(const char *path)
 {

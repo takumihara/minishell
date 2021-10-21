@@ -1,8 +1,11 @@
-#include "execute.h"
-#include "../utils/get_next_line.h"
-#include "../wrapper/x.h"
+#include <fcntl.h>
 
-void	new_t_redirect_out(t_simple_command *sc, char *filename, t_node_type type)
+#include "../execute.h"
+#include "../../utils/get_next_line.h"
+#include "../../wrapper/x.h"
+#include "execute_internal.h"
+
+void	new_redirect_out(t_simple_command *sc, char *filename, t_node_type type)
 {
 	t_redirect_out	**r_out;
 
@@ -23,12 +26,12 @@ void	new_t_redirect_out(t_simple_command *sc, char *filename, t_node_type type)
 	(*r_out)->next = NULL;
 }
 
-void	new_t_redirect_in(t_simple_command *sc, char *data, t_node_type type)
+void	new_redirect_in(t_simple_command *sc, char *data, t_node_type type)
 {
-	int pipefd[2];
-	int status;
-	char *line;
-	t_redirect_in **r_in;
+	int				pipefd[2];
+	int				status;
+	char			*line;
+	t_redirect_in	**r_in;
 
 	r_in = &sc->r_in;
 	while (*r_in)

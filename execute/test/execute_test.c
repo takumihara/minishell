@@ -1,5 +1,7 @@
 #include "../execute.h"
 #include "../../builtin/builtin.h"
+#include "../internal/split_path_from_env.h"
+#include "../internal/execute_internal.h"
 
 #define BLUE    "\033[34m"      /* Blue */
 
