@@ -1,7 +1,7 @@
 #include <dirent.h>
 #include "expander.h"
 
-t_ast_node	*search_command_arg_node(t_expander *e, t_ast_node *node);
+void		search_command_arg_node(t_expander *e, t_ast_node *node);
 char		*expand_word(t_expander *e, char delimiter);
 char		*expand_quotes_string(char *data, size_t replace_start, char quote_type);
 char		*expand_environment_variable(char *data, size_t replace_starts, t_expander *e, int status);
@@ -18,38 +18,33 @@ t_ast_node	*expand(t_ast_node *root, t_env_var **env_vars, int exit_status)
 	if (!root)
 		return (NULL);
 	new_expander(&e, root, *env_vars);
-	if (!search_command_arg_node(e, root))
-	{
-		free(e);
-		return (NULL);
-	}
+	search_command_arg_node(e, root);
 	free(e);
 	return (root);
 }
 
-t_ast_node	*search_command_arg_node(t_expander *e, t_ast_node *node)
+void search_command_arg_node(t_expander *e, t_ast_node *node)
 {
 	char		*original_data;
 	t_ast_node	*head;
 
 	head = node;
 	if (!node)
-		return (e->node);
-	if (!search_command_arg_node(e, node->right)
-		|| !search_command_arg_node(e, node->left))
-		return (NULL);
+		return ;
+	search_command_arg_node(e, node->right);
+	search_command_arg_node(e, node->left);
 	if (node->type != COMMAND_ARG_NODE && node->type != REDIRECT_IN_NODE
 		&& node->type != REDIRECT_OUT_NODE && node->type != REDIRECT_APPEND_NODE)
-		return (node);
+		return ;
 	original_data = x_strdup(node->data);
 	e->node = node;
 	node->data = expand_word(e, '$');
 	node->data = expand_word(e, '*');
 	node = word_splitting(node, e, original_data);
 	if (!node)
-		return (NULL);
+		return ;
 	free(original_data);
-	return (head);
+	// return (head);
 }
 
 char	*expand_word(t_expander *e, char delimiter)
