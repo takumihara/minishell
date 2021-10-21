@@ -125,4 +125,7 @@ char	**create_envp(t_executor *e);
 // handle_exec_error.c
 void	handle_exec_error(char *path, bool is_exec_run);
 
+// is_dir.c
+bool	is_dir(const char *path);
+
 #endif //MINISHELL_EXECUTE_H

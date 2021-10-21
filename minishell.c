@@ -74,29 +74,23 @@ int minishell(char *line)
 
 int	main(int argc, char **argv)
 {
-	char			*line;
-	t_gnl_status 	status;
+	char			*piped_lines;
 	int				exit_status;
 
 	if (argc == 3 && !ft_strcmp(argv[1], "-c"))
 		return (minishell(ft_strdup(argv[2])));
 	else
 	{
-		// todo: what if there are two lines
 		if (isatty(STDIN_FILENO) == 0)
 		{
-			status = get_next_line(STDIN_FILENO, &line);
-			if (status == GNL_STATUS_ERROR_READ)
-				perror_exit("read", EXIT_FAILURE);
-			else if (status == GNL_STATUS_ERROR_MALLOC)
-				perror_exit("malloc", EXIT_FAILURE);
-			if (line[0])
+			piped_lines = read_all(STDIN_FILENO);
+			if (piped_lines[0])
 			{
-				exit_status = minishell(line);
-				free(line);
+				exit_status = minishell(piped_lines);
+				free(piped_lines);
 				return (exit_status);
 			}
-			free(line);
+			free(piped_lines);
 		}
 		return (minishell(NULL));
 	}
