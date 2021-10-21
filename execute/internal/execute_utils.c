@@ -101,5 +101,5 @@ void	execute_redirect(t_simple_command *sc)
 	if (sc->r_in != UNSET_FD)
 		x_dup2(sc->r_in, STDIN_FILENO);
 	if (sc->r_out != UNSET_FD)
-		x_dup2(sc->r_out, STDIN_FILENO);
+		x_dup2(sc->r_out, STDOUT_FILENO);
 }
