@@ -30,8 +30,8 @@ void	new_t_simple_command(t_simple_command **sc)
 	(*sc)->root = NULL;
 	(*sc)->argc = 0;
 	(*sc)->argv = NULL;
-	(*sc)->r_out = NULL;
-	(*sc)->r_in = NULL;
+	(*sc)->r_out = UNSET_FD;
+	(*sc)->r_in = UNSET_FD;
 	(*sc)->err = NO_ERR;
 }
 

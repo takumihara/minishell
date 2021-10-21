@@ -15,6 +15,8 @@
 
 # define CHILD_PROCESS_NOT_CREATED 0
 
+# define UNSET_FD (-1)
+
 typedef struct s_pipeline		t_pipeline;
 typedef struct s_subshell		t_subshell;
 typedef struct s_compound_list	t_compound_list;
@@ -24,8 +26,6 @@ typedef struct s_redirect_in	t_redirect_in;
 
 typedef enum e_list_type {
 	UNSET,
-	T_REDIRECT_OUT,
-	T_REDIRECT_IN,
 	T_SIMPLE_COMMAND,
 	T_COMPOUND_LIST,
 	T_SUBSHELL,
@@ -68,20 +68,9 @@ struct s_simple_command {
 	t_ast_node				*root;
 	int						argc;
 	char					**argv;
-	t_redirect_out			*r_out;
-	t_redirect_in			*r_in;
+	int						r_out;
+	int						r_in;
 	t_simple_command_err	err;
-};
-
-// maybe there is no need to connect these, just overwrite
-struct s_redirect_out {
-	int				fd;
-	t_redirect_out	*next;
-};
-
-struct s_redirect_in {
-	int				fd;
-	t_redirect_in	*next;
 };
 
 int		init_command_line(t_executor *e, t_ast_node *node);
