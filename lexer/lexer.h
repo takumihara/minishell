@@ -12,7 +12,7 @@
 # include "../utils/utils.h"
 # include "../wrapper/x.h"
 
-# define DELIMITER "|&<>() "
+# define DELIMITER "|&<>() \n"
 
 // todo: need to discuss if read_position is actually needed?
 // todo: type of positions are different from the book
