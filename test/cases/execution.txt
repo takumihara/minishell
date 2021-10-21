@@ -5,3 +5,6 @@ touch ls && export PATH=: && ls
 touch ls && chmod +x ls && export PATH=: && ls
 touch ls && chmod +x ls && ls
 rm ls file
+mkdir existent_dir && ./existent_dir && rmdir existent_dir || rmdir existent_dir
+./not_existent_dir
+mkdir ls && export PATH=:/bin && ls && rmdir ls || rmdir ls

@@ -103,7 +103,7 @@ char	*get_cmd_path(t_executor *e, char *command)
 			return (NULL);
 		}
 		path = strjoin_three(paths[i], "/", command);
-		if (access(path, F_OK) == 0)
+		if (access(path, F_OK) == 0 && !is_dir(path))
 			break ;
 		free(path);
 	}
