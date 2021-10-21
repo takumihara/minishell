@@ -9,15 +9,6 @@ char		*expand_wildcard(char *data, size_t pre_len);
 t_ast_node	*word_splitting(t_ast_node *node, t_expander *e, char *original_data);
 char		*remove_quotes(char *data);
 
-void	print_node(t_ast_node *root)
-{
-	while (root)
-	{
-		printf("type: %d, data:%s\n", root->type, root->data);
-		root = root->right;
-	}
-}
-
 t_ast_node	*expand(t_ast_node *root, t_env_var **env_vars)
 {
 	t_expander	*e;
@@ -30,7 +21,6 @@ t_ast_node	*expand(t_ast_node *root, t_env_var **env_vars)
 		return (handle_expand_error(e));
 	free(e->err_data);
 	free(e);
-	// print_node(root);
 	return (root);
 }
 
