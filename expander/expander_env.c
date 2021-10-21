@@ -21,9 +21,7 @@ char	*str_insert(char *data, size_t replace_start, char *env_value, size_t env_v
 	char			*expanded_str;
 
 	prev_data = data;
-	expanded_str = (char *)malloc(sizeof(char) * (expansion_len + 1));
-	if (!expanded_str)
-		return (NULL);
+	expanded_str = x_malloc(sizeof(*expanded_str) * (expansion_len + 1));
 	ft_memmove(&expanded_str[0], &data[0], replace_start);
 	ft_memmove(&expanded_str[replace_start], env_value, env_value_len);
 	ft_memmove(&expanded_str[replace_start + env_value_len],
