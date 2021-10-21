@@ -1,18 +1,14 @@
 #include "lexer.h"
 
 // inputに対して新しくlexer構造体を作成する
-t_lexer *new_lexer(char *input)
+void	new_lexer(t_lexer **l, char *input)
 {
-	t_lexer *l;
-
-	// todo: FREE required!!
-	l = x_malloc(sizeof(*l));
-	l->input = input;
-	l->position = 0;
-	l->read_position = 0;
-	l->is_subshell = false;
-	l->is_redirect = false;
-	return l;
+	*l = x_malloc(sizeof(**l));
+	(*l)->input = input;
+	(*l)->position = 0;
+	(*l)->read_position = 0;
+	(*l)->is_subshell = false;
+	(*l)->is_redirect = false;
 }
 
 // token解析のための分岐処理
@@ -91,7 +87,7 @@ t_token	*lex(char *input)
 	t_token	*tmp;
 	t_lexer	*l;
 
-	l = new_lexer(input);
+	new_lexer(&l, input);
 	token.next = NULL;
 	tmp = &token;
 	read_char(l);

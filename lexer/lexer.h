@@ -30,7 +30,7 @@ typedef struct s_lexer
 }	t_lexer;
 
 // lexer.c
-t_lexer	*new_lexer(char *input);
+void	new_lexer(t_lexer **l, char *input);
 t_token	*next_token(t_lexer *lexer);
 t_token	*lex(char *input);
 
