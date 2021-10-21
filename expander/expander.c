@@ -1,3 +1,4 @@
+#include <dirent.h>
 #include "expander.h"
 
 t_ast_node	*search_command_arg_node(t_expander *e, t_ast_node *node);
