@@ -629,6 +629,18 @@ int main()
 		};
 		compare_literal_and_type(input, debug_token_type, NEWLINE_MS, test);
 	}
+	{
+		char input[] = "echo hello > res*\n";
+		struct test test[] = {
+				{STRING, "echo"},
+				{STRING, "hello"},
+				{REDIRECT_OUT, ">"},
+				{STRING, "res*"},
+				{EOL, "\0"},
+				{TEST_EOL, ""},
+		};
+		compare_literal_and_type(input, debug_token_type, NEWLINE_MS, test);
+	}
 
 	system("leaks a.out");
 
