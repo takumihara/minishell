@@ -13,6 +13,7 @@
 # include "../env/env.h"
 
 # include <stdlib.h>
+# include <dirent.h>
 
 # define EXPANDABLE "\"\'$"
 # define EXPANSION_DELIMITER "\"\'$|&<>() =\t\n"
