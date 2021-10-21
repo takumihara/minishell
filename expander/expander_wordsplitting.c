@@ -45,9 +45,7 @@ static char	**row_malloc_split(char const *str, const char *delims, size_t *row)
 		else
 			str++;
 	}
-	split = (char **)malloc(sizeof(char *) * (len + 1));
-	if (split == NULL)
-		return (NULL);
+	split = x_malloc(sizeof(*split) * (len + 1));
 	split[len] = NULL;
 	*row = len;
 	return (split);
@@ -66,7 +64,7 @@ static char	*ft_strdup_split(char const *src, const char *delims)
 			len += skip_quotes(&src[len], src[len]);
 		len++;
 	}
-	str = (char *)malloc(sizeof(char) * (len + 1));
+	str = x_malloc(sizeof(*str) * (len + 1));
 	if (str == NULL)
 		return (NULL);
 	i = 0;
@@ -77,20 +75,6 @@ static char	*ft_strdup_split(char const *src, const char *delims)
 	}
 	str[i] = '\0';
 	return (str);
-}
-
-static char	**free_split(char **split)
-{
-	size_t	i;
-
-	i = 0;
-	while (split[i])
-	{
-		free(split[i]);
-		i++;
-	}
-	free(split);
-	return (NULL);
 }
 
 char	**split_by_space_skip_quotes(char const *str, const char *delims)
@@ -105,16 +89,11 @@ char	**split_by_space_skip_quotes(char const *str, const char *delims)
 	i = 0;
 	j = 0;
 	split = row_malloc_split(str, delims, &row);
-	if (split == NULL)
-		return (NULL);
 	while (i < row)
 	{
 		while (is_delims(str[j], delims))
 			j++;
-		split[i] = ft_strdup_split(&str[j], delims);
-		if (split[i] == NULL)
-			return (free_split(split));
-		i++;
+		split[i++] = ft_strdup_split(&str[j], delims);
 		while (!is_delims(str[j], delims) && str[j])
 		{
 			if (is_quote(str[j]))
@@ -123,4 +102,33 @@ char	**split_by_space_skip_quotes(char const *str, const char *delims)
 		}
 	}
 	return (split);
+}
+
+t_ast_node	*split_arg_node(char **split, t_ast_node *node, char *original_data, t_expander *e)
+{
+	const t_ast_node	*root = node;
+	const t_ast_node	*original_right = node->right;
+	int					i;
+	t_ast_node			*result;
+
+	i = -1;
+	while (split[++i])
+	{
+		if (i == 0)
+		{
+			if (node->type != COMMAND_ARG_NODE && ft_strcmp(split[i], original_data))
+				return (expand_redirect_error(original_data, node, e));
+			node->data = remove_quotes(split[i]);
+		}
+		else
+		{
+			new_ast_node(&result);
+			result->data = remove_quotes(split[i]);
+			result->type = COMMAND_ARG_NODE;
+			node->right = result;
+			node = node->right;
+		}
+	}
+	node->right = (t_ast_node *)original_right;
+	return ((t_ast_node *)root);
 }

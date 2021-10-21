@@ -27,25 +27,30 @@
 # define IN_DOUBLE_QUOTE 1
 # define IN_SINGLE_QUOTE 2
 
+# define NO_ERR 0
+# define AMBIGUOUS_REDIRECT_ERR 1
+
 typedef struct s_expander t_expander;
 
 extern char	**environ;
 
 struct s_expander {
-	t_ast_node	*root;
-	t_ast_node	*node;
+	int			err;
+	char		*err_data;
 	t_env_var	*env_vars;
 	int			exit_status;
 };
 
 // expander.c
 t_ast_node	*expand(t_ast_node *root, t_env_var **env_vars);
+char		*remove_quotes(char *data);
 
 // expander_utils.c
-void		new_expander(t_expander **e, t_ast_node *root, t_env_var *env_vars);
+void		new_expander(t_expander **e, t_env_var *env_vars);
 int			expand_perror(t_expander *e, const char *s);
-void		*expand_redirect_error(char *original_data);
+t_ast_node	*expand_redirect_error(char *original_data, t_ast_node *node, t_expander *e);
 int			quotation_status(char c, int status);
+t_ast_node	*handle_expand_error(t_expander *e);
 
 // expander_env.c
 size_t		var_strlen(const char *str);
@@ -68,6 +73,7 @@ void		remove_null_argument(char *str);
 
 // expander_splitting.c
 char		**split_by_space_skip_quotes(char const *str, const char *delims);
+t_ast_node	*split_arg_node(char **split, t_ast_node *node, char *original_data, t_expander *e);
 
 #endif
 
