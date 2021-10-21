@@ -15,6 +15,7 @@
 #include "../execute/execute.h"
 #include "../expander/expander.h"
 #include "../env/env.h"
+#include "../wrapper/x.h"
 
 # define EXIT_STATUS_OUT_OF_RANGE 255
 

@@ -1,6 +1,6 @@
 #include "env.h"
 
-int	register_env_var_from_literal(const char *str_key, const char *str_value, int num_value, t_env_var **env_vars)
+void	register_env_var_from_literal(const char *str_key, const char *str_value, int num_value, t_env_var **env_vars)
 {
 	char	*key;
 	char	*value;
@@ -14,5 +14,5 @@ int	register_env_var_from_literal(const char *str_key, const char *str_value, in
 		value = ft_strdup(str_value);
 	if (!value)
 		perror_exit("malloc", EXIT_FAILURE);
-	return (register_env_var(key, value, env_vars));
+	register_env_var(key, value, env_vars);
 }

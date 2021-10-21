@@ -15,8 +15,7 @@ int main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	t_env_var	*env_vars = init_env_lst();
-	if (register_env_var(ft_strdup("?"), ft_strdup("0"), &env_vars) == MALLOC_ERROR)
-		exit(delete_env_lst(env_vars, NULL, NULL));
+	register_env_var_from_literal("?", NULL, 0, &env_vars);
 	test_split_path_from_env_normal(env_vars);
 	test_split_path_from_env_colon();
 	test_create_envp(envp, env_vars);

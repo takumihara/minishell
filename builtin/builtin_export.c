@@ -42,7 +42,7 @@ char	**sort_env_var(char **array, t_env_var *env_vars, size_t len)
 	return (array);
 }
 
-int	print_declaration(t_env_var *env_vars)
+static int	print_declaration(t_env_var *env_vars)
 {
 	const size_t	len = env_vars_len(env_vars);
 	char			**env_key_array;
@@ -51,9 +51,7 @@ int	print_declaration(t_env_var *env_vars)
 
 	if (!env_vars)
 		return (EXIT_SUCCESS);
-	env_key_array = malloc(sizeof(char *) * (len + 1));
-	if (!env_key_array)
-		return (BUILTIN_MALLOC_ERROR);
+	env_key_array = x_malloc(sizeof(char *) * (len + 1));
 	env_key_array[len] = NULL;
 	sort_env_var(env_key_array, env_vars, len);
 	i = 0;
@@ -70,7 +68,7 @@ int	print_declaration(t_env_var *env_vars)
 	return (EXIT_SUCCESS);
 }
 
-int	set_key_value(char **key, char **value, char *src)
+static int	set_key_value(char **key, char **value, char *src)
 {
 	*key = ft_strndup(src, key_strlen(src));
 	if (!*key)
@@ -106,8 +104,7 @@ int	builtin_export(int argc, char **argv, int no_use, t_env_var **env_vars)
 		{
 			if (set_key_value(&key, &value, argv[i]) == MALLOC_ERROR)
 				return (BUILTIN_MALLOC_ERROR);
-			if (register_env_var(key, value, env_vars) == MALLOC_ERROR)
-				return (BUILTIN_MALLOC_ERROR);
+			register_env_var(key, value, env_vars);
 		}
 		else
 			exit_status = EXIT_FAILURE;
