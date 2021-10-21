@@ -11,6 +11,7 @@
 # include "../utils/utils.h"
 # include "../execute/execute.h"
 # include "../env/env.h"
+# include "../wrapper/x.h"
 
 # include <stdlib.h>
 # include <dirent.h>
@@ -41,8 +42,7 @@ struct s_expander {
 t_ast_node	*expand(t_ast_node *root, t_env_var **env_vars, int exit_status);
 
 // expander_utils.c
-bool		new_expander(t_expander **e, t_ast_node *root, t_env_var *env_vars);
-bool		is_expandable_string(char *str, char delimiter);
+void		new_expander(t_expander **e, t_ast_node *root, t_env_var *env_vars);
 int			expand_perror(t_expander *e, const char *s);
 void		*expand_redirect_error(char *original_data);
 int			quotation_status(char c, int status);
@@ -53,10 +53,10 @@ char		*str_insert(char *data, size_t replace_start, char *env_value, size_t env_
 bool		is_expandable_env_var(char start, int status);
 
 // expander_wildcard.c
-char		*append_wildcard_strings(char *dst, char *src, const char *data, t_expander *e);
+char		*append_wildcard_strings(char *dst, char *src, const char *data);
 void		quick_sort(char **array, size_t left, size_t right);
 bool		is_match_pattern(const char *data, size_t len, char *name);
-char		*sort_strings(char *src, t_expander *e);
+char		*sort_strings(char *src, char *data);
 
 // expander_quote.c
 bool		is_quote(const char c);

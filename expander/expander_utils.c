@@ -1,21 +1,11 @@
 #include "expander.h"
 
-bool	new_expander(t_expander **e, t_ast_node *root, t_env_var *env_vars)
+void	new_expander(t_expander **e, t_ast_node *root, t_env_var *env_vars)
 {
-	*e = (t_expander *)malloc(sizeof(**e));
-	if (!*e)
-		return (false);
+	*e = x_malloc(sizeof(**e));
 	(*e)->root = root;
 	(*e)->node = root;
 	(*e)->env_vars = env_vars;
-	return (true);
-}
-
-bool	is_expandable_string(char *str, char delimiter)
-{
-	if (ft_strchr(str, delimiter))
-		return (true);
-	return (false);
 }
 
 int	expand_perror(t_expander *e, const char *s)
