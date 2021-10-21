@@ -93,6 +93,11 @@ void print_err_cnt() {
 }
 
 //int main(int argc, char **argv) {
+//	t_env_var	*env_vars;
+//
+//	env_vars = init_env_lst();
+//	if (register_env_var_from_literal("?", "0", 0, &env_vars) == MALLOC_ERROR)
+//		exit(delete_env_lst(env_vars, NULL, NULL));
 //	if (argc != 2) {
 //		printf("argument num wrong");
 //		return(1);
@@ -104,6 +109,6 @@ void print_err_cnt() {
 //		fprintf(stderr, RED "parse() returned NULL!\n" RESET);
 //		return (1);
 //	}
-//	execute(node);
+//	execute(node, &env_vars);
 //}
 
