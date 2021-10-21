@@ -56,8 +56,6 @@ char	*expand_word(t_expander *e, char delimiter)
 	data = e->node->data;
 	if (!data)
 		return (NULL);
-	if (!is_expandable_string(data, delimiter))
-		return (data);
 	i = 0;
 	status = OUTSIDE;
 	while (data[i])

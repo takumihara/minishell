@@ -8,13 +8,6 @@ void	new_expander(t_expander **e, t_ast_node *root, t_env_var *env_vars)
 	(*e)->env_vars = env_vars;
 }
 
-bool	is_expandable_string(char *str, char delimiter)
-{
-	if (ft_strchr(str, delimiter))
-		return (true);
-	return (false);
-}
-
 int	expand_perror(t_expander *e, const char *s)
 {
 	perror(s);
