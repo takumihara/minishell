@@ -8,6 +8,7 @@
 # include <stdbool.h>
 # include "../libft/libft.h"
 # include "../utils/utils.h"
+# include "../wrapper/x.h"
 
 # define MALLOC_ERROR -1
 
@@ -24,9 +25,9 @@ t_env_var	*init_env_lst(void);
 
 // env_utils.c
 char		*get_env_value(char *key, t_env_var *env_var);
-int			register_env_var(char *key, char *value, t_env_var **env_vars);
+void		register_env_var(char *key, char *value, t_env_var **env_vars);
 
 // register_env_var_from_literal.c
-int			register_env_var_from_literal(const char *str_key, const char *str_value, int num_value, t_env_var **env_vars);
+void		register_env_var_from_literal(const char *str_key, const char *str_value, int num_value, t_env_var **env_vars);
 
 #endif

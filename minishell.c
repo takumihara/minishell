@@ -50,8 +50,7 @@ int minishell(char *line)
 
 	env_vars = init_env_lst();
 
-	if (register_env_var_from_literal("?", "0", 0, &env_vars) == MALLOC_ERROR)
-		exit(delete_env_lst(env_vars, NULL, NULL));
+	register_env_var_from_literal("?", "0", 0, &env_vars);
 	if (line)
 		return (execute(parse(lex(line)), &env_vars));
 	exit_status = EXIT_SUCCESS;

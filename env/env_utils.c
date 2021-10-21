@@ -11,7 +11,7 @@ char	*get_env_value(char *key, t_env_var *env_var)
 	return (NULL);
 }
 
-t_env_var	*search_env_key(char *key, t_env_var *env_vars, bool *exist)
+static t_env_var	*search_env_key(char *key, t_env_var *env_vars, bool *exist)
 {
 	while (env_vars)
 	{
@@ -28,7 +28,7 @@ t_env_var	*search_env_key(char *key, t_env_var *env_vars, bool *exist)
 	return (env_vars);
 }
 
-int	register_env_var(char *key, char *value, t_env_var **env_vars)
+void	register_env_var(char *key, char *value, t_env_var **env_vars)
 {
 	t_env_var	*target_var;
 	bool		exist;
@@ -49,12 +49,5 @@ int	register_env_var(char *key, char *value, t_env_var **env_vars)
 			target_var->next = init_env_var(key, value);
 		else if (!*env_vars)
 			*env_vars = init_env_var(key, value);
-		if ((target_var && !target_var->next) || !*env_vars)
-		{
-			free(key);
-			free(value);
-			return (MALLOC_ERROR);
-		}
 	}
-	return (EXIT_SUCCESS);
 }
