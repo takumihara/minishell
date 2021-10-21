@@ -5,10 +5,12 @@ PARSER_PATH	= ..
 LEXER_PATH	= ../../lexer
 AST_PATH	= ../../ast
 UTILS_PATH	= ../../utils
-SRC_PATHS	= $(CUR_PATH) $(PARSER_PATH) $(LEXER_PATH) $(AST_PATH) $(UTILS_PATH)
+WRAPPER_PATH= ../../wrapper
+
+SRC_PATHS	= $(CUR_PATH) $(PARSER_PATH) $(LEXER_PATH) $(AST_PATH) $(UTILS_PATH) $(WRAPPER_PATH)
 SRCS		= $(foreach path, $(SRC_PATHS), $(wildcard $(path)/*.c))
 
-VPATH		= $(CUR_PATH):$(PARSER_PATH):$(LEXER_PATH):$(AST_PATH):$(UTILS_PATH)
+VPATH		= $(CUR_PATH):$(PARSER_PATH):$(LEXER_PATH):$(AST_PATH):$(UTILS_PATH):$(WRAPPER_PATH)
 
 OBJDIR  = ./obj
 OBJS    = $(addprefix $(OBJDIR)/, $(notdir $(SRCS:%.c=%.o)))
@@ -45,4 +47,7 @@ re: fclean all
 run: $(NAME)
 	./$(NAME)
 
-.PHONY: all re clean fclean run
+norm:
+	norminette $(PARSER_PATH)/*.c $(PARSER_PATH)/*.h | grep Error
+
+.PHONY: all re clean fclean run norm

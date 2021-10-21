@@ -1,5 +1,5 @@
 #include <string.h>
-#include "../parser.h"
+#include "../internal/internal.h"
 
 #define GENERAL_CASE -1
 #define ERROR_CASE -2
@@ -17,7 +17,6 @@ char *debug_node_type[20] = {
 		"REDIRECT_IN_NODE",
 		"REDIRECT_APPEND_NODE",
 		"HEREDOC_NODE",
-		"REDIRECT_OPERAND_NODE",
 		"SUBSHELL_NODE",
 		"SUBSHELL_NEWLINE_MS_NODE",
 };

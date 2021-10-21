@@ -1,3 +1,4 @@
+#include <dirent.h>
 #include "expander.h"
 
 t_ast_node	*search_command_arg_node(t_expander *e, t_ast_node *node);
@@ -176,8 +177,7 @@ t_ast_node	*word_splitting(t_ast_node *node, t_expander *e, char *original_data)
 		}
 		else
 		{
-			if (!new_ast_node(&result))
-				exit(expand_perror(e, "malloc"));
+			new_ast_node(&result);
 			result->data = remove_quotes(split[i], e);
 			result->type = COMMAND_ARG_NODE;
 			node->right = result;
