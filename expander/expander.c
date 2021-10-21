@@ -2,23 +2,24 @@
 #include "expander.h"
 
 void		search_command_arg_node(t_expander *e, t_ast_node *node);
-char		*expand_word(t_expander *e, char delimiter);
+char		*expand_word(t_expander *e, char *data, char delimiter);
 char		*expand_quotes_string(char *data, size_t replace_start, char quote_type);
 char		*expand_environment_variable(char *data, size_t replace_starts, t_expander *e, int status);
 char		*expand_wildcard(char *data, size_t pre_len);
 t_ast_node	*word_splitting(t_ast_node *node, t_expander *e, char *original_data);
-char		*remove_quotes(char *data, t_expander *e);
+char		*remove_quotes(char *data);
 
-// todo: expander in execute
-t_ast_node	*expand(t_ast_node *root, t_env_var **env_vars, int exit_status)
+t_ast_node	*expand(t_ast_node *root, t_env_var **env_vars)
 {
 	t_expander	*e;
 
-	(void)exit_status;
 	if (!root)
 		return (NULL);
-	new_expander(&e, root, *env_vars);
+	new_expander(&e, *env_vars);
 	search_command_arg_node(e, root);
+	if (e->err != NO_ERR)
+		return (handle_expand_error(e));
+	free(e->err_data);
 	free(e);
 	return (root);
 }
@@ -26,10 +27,8 @@ t_ast_node	*expand(t_ast_node *root, t_env_var **env_vars, int exit_status)
 void search_command_arg_node(t_expander *e, t_ast_node *node)
 {
 	char		*original_data;
-	t_ast_node	*head;
-
-	head = node;
-	if (!node || !node->data)
+	
+	if (!node)
 		return ;
 	search_command_arg_node(e, node->right);
 	search_command_arg_node(e, node->left);
@@ -37,26 +36,17 @@ void search_command_arg_node(t_expander *e, t_ast_node *node)
 		&& node->type != REDIRECT_OUT_NODE && node->type != REDIRECT_APPEND_NODE)
 		return ;
 	original_data = x_strdup(node->data);
-	e->node = node;
-	node->data = expand_word(e, '$');
-	node->data = expand_word(e, '*');
+	node->data = expand_word(e, node->data, '$');
+	node->data = expand_word(e, node->data, '*');
 	node = word_splitting(node, e, original_data);
-	if (!node)
-		return ;
 	free(original_data);
-	// return (head);
 }
 
-char	*expand_word(t_expander *e, char delimiter)
+char	*expand_word(t_expander *e, char *data, char delimiter)
 {
-	char	*data;
 	int		status;
 	size_t	i;
 
-	data = e->node->data;
-	// todo: need this? Is there a possibility that data is NULL?
-	if (!data)
-		return (NULL);
 	i = 0;
 	status = OUTSIDE;
 	while (data[i])
@@ -66,8 +56,6 @@ char	*expand_word(t_expander *e, char delimiter)
 			data = expand_environment_variable(data, i, e, status);
 		else if (data[i] == '*' && delimiter == '*' && status == OUTSIDE)
 			data = expand_wildcard(data, i);
-		if (!data)
-			return (NULL);
 		if (!data[i])
 			break ;
 		i++;
@@ -75,7 +63,6 @@ char	*expand_word(t_expander *e, char delimiter)
 	return (data);
 }
 
-// todo: $? expands exit status
 char	*expand_environment_variable(char *data, size_t replace_start, t_expander *e, int status)
 {
 	const char		*var_start = &data[replace_start + 1];
@@ -131,49 +118,19 @@ char	*expand_wildcard(char *data, size_t pre_len)
 t_ast_node	*word_splitting(t_ast_node *node, t_expander *e, char *original_data)
 {
 	char		**split;
-	size_t		i;
-	t_ast_node	*root;
-	t_ast_node	*result;
-	t_ast_node	*original_right;
 
-	if (!node->data)
-		return (NULL);
 	if (!*node->data && *original_data && node->type != COMMAND_ARG_NODE)
-		return (expand_redirect_error(original_data));
-	remove_null_argument(node->data);
+		return (expand_redirect_error(original_data, node, e));
 	if (!*node->data)
 		return (node);
+	remove_null_argument(node->data);
 	split = split_by_space_skip_quotes(node->data, " \t\n");
-	if (!split)
-		exit(expand_perror(e, "malloc"));
 	free(node->data);
-	i = 0;
-	root = node;
-	original_right = root->right;
-	while (split[i])
-	{
-		if (i == 0)
-		{
-			node->data = split[i];
-			if (node->type != COMMAND_ARG_NODE && ft_strcmp(node->data, original_data))
-				return (expand_redirect_error(original_data));
-			node->data = remove_quotes(split[i], e);
-		}
-		else
-		{
-			new_ast_node(&result);
-			result->data = remove_quotes(split[i], e);
-			result->type = COMMAND_ARG_NODE;
-			node->right = result;
-			node = node->right;
-		}
-		i++;
-	}
-	node->right = original_right;
-	return (root);
+	node = split_arg_node(split, node, original_data, e);
+	return (node);
 }
 
-char	*remove_quotes(char *data, t_expander *e)
+char	*remove_quotes(char *data)
 {
 	size_t	unquoted_len;
 	char	*unquoted_str;
@@ -181,11 +138,8 @@ char	*remove_quotes(char *data, t_expander *e)
 	if (!contain_quotes(data))
 		return (data);
 	unquoted_len = unquoted_strlen(data);
-	unquoted_str = malloc(sizeof(char) * (unquoted_len + 1));
-	if (!unquoted_str)
-		exit(expand_perror(e, "malloc"));
+	unquoted_str = x_malloc(sizeof(*unquoted_str) * (unquoted_len + 1));
 	unquoted_str = unquoted_memmove(unquoted_str, data);
 	free(data);
-	data = unquoted_str;
-	return (data);
+	return (unquoted_str);
 }

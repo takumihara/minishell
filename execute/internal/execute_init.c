@@ -95,7 +95,7 @@ void	init_simple_command(t_executor *e,
 {
 	new_t_simple_command(sc);
 	(*sc)->root = node;
-	if (!expand(node, e->env_vars, e->exit_status))
+	if (!expand(node, e->env_vars))
 	{
 		(*sc)->err = EXPANSION_ERR;
 		return ;
