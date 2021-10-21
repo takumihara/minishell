@@ -39,7 +39,7 @@ struct s_expander {
 };
 
 // expander.c
-t_ast_node	*expand(t_ast_node *root, t_env_var **env_vars, int exit_status);
+t_ast_node	*expand(t_ast_node *root, t_env_var **env_vars);
 
 // expander_utils.c
 void		new_expander(t_expander **e, t_ast_node *root, t_env_var *env_vars);
