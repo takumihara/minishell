@@ -1,10 +1,10 @@
 #include "execute.h"
 #include "exit_status.h"
 
-static int command_line(t_executor *e, t_ast_node *node);
+static int init_command_line(t_executor *e, t_ast_node *node);
 static void pipeline(t_executor *e, t_pipeline **pipeline, t_ast_node *node);
 static void	subshell(t_executor *e, t_subshell **ss, t_ast_node *node);
-static void	simple_command(t_executor *e, t_simple_command **sc, t_ast_node *node);
+static void	init_simple_command(t_executor *e, t_simple_command **sc, t_ast_node *node);
 
 int	execute(t_ast_node *root, t_env_var **env_vars)
 {
@@ -17,13 +17,13 @@ int	execute(t_ast_node *root, t_env_var **env_vars)
 		return (ES_SYNTAX_ERROR);
 	}
 	new_executor(&e, root, env_vars);
-	exit_status = command_line(e, root);
+	exit_status = init_command_line(e, root);
 	delete_ast_nodes(e->root, NULL);
 	free(e);
 	return (exit_status);
 }
 
-int command_line(t_executor *e, t_ast_node *node)
+int init_command_line(t_executor *e, t_ast_node *node)
 {
 	if (node->type == AND_IF_NODE || node->type == OR_IF_NODE)
 	{
@@ -38,7 +38,7 @@ int command_line(t_executor *e, t_ast_node *node)
 			e->condition = CONDITION_AND_IF;
 		else if (node->type == OR_IF_NODE)
 			e->condition = CONDITION_OR_IF;
-		return (command_line(e, node->right));
+		return (init_command_line(e, node->right));
 	}
 	else
 	{
@@ -72,7 +72,7 @@ void	pipeline(t_executor *e, t_pipeline **pipeline_, t_ast_node *node)
 	}
 	else
 	{
-		simple_command(e, (t_simple_command **)&(*pipeline_)->command, node);
+		init_simple_command(e, (t_simple_command **)&(*pipeline_)->command, node);
 		(*pipeline_)->type = T_SIMPLE_COMMAND;
 	}
 	if (pipeline_next)
@@ -111,7 +111,7 @@ void	init_compound_list(t_executor *e, t_compound_list **cl, t_ast_node *node)
 }
 
 // expected node: COMMAND_ARG_NODE, REDIRECT*
-void	simple_command(t_executor *e, t_simple_command **sc, t_ast_node *node)
+void	init_simple_command(t_executor *e, t_simple_command **sc, t_ast_node *node)
 {
 	new_t_simple_command(sc);
 	(*sc)->root = node;

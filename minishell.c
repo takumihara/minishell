@@ -10,7 +10,7 @@
 #include <sys/ioctl.h>  
 
 #include "libft/libft.h"
-#include "parser/internal/internal.h"
+#include "parser/parse.h"
 #include "lexer/lexer.h"
 #include "expander/expander.h"
 #include "execute/execute.h"
