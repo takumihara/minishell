@@ -6,7 +6,7 @@ t_env_var *init_env_var(char *key, char *value)
 {
 	t_env_var	*env_var;
     
-    env_var = x_malloc(sizeof(t_env_var));
+    env_var = x_malloc(sizeof(*env_var));
 	env_var->key = key;
     env_var->value = value;
     env_var->next = NULL;
