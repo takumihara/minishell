@@ -3,15 +3,10 @@
 char	*append_wildcard_strings(char *dst, char *src, const char *data, t_expander *e)
 {
 	if (dst == data)
-		return (ft_strdup(src));
+		return (x_strdup(src));
 	else
 	{
 		dst = strappend(dst, " ", 1);
-		if (!dst)
-		{
-			free(src);
-			exit(expand_perror(e, "malloc"));
-		}
 		dst = strappend(dst, src, ft_strlen(src));
 		return (dst);
 	}
@@ -27,7 +22,7 @@ bool	is_match_pattern(const char *data, size_t len, char *name)
 	while (i < len)
 	{
 		if (data[i] == '\"' || data[i] == '\'')
-		{
+		{	
 			i++;
 			continue ;
 		}
@@ -74,17 +69,16 @@ void	quick_sort(char **array, size_t left, size_t right)
 		quick_sort(array, j + 1, right);
 }
 
-char	*sort_strings(char *src, t_expander *e)
+char	*sort_strings(char *src, t_expander *e, char *data)
 {
 	char	**wildcard_array;
 	size_t	word_num;
 	char	*rtn;
 	size_t	i;
 
-	wildcard_array = ft_split(src, ' ');
+	free(data);
+	wildcard_array = x_split(src, ' ');
 	free(src);
-	if (!wildcard_array)
-		exit(expand_perror(e, "malloc"));
 	word_num = 0;
 	while (wildcard_array[word_num])
 		word_num++;

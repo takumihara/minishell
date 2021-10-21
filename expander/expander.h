@@ -56,7 +56,7 @@ bool		is_expandable_env_var(char start, int status);
 char		*append_wildcard_strings(char *dst, char *src, const char *data, t_expander *e);
 void		quick_sort(char **array, size_t left, size_t right);
 bool		is_match_pattern(const char *data, size_t len, char *name);
-char		*sort_strings(char *src, t_expander *e);
+char		*sort_strings(char *src, t_expander *e, char *data);
 
 // expander_quote.c
 bool		is_quote(const char c);

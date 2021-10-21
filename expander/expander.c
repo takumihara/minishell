@@ -29,7 +29,7 @@ void search_command_arg_node(t_expander *e, t_ast_node *node)
 	t_ast_node	*head;
 
 	head = node;
-	if (!node)
+	if (!node || !node->data)
 		return ;
 	search_command_arg_node(e, node->right);
 	search_command_arg_node(e, node->left);
@@ -109,14 +109,12 @@ char	*expand_wildcard(char *data, size_t pre_len, t_expander *e)
 	const size_t	post_len = unquoted_strlen(post_start);
 	char			*rtn;
 
-	dir = opendir(".");
-	if (!dir)
-		exit(expand_perror(e, "opendir"));
+	dir = x_opendir(".");
 	rtn = data;
 	while (1)
 	{
-		dp = readdir(dir);
-		if (!rtn || !dp)
+		dp = x_readdir(dir);
+		if (!dp)
 			break ;
 		if (!ft_strncmp(dp->d_name, ".", 1))
 			continue ;
@@ -124,12 +122,9 @@ char	*expand_wildcard(char *data, size_t pre_len, t_expander *e)
 			&& is_match_pattern(post_start, post_len, ft_strchr(dp->d_name, 0) - post_len))
 			rtn = append_wildcard_strings(rtn, dp->d_name, data, e);
 	}
-	closedir(dir);
+	x_closedir(dir);
 	if (rtn != data)
-	{
-		free(data);
-		rtn = sort_strings(rtn, e);
-	}
+		rtn = sort_strings(rtn, e, data);
 	return (rtn);
 }
 
