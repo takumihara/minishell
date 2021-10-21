@@ -10,6 +10,7 @@ char	*strappend(char *dst, const char *src, size_t l)
 	rtn = (char *)malloc(sizeof(char) * (ft_strlen(dst) + l + 1));
 	if (!rtn)
 		perror_exit("malloc", EXIT_FAILURE);
+	i = 0;
 	j = 0;
 	while (dst[j])
 		rtn[i++] = dst[j++];

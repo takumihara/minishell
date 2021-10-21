@@ -1,6 +1,6 @@
 #include "expander.h"
 
-char	*append_wildcard_strings(char *dst, char *src, const char *data, t_expander *e)
+char	*append_wildcard_strings(char *dst, char *src, const char *data)
 {
 	if (dst == data)
 		return (x_strdup(src));
@@ -69,7 +69,7 @@ void	quick_sort(char **array, size_t left, size_t right)
 		quick_sort(array, j + 1, right);
 }
 
-char	*sort_strings(char *src, t_expander *e, char *data)
+char	*sort_strings(char *src, char *data)
 {
 	char	**wildcard_array;
 	size_t	word_num;
@@ -86,7 +86,7 @@ char	*sort_strings(char *src, t_expander *e, char *data)
 	rtn = NULL;
 	i = 0;
 	while (i < word_num)
-		rtn = append_wildcard_strings(rtn, wildcard_array[i++], NULL, e);
+		rtn = append_wildcard_strings(rtn, wildcard_array[i++], NULL);
 	free_2d_array((void ***)&wildcard_array);
 	return (rtn);
 }

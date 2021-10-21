@@ -5,7 +5,7 @@ void		search_command_arg_node(t_expander *e, t_ast_node *node);
 char		*expand_word(t_expander *e, char delimiter);
 char		*expand_quotes_string(char *data, size_t replace_start, char quote_type);
 char		*expand_environment_variable(char *data, size_t replace_starts, t_expander *e, int status);
-char		*expand_wildcard(char *data, size_t pre_len, t_expander *e);
+char		*expand_wildcard(char *data, size_t pre_len);
 t_ast_node	*word_splitting(t_ast_node *node, t_expander *e, char *original_data);
 char		*remove_quotes(char *data, t_expander *e);
 
@@ -65,7 +65,7 @@ char	*expand_word(t_expander *e, char delimiter)
 		if (data[i] == '$' && delimiter == '$' && status != IN_SINGLE_QUOTE)
 			data = expand_environment_variable(data, i, e, status);
 		else if (data[i] == '*' && delimiter == '*' && status == OUTSIDE)
-			data = expand_wildcard(data, i, e);
+			data = expand_wildcard(data, i);
 		if (!data)
 			return (NULL);
 		if (!data[i])
@@ -101,7 +101,7 @@ char	*expand_environment_variable(char *data, size_t replace_start, t_expander *
 		return (str_insert(data, replace_start, "", 0));
 }
 
-char	*expand_wildcard(char *data, size_t pre_len, t_expander *e)
+char	*expand_wildcard(char *data, size_t pre_len)
 {
 	DIR				*dir;
 	struct dirent	*dp;
@@ -120,11 +120,11 @@ char	*expand_wildcard(char *data, size_t pre_len, t_expander *e)
 			continue ;
 		if (is_match_pattern(rtn, pre_len, dp->d_name)
 			&& is_match_pattern(post_start, post_len, ft_strchr(dp->d_name, 0) - post_len))
-			rtn = append_wildcard_strings(rtn, dp->d_name, data, e);
+			rtn = append_wildcard_strings(rtn, dp->d_name, data);
 	}
 	x_closedir(dir);
 	if (rtn != data)
-		rtn = sort_strings(rtn, e, data);
+		rtn = sort_strings(rtn, data);
 	return (rtn);
 }
 
