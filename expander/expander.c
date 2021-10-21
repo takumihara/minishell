@@ -17,8 +17,7 @@ t_ast_node	*expand(t_ast_node *root, t_env_var **env_vars, int exit_status)
 	(void)exit_status;
 	if (!root)
 		return (NULL);
-	if (!new_expander(&e, root, *env_vars))
-		exit(expand_perror(NULL, "malloc"));
+	new_expander(&e, root, *env_vars);
 	if (!search_command_arg_node(e, root))
 	{
 		free(e);
@@ -42,9 +41,7 @@ t_ast_node	*search_command_arg_node(t_expander *e, t_ast_node *node)
 	if (node->type != COMMAND_ARG_NODE && node->type != REDIRECT_IN_NODE
 		&& node->type != REDIRECT_OUT_NODE && node->type != REDIRECT_APPEND_NODE)
 		return (node);
-	original_data = ft_strdup(node->data);
-	if (!original_data)
-		exit(expand_perror(e, "malloc"));
+	original_data = x_strdup(node->data);
 	e->node = node;
 	node->data = expand_word(e, '$');
 	node->data = expand_word(e, '*');
