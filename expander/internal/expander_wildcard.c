@@ -1,4 +1,4 @@
-#include "expander.h"
+#include "expander_internal.h"
 
 char	*append_wildcard_strings(char *dst, char *src, const char *data)
 {
@@ -88,5 +88,32 @@ char	*sort_strings(char *src, char *data)
 	while (i < word_num)
 		rtn = append_wildcard_strings(rtn, wildcard_array[i++], NULL);
 	free_2d_array((void ***)&wildcard_array);
+	return (rtn);
+}
+
+char	*expand_wildcard(char *data, size_t pre_len)
+{
+	DIR				*dir;
+	struct dirent	*dp;
+	const char		*post_start = &data[pre_len + 1];
+	const size_t	post_len = unquoted_strlen(post_start);
+	char			*rtn;
+
+	dir = x_opendir(".");
+	rtn = data;
+	while (1)
+	{
+		dp = x_readdir(dir);
+		if (!dp)
+			break ;
+		if (!ft_strncmp(dp->d_name, ".", 1))
+			continue ;
+		if (is_match_pattern(rtn, pre_len, dp->d_name)
+			&& is_match_pattern(post_start, post_len, ft_strchr(dp->d_name, 0) - post_len))
+			rtn = append_wildcard_strings(rtn, dp->d_name, data);
+	}
+	x_closedir(dir);
+	if (rtn != data)
+		rtn = sort_strings(rtn, data);
 	return (rtn);
 }

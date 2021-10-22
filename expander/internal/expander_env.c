@@ -1,4 +1,4 @@
-#include "expander.h"
+#include "expander_internal.h"
 
 size_t	var_strlen(const char *str)
 {
@@ -45,4 +45,29 @@ bool	is_expandable_env_var(char start, int status)
 			return (false);
 	}
 	return (true);
+}
+
+char	*expand_environment_variable(char *data, size_t replace_start, t_expander *e, int status)
+{
+	const char		*var_start = &data[replace_start + 1];
+	const size_t	var_len = var_strlen(var_start);
+	char			*key;
+	char			*value;
+
+	if (!is_expandable_env_var(*var_start, status))
+		return (data);
+	if (*var_start == '?')
+		value = get_env_value("?", e->env_vars);
+	else
+	{
+		key = x_malloc(sizeof(*key) * (var_len + 1));
+		ft_memmove(key, var_start, var_len);
+		key[var_len] = '\0';
+		value = get_env_value(key, e->env_vars);
+		free(key);
+	}
+	if (value)
+		return (str_insert(data, replace_start, value, ft_strlen(value)));
+	else
+		return (str_insert(data, replace_start, "", 0));
 }

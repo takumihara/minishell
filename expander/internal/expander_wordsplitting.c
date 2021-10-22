@@ -1,4 +1,4 @@
-#include "expander.h"
+#include "expander_internal.h"
 
 static bool	is_delims(char c, char const *delims)
 {
@@ -131,4 +131,19 @@ t_ast_node	*split_arg_node(char **split, t_ast_node *node, char *original_data, 
 	}
 	node->right = (t_ast_node *)original_right;
 	return ((t_ast_node *)root);
+}
+
+t_ast_node	*word_splitting(t_ast_node *node, t_expander *e, char *original_data)
+{
+	char		**split;
+
+	if (!*node->data && *original_data && node->type != COMMAND_ARG_NODE)
+		return (expand_redirect_error(original_data, node, e));
+	if (!*node->data)
+		return (node);
+	remove_null_argument(node->data);
+	split = split_by_space_skip_quotes(node->data, " \t\n");
+	free(node->data);
+	node = split_arg_node(split, node, original_data, e);
+	return (node);
 }

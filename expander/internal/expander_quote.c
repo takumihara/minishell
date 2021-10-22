@@ -1,4 +1,4 @@
-#include "expander.h"
+#include "expander_internal.h"
 
 bool	is_quote(const char c)
 {
@@ -88,4 +88,18 @@ void	remove_null_argument(char *str)
 		status = quotation_status(*str, status);
 		str++;
 	}
+}
+
+char	*remove_quotes(char *data)
+{
+	size_t	unquoted_len;
+	char	*unquoted_str;
+
+	if (!contain_quotes(data))
+		return (data);
+	unquoted_len = unquoted_strlen(data);
+	unquoted_str = x_malloc(sizeof(*unquoted_str) * (unquoted_len + 1));
+	unquoted_str = unquoted_memmove(unquoted_str, data);
+	free(data);
+	return (unquoted_str);
 }
