@@ -1,6 +1,6 @@
 #include "builtin.h"
 
-size_t	key_strlen(const char *str)
+static size_t	key_strlen(const char *str)
 {
 	size_t	len;
 
@@ -10,7 +10,7 @@ size_t	key_strlen(const char *str)
 	return (len);
 }
 
-size_t	env_vars_len(t_env_var *env_vars)
+static size_t	env_vars_len(t_env_var *env_vars)
 {
 	size_t	len;
 
@@ -24,7 +24,7 @@ size_t	env_vars_len(t_env_var *env_vars)
 	return (len);
 }
 
-char	**sort_env_var(char **array, t_env_var *env_vars, size_t len)
+static char	**sort_env_var(char **array, t_env_var *env_vars, size_t len)
 {
 	size_t	i;
 
@@ -68,23 +68,6 @@ static int	print_declaration(t_env_var *env_vars)
 	return (EXIT_SUCCESS);
 }
 
-static int	set_key_value(char **key, char **value, char *src)
-{
-	*key = ft_strndup(src, key_strlen(src));
-	if (!*key)
-		return (BUILTIN_MALLOC_ERROR);
-	if (ft_strchr(src, '='))
-	{
-		*value = ft_strdup(ft_strchr(src, '=') + 1);
-		if (!*value)
-		{
-			free(*key);
-			return (BUILTIN_MALLOC_ERROR);
-		}
-	}
-	return (EXIT_SUCCESS);
-}
-
 int	builtin_export(int argc, char **argv, int no_use, t_env_var **env_vars)
 {
 	char	*key;
@@ -102,8 +85,9 @@ int	builtin_export(int argc, char **argv, int no_use, t_env_var **env_vars)
 		value = NULL;
 		if (is_valid_argument(argv[i], key_strlen(argv[i]), EXPORT_ARG_ERROR))
 		{
-			if (set_key_value(&key, &value, argv[i]) == MALLOC_ERROR)
-				return (BUILTIN_MALLOC_ERROR);
+			*key = x_strndup(argv[i], key_strlen(argv[i]));
+			if (ft_strchr(argv[i], '='))
+				*value = x_strdup(ft_strchr(argv[i], '=') + 1);
 			register_env_var(key, value, env_vars);
 		}
 		else
