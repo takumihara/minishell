@@ -3,7 +3,6 @@
 
 # include "../ast/ast.h"
 # include "../env/env.h"
-# include "internal/expander_internal.h"
 
 // expander.c
 t_ast_node	*expand(t_ast_node *root, t_env_var **env_vars);
