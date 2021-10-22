@@ -1,4 +1,4 @@
-#include "lexer.h"
+#include "internal.h"
 
 t_token	*new_token(t_token_type token_type, t_lexer *l, size_t len, size_t len_start)
 {

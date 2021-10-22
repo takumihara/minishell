@@ -1,4 +1,14 @@
-#include "lexer.h"
+#include "internal.h"
+
+void	new_lexer(t_lexer **l, char *input)
+{
+	*l = x_malloc(sizeof(**l));
+	(*l)->input = input;
+	(*l)->position = 0;
+	(*l)->read_position = 0;
+	(*l)->is_subshell = false;
+	(*l)->is_redirect = false;
+}
 
 void	read_char(t_lexer *l)
 {
