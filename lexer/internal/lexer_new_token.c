@@ -1,29 +1,24 @@
 #include "lexer_internal.h"
 
-t_token	*new_token(t_token_type token_type, t_lexer *l, size_t len, size_t len_start)
+t_token	*new_token(t_token_type type, t_lexer *l, size_t len, size_t len_start)
 {
 	t_token	 *token;
 
 	token = x_malloc(sizeof(*token));
-	token->type = token_type;
+	token->type = type;
 	token->literal.start = &(l->input[len_start]);
 	token->literal.len = len;
 	token->next = NULL;
-	if (token_type == REDIRECT_IN || token_type == REDIRECT_OUT
-		|| token_type == HEREDOC || token_type == REDIRECT_APPEND)
+	if (type == REDIRECT_IN || type == REDIRECT_OUT
+		|| type == HEREDOC || type == REDIRECT_APPEND)
 		l->is_redirect = true;
 	return (token);
 }
 
-t_token	*new_token_string(t_lexer *l)
+static void	read_string(t_lexer *l, bool *closed)
 {
-	t_token			*token;
-	const size_t	len_start = l->position;
-	char			quote_type;
-	bool			closed;
+	char	quote_type;
 
-	closed = true;
-	token = x_malloc(sizeof(*token));
 	while (!ft_strchr(DELIMITER, l->ch))
 	{
 		if (l->ch == '\'' || l->ch == '\"')
@@ -33,12 +28,23 @@ t_token	*new_token_string(t_lexer *l)
 			while (l->ch != quote_type && l->ch != '\0')
 				read_char(l);
 			if (l->ch == '\0')
-				closed = false;
+				*closed = false;
 		}
 		read_char(l);
 		if (l->is_subshell && l->ch == '\n')
 			break ;
 	}
+}
+
+t_token	*new_token_string(t_lexer *l)
+{
+	t_token			*token;
+	const size_t	len_start = l->position;
+	bool			closed;
+
+	closed = true;
+	token = x_malloc(sizeof(*token));
+	read_string(l, &closed);
 	if (closed)
 		token->type = STRING;
 	else

@@ -1,4 +1,5 @@
 #include "lexer.h"
+#include "internal/lexer_internal.h"
 
 t_token	*lex(char *input)
 {
