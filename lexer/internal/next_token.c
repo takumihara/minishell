@@ -1,4 +1,4 @@
-#include "internal.h"
+#include "lexer_internal.h"
 
 t_token *next_token(t_lexer *l)
 {

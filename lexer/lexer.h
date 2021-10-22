@@ -2,7 +2,7 @@
 # define LEXER_H
 
 # include "../token/token.h"
-# include "internal/internal.h"
+# include "internal/lexer_internal.h"
 
 // lex.c
 t_token	*lex(char *input);
