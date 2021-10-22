@@ -1,5 +1,5 @@
-#ifndef WRAPPER_H
-#define WRAPPER_H
+#ifndef X_H
+# define X_H
 
 # include <sys/stat.h>
 # include <stdlib.h>
@@ -19,5 +19,6 @@ DIR				*x_opendir(const char *str);
 struct dirent	*x_readdir(DIR *dirp);
 void			x_closedir(DIR *dir);
 char			**x_split(const char *s, char c);
+char			*x_strndup(const char *str, size_t size);
 
-#endif //WRAPPER_H
+#endif
