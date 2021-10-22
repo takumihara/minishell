@@ -56,7 +56,7 @@ bool	execute_builtin(t_executor *e, int ac, char **av)
 	else if (!ft_strcmp(av[0], "exit"))
 		e->exit_status = builtin_exit(ac, av, e->exit_status, e->env_vars);
 	else if (!ft_strcmp(av[0], "echo"))
-		e->exit_status = builtin_echo(ac, av, e->exit_status, e->env_vars);
+		e->exit_status = builtin_echo(ac, av);
 	else if (!ft_strcmp(av[0], "export"))
 		e->exit_status = builtin_export(ac, av, e->env_vars);
 	else if (!ft_strcmp(av[0], "env"))
