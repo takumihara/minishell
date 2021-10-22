@@ -37,7 +37,7 @@ int	execute_pipeline_internal(t_executor *e, t_pipeline *pl, int stdout_fd, int 
 	while (pl)
 	{
 		x_dup2(info.pipefd[READ], STDIN_FILENO);
-		if (info.pipefd[READ])
+		if (info.pipefd[READ] != STDIN_FILENO)
 			close(info.pipefd[READ]);
 		if (pl->next)
 		{
