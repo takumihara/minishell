@@ -45,7 +45,7 @@ void	new_argv(t_simple_command *sc)
 	i = 0;
 	while (node != NULL)
 	{
-		if (node->type == COMMAND_ARG_NODE)
+		if (node->type == COMMAND_ARG_NODE && node->data)
 			sc->argv[i++] = node->data;
 		node = node->right;
 	}
