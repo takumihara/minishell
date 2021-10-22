@@ -2,7 +2,6 @@
 # define EXPANDER_INTERNAL_H
 
 # include "../../ast/ast.h"
-# include "../../parser/internal/internal.h"
 # include "../../libft/libft.h"
 # include "../../utils/utils.h"
 # include "../../execute/execute.h"
