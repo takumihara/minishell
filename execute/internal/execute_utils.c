@@ -1,7 +1,6 @@
-#include "../execute.h"
 #include "../../wrapper/x.h"
-#include "execute_internal.h"
 #include "../../builtin/builtin.h"
+#include "execute_internal.h"
 
 void	new_executor(t_executor **e, t_ast_node *root, t_env_var **env_vars)
 {
@@ -12,14 +11,6 @@ void	new_executor(t_executor **e, t_ast_node *root, t_env_var **env_vars)
 	(*e)->pipeline = NULL;
 	(*e)->env_vars = env_vars;
 }
-
-//void	delete_executor(t_executor **e)
-//{
-//	delete_list((*e)->pipeline, T_PIPELINE);
-//	delete_ast_nodes((*e)->root, NULL);
-//	free(*e);
-//	*e = NULL;
-//}
 
 void	delete_list(void *element, t_list_type type)
 {
@@ -42,44 +33,30 @@ void	delete_list(void *element, t_list_type type)
 	}
 	else if (type == T_PIPELINE)
 	{
-		delete_list(((t_pipeline *)element)->command, ((t_pipeline *)element)->type);
+		delete_list(((t_pipeline *)element)->command,
+			((t_pipeline *)element)->type);
 		delete_list(((t_pipeline *)element)->next, T_PIPELINE);
 	}
 	free(element);
 }
 
-//int	ex_perror(t_executor *e, const char *s)
-//{
-//	perror(s);
-//	if (e)
-//		delete_executor(&e);
-//	return (EXIT_FAILURE);
-//}
-
-static void	execute_builtin_internal(int argc, char **argv, t_executor *e, bool islast, int (*fn)(int, char**, int, t_env_var**))
-{
-	if (islast)
-		e->exit_status = fn(argc, argv, e->exit_status, e->env_vars);
-	else
-		fn(argc, argv, e->exit_status, e->env_vars);
-}
-
-bool	execute_builtin(t_executor *e, int argc, char **argv, bool is_last)
+bool	execute_builtin(t_executor *e, int argc, char **argv)
 {
 	if (!ft_strcmp(argv[0], "cd"))
-		execute_builtin_internal(argc, argv, e, is_last, builtin_cd);
+		e->exit_status = builtin_cd(argc, argv, e->exit_status, e->env_vars);
 	else if (!ft_strcmp(argv[0], "pwd"))
-		execute_builtin_internal(argc, argv, e, is_last, builtin_pwd);
+		e->exit_status = builtin_pwd(argc, argv, e->exit_status, e->env_vars);
 	else if (!ft_strcmp(argv[0], "exit"))
-		execute_builtin_internal(argc, argv, e, is_last, builtin_exit);
+		e->exit_status = builtin_exit(argc, argv, e->exit_status, e->env_vars);
 	else if (!ft_strcmp(argv[0], "echo"))
-		execute_builtin_internal(argc, argv, e, is_last, builtin_echo);
+		e->exit_status = builtin_echo(argc, argv, e->exit_status, e->env_vars);
 	else if (!ft_strcmp(argv[0], "export"))
-		execute_builtin_internal(argc, argv, e, is_last, builtin_export);
+		e->exit_status = builtin_export(argc,
+				argv, e->exit_status, e->env_vars);
 	else if (!ft_strcmp(argv[0], "env"))
-		execute_builtin_internal(argc, argv, e, is_last, builtin_env);
+		e->exit_status = builtin_env(argc, argv, e->exit_status, e->env_vars);
 	else if (!ft_strcmp(argv[0], "unset"))
-		execute_builtin_internal(argc, argv, e, is_last, builtin_unset);
+		e->exit_status = builtin_unset(argc, argv, e->exit_status, e->env_vars);
 	else
 		return (false);
 	return (true);

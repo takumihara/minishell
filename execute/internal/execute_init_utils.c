@@ -32,7 +32,7 @@ void	new_t_simple_command(t_simple_command **sc)
 	(*sc)->argv = NULL;
 	(*sc)->r_out = UNSET_FD;
 	(*sc)->r_in = UNSET_FD;
-	(*sc)->err = NO_ERR;
+	(*sc)->err = NO_SC_ERR;
 }
 
 void	new_argv(t_simple_command *sc)
