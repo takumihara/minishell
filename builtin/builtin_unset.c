@@ -1,6 +1,6 @@
 #include "builtin.h"
 
-t_env_var	*delete_env_var(char *key, t_env_var *env_vars)
+static t_env_var	*delete_env_var(char *key, t_env_var *env_vars)
 {
 	t_env_var	*head_var;
 	t_env_var	*pre_var;
@@ -26,7 +26,7 @@ t_env_var	*delete_env_var(char *key, t_env_var *env_vars)
 	return (head_var);
 }
 
-int		builtin_unset(int argc, char **argv, int no_use, t_env_var **env_vars)
+int	builtin_unset(int argc, char **argv, int no_use, t_env_var **env_vars)
 {
 	int			i;
 	int			exit_status;
@@ -41,9 +41,7 @@ int		builtin_unset(int argc, char **argv, int no_use, t_env_var **env_vars)
 	{
 		if (is_valid_argument(argv[i], ft_strlen(argv[i]), UNSET_ARG_ERROR))
 		{
-			key = ft_strdup(argv[i]);
-			if (!key)
-				return (BUILTIN_MALLOC_ERROR);
+			key = x_strdup(argv[i]);
 			*env_vars = delete_env_var(key, *env_vars);
 			free(key);
 		}
