@@ -19,7 +19,7 @@
 
 # define EXIT_STATUS_OUT_OF_RANGE 255
 
-int		builtin_cd(int argc, char **argv, int no_use, t_env_var **env_vars);
+int		builtin_cd(int argc, char **argv, t_env_var **env_vars);
 int		builtin_pwd(int argc, char **argv, int no_use, t_env_var **env_vars);
 int		builtin_exit(int argc, char **argv, int last_exit_status, t_env_var **env_vars);
 int		builtin_echo(int argc, char **argv, int no_use, t_env_var **env_vars);
