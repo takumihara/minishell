@@ -1,5 +1,5 @@
-#include <dirent.h>
 #include "expander.h"
+#include "internal/expander_internal.h"
 
 static char	*expand_word(t_expander *e, char *data, char delimiter)
 {
@@ -30,8 +30,10 @@ static void	search_command_arg_node(t_expander *e, t_ast_node *node)
 		return ;
 	search_command_arg_node(e, node->right);
 	search_command_arg_node(e, node->left);
-	if (node->type != COMMAND_ARG_NODE && node->type != REDIRECT_IN_NODE
-		&& node->type != REDIRECT_OUT_NODE && node->type != REDIRECT_APPEND_NODE)
+	if (node->type != COMMAND_ARG_NODE
+		&& node->type != REDIRECT_IN_NODE
+		&& node->type != REDIRECT_OUT_NODE
+		&& node->type != REDIRECT_APPEND_NODE)
 		return ;
 	original_data = x_strdup(node->data);
 	node->data = expand_word(e, node->data, '$');

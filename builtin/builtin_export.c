@@ -38,7 +38,7 @@ static char	**sort_env_var(char **array, t_env_var *env_vars, size_t len)
 		}
 		env_vars = env_vars->next;
 	}
-	quick_sort(array, 0, len - 1);
+	quick_sort_str(array, 0, len - 1);
 	return (array);
 }
 
