@@ -1,4 +1,5 @@
 #include "lexer.h"
+#include "internal/lexer_internal.h"
 
 void	token_lstclear(t_token *lst)
 {
