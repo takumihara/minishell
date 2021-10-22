@@ -167,7 +167,5 @@ int	execute_simple_command(t_executor *e,
 		if (execve(path, sc->argv, create_envp(e)) == -1)
 			handle_exec_error(path, true);
 	}
-//	if (info->is_last)
-		return (pid);
-//	return (NOT_LAST_COMMAND);
+	return (pid);
 }
