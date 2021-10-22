@@ -2,13 +2,14 @@ NAME    = a.out
 
 CURRENT_PATH	= .
 LEXER_PATH		= ..
+LEXER_INT_PATH	= ../internal
 UTILS_PATH		= ../../utils
 WRAPPER_PATH	= ../../wrapper
 
-SRC_PATHS	= $(CURRENT_PATH) $(LEXER_PATH) $(UTILS_PATH) $(WRAPPER_PATH)
+SRC_PATHS	= $(CURRENT_PATH) $(LEXER_PATH) $(LEXER_INT_PATH) $(UTILS_PATH) $(WRAPPER_PATH)
 SRCS		= $(foreach path, $(SRC_PATHS), $(wildcard $(path)/*.c))
 
-VPATH		= $(CURRENT_PATH):$(LEXER_PATH):$(UTILS_PATH):$(WRAPPER_PATH)
+VPATH		= $(CURRENT_PATH):$(LEXER_PATH):$(LEXER_INT_PATH):$(UTILS_PATH):$(WRAPPER_PATH)
 
 OBJDIR  = ./obj
 OBJS    = $(addprefix $(OBJDIR)/, $(notdir $(SRCS:%.c=%.o)))
