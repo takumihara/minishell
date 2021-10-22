@@ -2,10 +2,9 @@
 #include "../../builtin/builtin.h"
 #include "execute_internal.h"
 
-void	new_executor(t_executor **e, t_ast_node *root, t_env_var **env_vars)
+void	new_executor(t_executor **e, t_env_var **env_vars)
 {
 	*e = x_malloc(sizeof(**e));
-	(*e)->root = root;
 	(*e)->exit_status = EXIT_SUCCESS;
 	(*e)->condition = CONDITION_AND_IF;
 	(*e)->pipeline = NULL;
