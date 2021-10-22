@@ -2,6 +2,7 @@ echo hello
 echo "hello"
 "echo hello"
 'echo hello'
+echo $USER
 echo "$USER"
 echo '$USER'
 echo '"$USER"'
@@ -56,3 +57,25 @@ echo "''"'' a
 echo "a b"$USER"" c
 echo ""''a""'' b
 export str='   a  bb  ccc   ' && echo $str""
+echo "$ $ $ $ $ $ "
+echo a "" b "" c
+echo		hello
+echo "-n" hello
+echo '-n' hello
+echo "-n" "hello"
+echo '-n' 'hello'
+echo hello -n
+echo hello -nnnnnnn
+echo hello -nknknknknk
+echo hello -nnnnnnnnn -nnnnnnnnn
+echo
+echo a
+echo	tab
+echo "	tab	"
+echo		tab
+echo hello world
+echo -n
+echo -n a
+echo -n hello world
+echo a "$NO_SUCH_ENV" b $NO_SUCH_ENV c, unset NO_SUCH_ENV
+$HOGE
