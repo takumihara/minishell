@@ -1,6 +1,5 @@
-#ifndef INTERNAL_H
-# define INTERNAL_H
-
+#ifndef LEXER_INTERNAL_H
+# define LEXER_INTERNAL_H
 # include <stdlib.h>
 # include <stdio.h>
 # include <stdbool.h>

@@ -1,4 +1,4 @@
-#include "internal.h"
+#include "lexer_internal.h"
 
 void	new_lexer(t_lexer **l, char *input)
 {
