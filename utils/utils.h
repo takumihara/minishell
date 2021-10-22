@@ -16,5 +16,6 @@ char	*strjoin_three(const char *s1, const char *s2, const char *s3);
 void	perror_exit(const char *msg, int status);
 char	*ft_strstr(const char *hay, const char *needle);
 char	*read_all(int fd);
+void	quick_sort_str(char **array, size_t left, size_t right);
 
 # endif //UTILS_H
