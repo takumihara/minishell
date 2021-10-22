@@ -14,6 +14,7 @@ char	*get_cmd_path(t_executor *e, char *command)
 	paths = split_path_from_env(path_from_env);
 	if (!paths[0])
 		return (x_strdup(command));
+	printf("HERE \n");
 	i = -1;
 	while (1)
 	{
