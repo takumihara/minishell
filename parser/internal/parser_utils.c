@@ -13,6 +13,7 @@ t_parser	*new_parser(t_token *token)
 	parser->token = token;
 	parser->err = 0;
 	parser->is_subshell = false;
+	parser->is_first_word = true;
 	return (parser);
 }
 
