@@ -81,6 +81,8 @@ char	**split_path_from_env(const char *path_from_env)
 	t_sep_list	*sep_list;
 	int			list_len;
 
+	if (!path_from_env[0])
+		return (NULL);
 	sep_list = create_sep_list(path_from_env, &list_len);
 	paths = x_malloc(sizeof(*paths) * (list_len + 1));
 	create_paths(paths, path_from_env, sep_list);
