@@ -62,7 +62,7 @@ bool	execute_builtin(t_executor *e, int ac, char **av)
 	else if (!ft_strcmp(av[0], "env"))
 		e->exit_status = builtin_env(*e->env_vars);
 	else if (!ft_strcmp(av[0], "unset"))
-		e->exit_status = builtin_unset(ac, av, e->exit_status, e->env_vars);
+		e->exit_status = builtin_unset(ac, av, e->env_vars);
 	else
 		return (false);
 	return (true);

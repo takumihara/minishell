@@ -26,13 +26,12 @@ static t_env_var	*delete_env_var(char *key, t_env_var *env_vars)
 	return (head_var);
 }
 
-int	builtin_unset(int argc, char **argv, int no_use, t_env_var **env_vars)
+int	builtin_unset(int argc, char **argv, t_env_var **env_vars)
 {
 	int			i;
 	int			exit_status;
 	char		*key;
 
-	(void)no_use;
 	exit_status = EXIT_SUCCESS;
 	if (argc == 1 || !*env_vars)
 		return (exit_status);

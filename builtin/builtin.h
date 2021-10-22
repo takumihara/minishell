@@ -25,7 +25,7 @@ int		builtin_exit(int argc, char **argv, int last_exit_status, t_env_var **env_v
 int		builtin_echo(int argc, char **argv, int no_use, t_env_var **env_vars);
 int		builtin_export(int argc, char **argv, t_env_var **env_vars);
 int		builtin_env(t_env_var *env_vars);
-int		builtin_unset(int argc, char **argv, int no_use, t_env_var **env_vars);
+int		builtin_unset(int argc, char **argv, t_env_var **env_vars);
 
 bool	is_valid_argument(char *argv, size_t len, int error_type);
 
