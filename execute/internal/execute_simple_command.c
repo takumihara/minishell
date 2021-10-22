@@ -1,3 +1,5 @@
+#include "errno.h"
+
 #include "execute_internal.h"
 #include "exit_status.h"
 #include "../../builtin/builtin.h"
@@ -76,6 +78,9 @@ void	print_err_msg(char *path, char *msg)
 	ft_putendl_fd(msg, STDERR_FILENO);
 }
 
+// access(path, F_OK) == -1 -> 2
+// is_dir(path), access(path, X_OK) -> 13
+//
 void	handle_exec_error(char *path, bool is_exec_run)
 {
 	if (!is_exec_run)
@@ -85,21 +90,22 @@ void	handle_exec_error(char *path, bool is_exec_run)
 	}
 	else
 	{
-		if (access(path, F_OK) == -1)
+		if (errno == ENOEXEC)
+			exit(EXIT_SUCCESS);
+		if (errno == EACCES)
 		{
-			print_err_msg(path, "No such file or directory");
-			exit(ES_NO_SUCH_FILE);
-		}
-		else if (is_dir(path))
-		{
-			print_err_msg(path, "is a directory");
-			exit(ES_IS_A_DIRECTORY);
-		}
-		else if (access(path, X_OK) == -1)
-		{
-			print_err_msg(path, "Permission denied");
+			if (is_dir(path))
+				print_err_msg(path, "is a directory");
+			else
+				print_err_msg(path, "Permission denied");
 			exit(ES_PERMISSION_DENIED);
 		}
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		perror(path);
+		if (errno == ENOENT)
+			exit(ES_NO_SUCH_FILE);
+		if (errno == ENOTDIR)
+			exit(ES_NOT_A_DIRECTORY);
 		exit(EXIT_SUCCESS);
 	}
 }
