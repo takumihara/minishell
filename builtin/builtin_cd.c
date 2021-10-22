@@ -14,13 +14,14 @@ int	builtin_cd(int argc, char **argv, int no_use, t_env_var **env_vars)
 			return (EXIT_FAILURE);
 		}
 	}
-	else if (argv[1][0] == '\0')
-		return (EXIT_SUCCESS);
 	else
 		path = argv[1];
+	if (path[0] == '\0')
+		return (EXIT_SUCCESS);
 	if (chdir(path) == -1)
 	{
-		perror("minishell: cd");
+		ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
+		perror(path);
 		return (EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);

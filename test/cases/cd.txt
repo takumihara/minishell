@@ -1,2 +1,43 @@
 mkdir dir && cd dir && pwd
 mkdir dir || cd dir && pwd
+mkdir dir && cd dir && cd . && pwd
+mkdir dir && cd dir && cd ./ && pwd
+mkdir dir && cd dir && cd .. && pwd
+mkdir dir && cd dir && cd ../ && pwd
+touch testfile && cd testfile
+cd NO_SUCH_FILE && pwd
+cd NO_SUCH_FILE || pwd
+cd hello world && pwd
+cd hello world || pwd
+cd / && cd ../../akjwyefgjkwveyjfgweyugyuwegf76t273/../../ &&pwd
+mkdir dir && cd dir && cd ../nosuchdir/../dir && pwd || pwd
+mkdir hello && cd hello world && pwd || pwd
+cd / && pwd
+cd /bin && pwd
+cd /bin/../ && pwd
+not_implemented && (mkdir dir && cd DIR && pwd || pwd)
+not_implemented && (mkdir DIR && cd dir && pwd || pwd)
+mkdir dir && chmod 000 dir && cd dir && pwd&&chmod 777 dir
+not_implemented && (mkdir dir&& ln -s dir link&& cd link&& pwd)
+mkdir dir&& ln -s dir link&& rmdir dir&& cd link&& pwd
+not_implemented && (mkdir dir&& cd dir&& rmdir ../dir&& cd ./&& pwd&&cd .&& pwd&& cd ./././././&& pwd&& cd .////////./&& pwd&& cd ../&& pwd)
+not_implemented && (mkdir -p a/b/c&& cd a/b/c&& rm -rf ../../b&& cd ./&& pwd&& cd .././.&& pwd&& cd ./&& pwd&& cd ../&& pwd)
+cd && pwd
+export HOME=&& cd && pwd
+unset HOME&& cd && pwd
+export HOME="./"&& cd && pwd
+export HOME="../../"&& cd && pwd
+export HOME=""&& cd && pwd
+not_implemented && (export HOME="/BIN"&& cd && pwd)
+export HOME=a&& mkdir -p a/b&& cd && pwd
+export HOME=NO_SUCH_FILE&& cd && pwd
+mkdir -p a/b/c/d/e/f/g/h/i/&& cd a/b/c/d/../../c/d/e/f/g/h/i/../../../g/h/i/../.././././../g/h/i/../../../../../../../c/d/../d/../d/e/../../d/e/.././././e/f/.//////../f/g/h/i/////../../../&& pwd
+not_implemented && (cd //&& pwd&& cd //bin&& pwd)
+cd ///&& pwd&& cd ///bin&& pwd
+cd ////&& pwd&& cd ////bin&& pwd
+cd /////&& pwd&& cd /////bin&& pwd
+cd //////&& pwd&& cd //////bin&& pwd
+cd ///////&& pwd&& cd ///////bin&& pwd
+export HOME=//&& cd
+export HOME=//bin/..////////////bin/../&& cd
+export HOME=///&& cd
