@@ -9,7 +9,7 @@ char	*get_cmd_path(t_executor *e, char *command)
 	char		*path;
 	int			i;
 
-	if (!path_from_env)
+	if (ft_strchr(command, '/') || !path_from_env)
 		return (x_strdup(command));
 	paths = split_path_from_env(path_from_env);
 	if (!paths[0])
