@@ -14,7 +14,7 @@ static bool	print_argument_error(char *argv, int error_type)
 
 bool	is_valid_argument(char *argv, size_t len, int error_type)
 {
-	size_t			i;
+	size_t	i;
 
 	if (!len)
 		return (print_argument_error(argv, error_type));

@@ -1,6 +1,6 @@
 #include "builtin.h"
 
-int		print_env_vars(t_env_var *env_vars)
+int	print_env_vars(t_env_var *env_vars)
 {
 	while (env_vars)
 	{
@@ -11,7 +11,7 @@ int		print_env_vars(t_env_var *env_vars)
 	return (EXIT_SUCCESS);
 }
 
-int		builtin_env(int argc, char **argv, int no_use, t_env_var **env_vars)
+int	builtin_env(int argc, char **argv, int no_use, t_env_var **env_vars)
 {
 	(void)argc;
 	(void)argv;
