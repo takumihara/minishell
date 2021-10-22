@@ -1,4 +1,4 @@
-#include "internal.h"
+#include "parser_internal.h"
 #include "../../wrapper/x.h"
 
 #define ERR_MSG_SYNTAX_FORMER "minishell: syntax error near unexpected token `"

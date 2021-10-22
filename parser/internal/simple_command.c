@@ -1,4 +1,4 @@
-#include "internal.h"
+#include "parser_internal.h"
 
 //<simple_command_element> <simple_command>
 //<simple_command_element>

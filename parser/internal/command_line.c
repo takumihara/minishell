@@ -1,4 +1,4 @@
-#include "internal.h"
+#include "parser_internal.h"
 
 //<pipeline> '&&' <newline> <command_line>
 //<pipeline> '||' <newline> <command_line>
