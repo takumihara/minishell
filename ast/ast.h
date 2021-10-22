@@ -1,11 +1,11 @@
-#ifndef MINISHELL_AST_H
-#define MINISHELL_AST_H
+#ifndef AST_H
+# define AST_H
 
-#include <stdbool.h>
+# include <stdbool.h>
 
-#include "../token/token.h"
+# include "../token/token.h"
 
-typedef struct s_ast_node t_ast_node;
+typedef struct s_ast_node	t_ast_node;
 
 typedef enum e_node_type {
 	UNSET_NODE,
@@ -27,10 +27,11 @@ struct s_ast_node {
 	t_ast_node	*left;
 	t_ast_node	*right;
 };
+
 void	set_ast_nodes(t_ast_node *root, t_ast_node *left, t_ast_node *right);
 void	*delete_ast_nodes(t_ast_node *node1, t_ast_node *node2);
 void	new_ast_node(t_ast_node **node);
 bool	assign_ast_node(t_ast_node **dst, t_ast_node *src);
 void	attach_ast_nodes(t_ast_node *root, t_ast_node *left, t_ast_node *right);
 
-#endif //MINISHELL_AST_H
+#endif //AST_H
