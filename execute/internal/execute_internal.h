@@ -14,7 +14,6 @@
 # define CHILD_PROCESS 0
 
 # define CHILD_PROCESS_NOT_CREATED 0
-# define NOT_LAST_COMMAND (-1)
 
 # define UNSET_FD (-1)
 
