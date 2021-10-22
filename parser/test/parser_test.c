@@ -1,8 +1,9 @@
 #include <string.h>
-#include "../internal/internal.h"
+#include "../internal/parser_internal.h"
+#include "../parser.h"
 
-#define GENERAL_CASE -1
-#define ERROR_CASE -2
+#define GENERAL_CASE (-1)
+#define ERROR_CASE (-2)
 
 #define BLUE    "\033[34m"      /* Blue */
 
