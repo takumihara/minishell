@@ -20,31 +20,18 @@ echo hello -n
 echo hello -nnnnnnn
 echo hello -nknknknknk
 echo hello -nnnnnnnnn -nnnnnnnnn
-nothandled && echo \-n hello
 echo "-n" hello
 echo '-n' hello
 echo "-n" "hello"
 echo '-n' 'hello'
-echo \-\n \h\e\l\l\o
-echo '\-\n' '\h\e\l\l\o'
-echo "\-\n" "\h\e\l\l\o"
 echo $PATH
 echo "$PATH"
 echo '$PATH'
-echo \$PATH
-echo "\$PATH"
-echo '\$PATH'
 echo a "" b "" c
 echo a "$NO_SUCH_ENV" b $NO_SUCH_ENV c, unset NO_SUCH_ENV
 echo		hello
-echo \"$\"
 echo "$ $ $ $ $ $ "
-echo "\$\$USER\\$USER""$USER"
 echo $
-echo \$USER
-echo \\$USER
-echo \\\$USER
-echo \\\\$USER
 echo ""
 echo "" a
 echo "" a ""

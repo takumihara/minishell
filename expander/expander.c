@@ -37,6 +37,12 @@ static void	search_command_arg_node(t_expander *e, t_ast_node *node)
 		return ;
 	original_data = x_strdup(node->data);
 	node->data = expand_word(e, node->data, '$');
+	if (!*node->data && node->type == COMMAND_ARG_NODE)
+	{
+		node->data = NULL;
+		free(original_data);
+		return ;
+	}
 	node->data = expand_word(e, node->data, '*');
 	node = word_splitting(node, e, original_data);
 	free(original_data);

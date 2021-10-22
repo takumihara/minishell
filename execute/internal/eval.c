@@ -76,7 +76,7 @@ void	eval_simple_command(t_executor *e,
 	}
 	while (node != NULL)
 	{
-		if (node->type == COMMAND_ARG_NODE)
+		if (node->type == COMMAND_ARG_NODE && node->data)
 			(*sc)->argc++;
 		else if (node->type == REDIRECT_OUT_NODE
 			|| node->type == REDIRECT_APPEND_NODE)
