@@ -28,7 +28,7 @@ static void	read_string(t_lexer *l, bool *closed)
 			while (l->ch != quote_type && l->ch != '\0')
 				read_char(l);
 			if (l->ch == '\0')
-				closed = false;
+				*closed = false;
 		}
 		read_char(l);
 		if (l->is_subshell && l->ch == '\n')
