@@ -2,15 +2,16 @@ NAME = a.out
 
 CUR_PATH	= .
 PARSER_PATH	= ..
+PARSER_INT_PATH	= ../internal
 LEXER_PATH	= ../../lexer
 AST_PATH	= ../../ast
 UTILS_PATH	= ../../utils
 WRAPPER_PATH= ../../wrapper
 
-SRC_PATHS	= $(CUR_PATH) $(PARSER_PATH) $(LEXER_PATH) $(AST_PATH) $(UTILS_PATH) $(WRAPPER_PATH)
+SRC_PATHS	= $(CUR_PATH) $(PARSER_PATH) $(PARSER_INT_PATH) $(LEXER_PATH) $(AST_PATH) $(UTILS_PATH) $(WRAPPER_PATH)
 SRCS		= $(foreach path, $(SRC_PATHS), $(wildcard $(path)/*.c))
 
-VPATH		= $(CUR_PATH):$(PARSER_PATH):$(LEXER_PATH):$(AST_PATH):$(UTILS_PATH):$(WRAPPER_PATH)
+VPATH		= $(CUR_PATH):$(PARSER_PATH):$(PARSER_INT_PATH):$(LEXER_PATH):$(AST_PATH):$(UTILS_PATH):$(WRAPPER_PATH)
 
 OBJDIR  = ./obj
 OBJS    = $(addprefix $(OBJDIR)/, $(notdir $(SRCS:%.c=%.o)))
@@ -48,6 +49,6 @@ run: $(NAME)
 	./$(NAME)
 
 norm:
-	norminette $(PARSER_PATH)/*.c $(PARSER_PATH)/*.h | grep Error
+	norminette $(PARSER_PATH)/*.c $(PARSER_PATH)/*.h $(PARSER_INT_PATH)/*.c $(PARSER_INT_PATH)/*.h| grep Error
 
 .PHONY: all re clean fclean run norm

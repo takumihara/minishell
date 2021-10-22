@@ -1,5 +1,5 @@
-#ifndef INTERNAL_H
-# define INTERNAL_H
+#ifndef PARSER_INTERNAL_H
+# define PARSER_INTERNAL_H
 
 # include <stdbool.h>
 # include <unistd.h>
@@ -34,4 +34,4 @@ bool		handle_err(t_parser *p);
 t_ast_node	*command_line(t_parser *p);
 t_ast_node	*simple_command(t_parser *p);
 
-#endif //INTERNAL_H
+#endif //PARSER_INTERNAL_H

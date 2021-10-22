@@ -1,4 +1,4 @@
-#include "internal/internal.h"
+#include "internal/parser_internal.h"
 #include <stdio.h>
 
 #ifdef TEST

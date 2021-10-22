@@ -6,7 +6,7 @@
 # include "../token/token.h"
 # include "../lexer/lexer.h"
 # include "../ast/ast.h"
-# include "../parser/internal/internal.h"
+# include "../parser/internal/parser_internal.h"
 # include "../libft/libft.h"
 # include "../utils/utils.h"
 # include "../execute/execute.h"
