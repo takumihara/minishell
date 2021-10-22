@@ -2,38 +2,12 @@
 #include "exit_status.h"
 #include "execute_internal.h"
 #include "../../expander/expander.h"
+#include "eval.h"
+#include "eval_utils.h"
 
-static void	eval_pipeline(t_executor *e,
-				 t_pipeline **pipeline, t_ast_node *node);
 static void	eval_subshell(t_executor *e, t_subshell **ss, t_ast_node *node);
 static void	eval_simple_command(t_executor *e,
 				   t_simple_command **sc, t_ast_node *node);
-
-int	eval_command_line(t_executor *e, t_ast_node *node)
-{
-	t_ast_node	*pipeline_node;
-
-	if (node->type == AND_IF_NODE || node->type == OR_IF_NODE)
-		pipeline_node = node->left;
-	else
-		pipeline_node = node;
-	if (is_execute_condition(e->condition, e->exit_status))
-	{
-		eval_pipeline(e, &e->pipeline, pipeline_node);
-		execute_pipeline(e, e->pipeline);
-		register_env_var_from_literal("?", NULL, e->exit_status, e->env_vars);
-		delete_list(e->pipeline, T_PIPELINE);
-	}
-	if (node->type == AND_IF_NODE || node->type == OR_IF_NODE)
-	{
-		if (node->type == AND_IF_NODE)
-			e->condition = CONDITION_AND_IF;
-		else if (node->type == OR_IF_NODE)
-			e->condition = CONDITION_OR_IF;
-		return (eval_command_line(e, node->right));
-	}
-	return (e->exit_status);
-}
 
 // expected node: COMMAND_ARG_NODE, REDIRECT*, PIPE_NODE, SUBSHELL
 void	eval_pipeline(t_executor *e, t_pipeline **pipeline_, t_ast_node *node)

@@ -39,7 +39,6 @@ void	delete_list(void *element, t_list_type type)
 	free(element);
 }
 
-
 bool	is_execute_condition(int condition, int exit_status)
 {
 	if (condition == CONDITION_AND_IF && exit_status == EXIT_SUCCESS)

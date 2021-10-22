@@ -80,4 +80,3 @@ void	save_orig_stdfd(int orig_stdfd[])
 	orig_stdfd[READ] = x_dup(STDIN_FILENO);
 	orig_stdfd[WRITE] = x_dup(STDOUT_FILENO);
 }
-

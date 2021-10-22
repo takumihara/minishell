@@ -36,9 +36,7 @@ typedef enum e_simple_command_err {
 	EXPANSION_ERR,
 }	t_simple_command_err;
 
-// todo: root may not needed
 typedef struct s_executor {
-	t_ast_node	*root;
 	int			exit_status;
 	int			condition;
 	t_pipeline	*pipeline;
@@ -77,32 +75,30 @@ typedef struct s_exec_pipe_info {
 	int		pipefd[2];
 }	t_exec_pipe_info;
 
-int		init_command_line(t_executor *e, t_ast_node *node);
-void	init_compound_list(t_executor *e,
-			   t_compound_list **cl, t_ast_node *node);
+// execute_command_line.c
+int		execute_command_line(t_executor *e, t_ast_node *node);
+
+// execute_pipeline.c
+int		execute_pipeline(t_executor *e, t_pipeline *c);
+
+// execute_command.c
+int		execute_command(t_executor *e,
+			   void *command, int type, t_exec_pipe_info *info);
+
+// execute_simple_command.c
+int		execute_simple_command(t_executor *e,
+			  t_simple_command *sc, t_exec_pipe_info *info);
 
 // execute_utils.c
 void	new_executor(t_executor **e, t_env_var **env_vars);
 void	delete_list(void *element, t_list_type type);
 bool	is_execute_condition(int condition, int exit_status);
 
-// execute_command.c
-int		execute_pipeline(t_executor *e, t_pipeline *c);
-
 // get_cmd_path.c
 char	*get_cmd_path(t_executor *e, char *command);
 
 // create_envp.c
 char	**create_envp(t_executor *e);
-
-// handle_exec_error.c
-void	handle_exec_error(char *path, bool is_exec_run);
-
-
-int	execute_command(t_executor *e,
-					   void *command, int type, t_exec_pipe_info *info);
-int	execute_simple_command(t_executor *e,
-							  t_simple_command *sc, t_exec_pipe_info *info);
 
 // is_dir.c
 bool	is_dir(const char *path);

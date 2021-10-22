@@ -3,7 +3,9 @@
 #include "../internal/split_path_from_env.h"
 #include "../internal/execute_internal.h"
 
+#define RESET   "\033[0m"
 #define BLUE    "\033[34m"      /* Blue */
+#define RED     "\033[31m"
 
 void test_split_path_from_env_normal(t_env_var *env_vars);
 void test_split_path_from_env_colon();
@@ -74,7 +76,7 @@ void test_create_envp(char **expected, t_env_var *env_vars)
 	t_executor *e;
 	char		**envp;
 
-	new_executor(&e, NULL, &env_vars);
+	new_executor(&e, &env_vars);
 	envp = create_envp(e);
 	for (int i = 0; expected[i] && envp[i]; i++) {
 		if (ft_strcmp(expected[i], envp[i]))

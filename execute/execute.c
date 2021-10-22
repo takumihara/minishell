@@ -14,7 +14,7 @@ int	execute(t_ast_node *root, t_env_var **env_vars)
 		return (ES_SYNTAX_ERROR);
 	}
 	new_executor(&e, env_vars);
-	exit_status = init_command_line(e, root);
+	exit_status = execute_command_line(e, root);
 	delete_ast_nodes(root, NULL);
 	free(e);
 	return (exit_status);

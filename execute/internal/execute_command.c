@@ -1,3 +1,6 @@
+#include "execute_internal.h"
+#include "eval.h"
+
 static int	execute_subshell(t_executor *e, t_subshell *ss);
 static int	execute_compound_list(t_executor *e, t_compound_list *cl);
 
@@ -35,14 +38,14 @@ int	execute_compound_list(t_executor *e, t_compound_list *cl)
 		exe_child->pipeline = cl->pipeline;
 		exit_status = execute_pipeline(exe_child, exe_child->pipeline);
 		if (cl->compound_list_next)
-			init_compound_list(e, &cl->next, cl->compound_list_next);
+			eval_compound_list(e, &cl->next, cl->compound_list_next);
 		while (cl->next)
 		{
 			if (is_execute_condition(cl->condition, exit_status))
 				exit_status = execute_pipeline(exe_child, cl->next->pipeline);
 			cl = cl->next;
 			if (cl->compound_list_next)
-				init_compound_list(e, &cl->next, cl->compound_list_next);
+				eval_compound_list(e, &cl->next, cl->compound_list_next);
 		}
 		free(exe_child);
 		exit(exit_status);
