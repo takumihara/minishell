@@ -31,3 +31,13 @@ export HOME=""&& cd && pwd
 not_implemented && (export HOME="/BIN"&& cd && pwd)
 export HOME=a&& mkdir -p a/b&& cd && pwd
 export HOME=NO_SUCH_FILE&& cd && pwd
+mkdir -p a/b/c/d/e/f/g/h/i/&& cd a/b/c/d/../../c/d/e/f/g/h/i/../../../g/h/i/../.././././../g/h/i/../../../../../../../c/d/../d/../d/e/../../d/e/.././././e/f/.//////../f/g/h/i/////../../../&& pwd
+not_implemented && (cd //&& pwd&& cd //bin&& pwd)
+cd ///&& pwd&& cd ///bin&& pwd
+cd ////&& pwd&& cd ////bin&& pwd
+cd /////&& pwd&& cd /////bin&& pwd
+cd //////&& pwd&& cd //////bin&& pwd
+cd ///////&& pwd&& cd ///////bin&& pwd
+export HOME=//&& cd
+export HOME=//bin/..////////////bin/../&& cd
+export HOME=///&& cd
