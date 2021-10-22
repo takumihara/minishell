@@ -85,9 +85,9 @@ int	builtin_export(int argc, char **argv, int no_use, t_env_var **env_vars)
 		value = NULL;
 		if (is_valid_argument(argv[i], key_strlen(argv[i]), EXPORT_ARG_ERROR))
 		{
-			*key = x_strndup(argv[i], key_strlen(argv[i]));
+			key = x_strndup(argv[i], key_strlen(argv[i]));
 			if (ft_strchr(argv[i], '='))
-				*value = x_strdup(ft_strchr(argv[i], '=') + 1);
+				value = x_strdup(ft_strchr(argv[i], '=') + 1);
 			register_env_var(key, value, env_vars);
 		}
 		else
