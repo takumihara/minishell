@@ -52,7 +52,7 @@ bool	execute_builtin(t_executor *e, int ac, char **av)
 	if (!ft_strcmp(av[0], "cd"))
 		e->exit_status = builtin_cd(ac, av, e->env_vars);
 	else if (!ft_strcmp(av[0], "pwd"))
-		e->exit_status = builtin_pwd(ac, av, e->exit_status, e->env_vars);
+		e->exit_status = builtin_pwd();
 	else if (!ft_strcmp(av[0], "exit"))
 		e->exit_status = builtin_exit(ac, av, e->exit_status);
 	else if (!ft_strcmp(av[0], "echo"))
