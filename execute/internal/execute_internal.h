@@ -81,14 +81,14 @@ int		init_command_line(t_executor *e, t_ast_node *node);
 void	init_compound_list(t_executor *e,
 			   t_compound_list **cl, t_ast_node *node);
 // execute_init_utils.c
-void	new_t_pipeline(t_pipeline **pipeline);
-void	new_t_subshell(t_subshell **ss);
-void	new_t_compound_list(t_compound_list **cl);
-void	new_t_simple_command(t_simple_command **sc);
+void	new_pipeline(t_pipeline **pipeline);
+void	new_subshell(t_subshell **ss);
+void	new_compound_list(t_compound_list **cl);
+void	new_simple_command(t_simple_command **sc);
 void	new_argv(t_simple_command *sc);
 
 // execute_utils.c
-void	new_executor(t_executor **e, t_ast_node *root, t_env_var **env_vars);
+void	new_executor(t_executor **e, t_env_var **env_vars);
 void	delete_list(void *element, t_list_type type);
 bool	execute_builtin(t_executor *e, int argc, char **argv);
 bool	is_execute_condition(int condition, int exit_status);

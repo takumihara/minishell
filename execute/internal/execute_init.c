@@ -41,7 +41,7 @@ void	init_pipeline(t_executor *e, t_pipeline **pipeline_, t_ast_node *node)
 	t_pipeline	*pipeline_next;
 
 	pipeline_next = NULL;
-	new_t_pipeline(pipeline_);
+	new_pipeline(pipeline_);
 	if (node->type == PIPE_NODE)
 	{
 		init_pipeline(e, &pipeline_next, node->right);
@@ -64,14 +64,14 @@ void	init_pipeline(t_executor *e, t_pipeline **pipeline_, t_ast_node *node)
 
 void	init_subshell(t_executor *e, t_subshell **ss, t_ast_node *node)
 {
-	new_t_subshell(ss);
+	new_subshell(ss);
 	init_compound_list(e, &(*ss)->compound_list, node->left);
 }
 
 void	init_compound_list(t_executor *e,
 			   t_compound_list **cl, t_ast_node *node)
 {
-	new_t_compound_list(cl);
+	new_compound_list(cl);
 	if (node->type == AND_IF_NODE
 		|| node->type == OR_IF_NODE
 		|| node->type == SUBSHELL_NEWLINE_MS_NODE)
@@ -93,7 +93,7 @@ void	init_compound_list(t_executor *e,
 void	init_simple_command(t_executor *e,
 				t_simple_command **sc, t_ast_node *node)
 {
-	new_t_simple_command(sc);
+	new_simple_command(sc);
 	(*sc)->root = node;
 	if (!expand(node, e->env_vars))
 	{

@@ -1,8 +1,8 @@
-#include "../execute.h"
 #include "../../wrapper/x.h"
+#include "../execute.h"
 #include "execute_internal.h"
 
-void	new_t_pipeline(t_pipeline **pipeline)
+void	new_pipeline(t_pipeline **pipeline)
 {
 	*pipeline = x_malloc(sizeof(**pipeline));
 	(*pipeline)->command = NULL;
@@ -10,13 +10,13 @@ void	new_t_pipeline(t_pipeline **pipeline)
 	(*pipeline)->next = NULL;
 }
 
-void	new_t_subshell(t_subshell **ss)
+void	new_subshell(t_subshell **ss)
 {
 	*ss = x_malloc(sizeof(**ss));
 	(*ss)->compound_list = NULL;
 }
 
-void	new_t_compound_list(t_compound_list **cl)
+void	new_compound_list(t_compound_list **cl)
 {
 	*cl = x_malloc(sizeof(**cl));
 	(*cl)->pipeline = NULL;
@@ -24,7 +24,7 @@ void	new_t_compound_list(t_compound_list **cl)
 	(*cl)->next = NULL;
 }
 
-void	new_t_simple_command(t_simple_command **sc)
+void	new_simple_command(t_simple_command **sc)
 {
 	*sc = x_malloc(sizeof(**sc));
 	(*sc)->root = NULL;
