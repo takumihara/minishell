@@ -39,27 +39,6 @@ void	delete_list(void *element, t_list_type type)
 	free(element);
 }
 
-bool	execute_builtin(t_executor *e, int argc, char **argv)
-{
-	if (!ft_strcmp(argv[0], "cd"))
-		e->exit_status = builtin_cd(argc, argv, e->exit_status, e->env_vars);
-	else if (!ft_strcmp(argv[0], "pwd"))
-		e->exit_status = builtin_pwd(argc, argv, e->exit_status, e->env_vars);
-	else if (!ft_strcmp(argv[0], "exit"))
-		e->exit_status = builtin_exit(argc, argv, e->exit_status, e->env_vars);
-	else if (!ft_strcmp(argv[0], "echo"))
-		e->exit_status = builtin_echo(argc, argv, e->exit_status, e->env_vars);
-	else if (!ft_strcmp(argv[0], "export"))
-		e->exit_status = builtin_export(argc,
-				argv, e->exit_status, e->env_vars);
-	else if (!ft_strcmp(argv[0], "env"))
-		e->exit_status = builtin_env(argc, argv, e->exit_status, e->env_vars);
-	else if (!ft_strcmp(argv[0], "unset"))
-		e->exit_status = builtin_unset(argc, argv, e->exit_status, e->env_vars);
-	else
-		return (false);
-	return (true);
-}
 
 bool	is_execute_condition(int condition, int exit_status)
 {
@@ -70,12 +49,4 @@ bool	is_execute_condition(int condition, int exit_status)
 	if (condition == CONDITION_NL)
 		return (true);
 	return (false);
-}
-
-void	execute_redirect(t_simple_command *sc)
-{
-	if (sc->r_in != UNSET_FD)
-		x_dup2(sc->r_in, STDIN_FILENO);
-	if (sc->r_out != UNSET_FD)
-		x_dup2(sc->r_out, STDOUT_FILENO);
 }

@@ -80,19 +80,11 @@ typedef struct s_exec_pipe_info {
 int		init_command_line(t_executor *e, t_ast_node *node);
 void	init_compound_list(t_executor *e,
 			   t_compound_list **cl, t_ast_node *node);
-// execute_init_utils.c
-void	new_pipeline(t_pipeline **pipeline);
-void	new_subshell(t_subshell **ss);
-void	new_compound_list(t_compound_list **cl);
-void	new_simple_command(t_simple_command **sc);
-void	new_argv(t_simple_command *sc);
 
 // execute_utils.c
 void	new_executor(t_executor **e, t_env_var **env_vars);
 void	delete_list(void *element, t_list_type type);
-bool	execute_builtin(t_executor *e, int argc, char **argv);
 bool	is_execute_condition(int condition, int exit_status);
-void	execute_redirect(t_simple_command *sc);
 
 // execute_command.c
 int		execute_pipeline(t_executor *e, t_pipeline *c);
@@ -106,10 +98,11 @@ char	**create_envp(t_executor *e);
 // handle_exec_error.c
 void	handle_exec_error(char *path, bool is_exec_run);
 
-// new_redirect.c
-void	new_redirect_out(t_simple_command *sc,
-			 char *filename, t_node_type type);
-void	new_redirect_in(t_simple_command *sc, char *data, t_node_type type);
+
+int	execute_command(t_executor *e,
+					   void *command, int type, t_exec_pipe_info *info);
+int	execute_simple_command(t_executor *e,
+							  t_simple_command *sc, t_exec_pipe_info *info);
 
 // is_dir.c
 bool	is_dir(const char *path);
