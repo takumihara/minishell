@@ -3,7 +3,7 @@
 #include "../../builtin/builtin.h"
 
 static void	execute_redirect(t_simple_command *sc);
-static bool	execute_builtin(t_executor *e, int ac, char **av);
+static bool	execute_builtin(t_executor *e, int argc, char **argv);
 static void	print_err_msg(char *path, char *msg);
 static void	handle_exec_error(char *path, bool is_exec_run);
 
@@ -47,22 +47,22 @@ void	execute_redirect(t_simple_command *sc)
 		x_dup2(sc->r_out, STDOUT_FILENO);
 }
 
-bool	execute_builtin(t_executor *e, int ac, char **av)
+bool	execute_builtin(t_executor *e, int argc, char **argv)
 {
-	if (!ft_strcmp(av[0], "cd"))
-		e->exit_status = builtin_cd(ac, av, e->exit_status, e->env_vars);
-	else if (!ft_strcmp(av[0], "pwd"))
-		e->exit_status = builtin_pwd(ac, av, e->exit_status, e->env_vars);
-	else if (!ft_strcmp(av[0], "exit"))
-		e->exit_status = builtin_exit(ac, av, e->exit_status, e->env_vars);
-	else if (!ft_strcmp(av[0], "echo"))
-		e->exit_status = builtin_echo(ac, av, e->exit_status, e->env_vars);
-	else if (!ft_strcmp(av[0], "export"))
-		e->exit_status = builtin_export(ac, av, e->exit_status, e->env_vars);
-	else if (!ft_strcmp(av[0], "env"))
-		e->exit_status = builtin_env(ac, av, e->exit_status, e->env_vars);
-	else if (!ft_strcmp(av[0], "unset"))
-		e->exit_status = builtin_unset(ac, av, e->exit_status, e->env_vars);
+	if (!ft_strcmp(argv[0], "cd"))
+		e->exit_status = builtin_cd(argc, argv, e->env_vars);
+	else if (!ft_strcmp(argv[0], "pwd"))
+		e->exit_status = builtin_pwd();
+	else if (!ft_strcmp(argv[0], "exit"))
+		e->exit_status = builtin_exit(argc, argv, e->exit_status);
+	else if (!ft_strcmp(argv[0], "echo"))
+		e->exit_status = builtin_echo(argc, argv);
+	else if (!ft_strcmp(argv[0], "export"))
+		e->exit_status = builtin_export(argc, argv, e->env_vars);
+	else if (!ft_strcmp(argv[0], "env"))
+		e->exit_status = builtin_env(*e->env_vars);
+	else if (!ft_strcmp(argv[0], "unset"))
+		e->exit_status = builtin_unset(argc, argv, e->env_vars);
 	else
 		return (false);
 	return (true);

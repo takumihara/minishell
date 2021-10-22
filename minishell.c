@@ -17,6 +17,9 @@
 #include "utils/get_next_line.h"
 #include "execute/internal/exit_status.h"
 
+#define BLUE    "\033[1;34m"
+#define RESET   "\033[0m"
+
 // 何らかのSIGNAL(Ctrl-C(SIGINT), Ctrl-\(SIGQUIT))を受け取った時の挙動を定義する
 static void	signal_handler(int signo)
 {
@@ -57,7 +60,7 @@ int minishell(char *line)
 	set_signal_handler();
 	while (1)
 	{
-		line = readline("minishell> ");
+		line = readline(BLUE "minishell> " RESET);
 		if (!line)
 			break ;
 		// line can be NULL when Ctrl+d

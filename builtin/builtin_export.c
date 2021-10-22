@@ -68,14 +68,13 @@ static int	print_declaration(t_env_var *env_vars)
 	return (EXIT_SUCCESS);
 }
 
-int	builtin_export(int argc, char **argv, int no_use, t_env_var **env_vars)
+int	builtin_export(int argc, char **argv, t_env_var **env_vars)
 {
 	char	*key;
 	char	*value;
 	int		i;
 	int		exit_status;
 
-	(void)no_use;
 	exit_status = EXIT_SUCCESS;
 	if (argc == 1)
 		return (print_declaration(*env_vars));
