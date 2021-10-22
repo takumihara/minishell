@@ -1,4 +1,4 @@
-#include "expander.h"
+#include "expander_internal.h"
 
 void	new_expander(t_expander **e, t_env_var *env_vars)
 {
