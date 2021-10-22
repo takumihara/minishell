@@ -64,14 +64,19 @@ void	set_orig_stdfd(int orig_stdfd[])
 	close(orig_stdfd[WRITE]);
 }
 
-int	execute_pipeline(t_executor *e, t_pipeline *pl)
+void	save_orig_stdfd(int orig_stdfd[])
 {
-	pid_t 		child_pid;
-	int			orig_stdfd[2];
-	int			child_process_cnt;
-
 	orig_stdfd[READ] = x_dup(STDIN_FILENO);
 	orig_stdfd[WRITE] = x_dup(STDOUT_FILENO);
+}
+
+int	execute_pipeline(t_executor *e, t_pipeline *pl)
+{
+	pid_t	child_pid;
+	int		orig_stdfd[2];
+	int		child_process_cnt;
+
+	save_orig_stdfd(orig_stdfd);
 	child_process_cnt = execute_pipeline_internal(e, pl, orig_stdfd[WRITE], &child_pid);
 	set_orig_stdfd(orig_stdfd);
 	get_child_process_status(e, child_process_cnt, child_pid);
