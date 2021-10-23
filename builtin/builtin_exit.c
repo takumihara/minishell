@@ -23,7 +23,7 @@ int	builtin_exit(t_executor *e, int argc, char **argv)
 	}
 	delete_env_lst(*e->env_vars);
 	delete_ast_nodes(e->root, NULL);
-	delete_list(e->pipeline, T_PIPELINE);
+	delete_execute_list(e->pipeline, T_PIPELINE);
 	free(e);
 	exit((unsigned char)exit_status);
 }

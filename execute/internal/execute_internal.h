@@ -93,7 +93,7 @@ int		execute_simple_command(t_executor *e,
 
 // execute_utils.c
 void	new_executor(t_executor **e, t_env_var **env_vars, t_ast_node *root, bool is_interactive);
-void	delete_list(void *element, t_list_type type);
+void	delete_execute_list(void *element, t_list_type type);
 bool	is_execute_condition(int condition, int exit_status);
 
 // get_cmd_path.c

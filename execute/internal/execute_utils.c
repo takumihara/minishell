@@ -13,7 +13,7 @@ void	new_executor(t_executor **e, t_env_var **env_vars, t_ast_node *root, bool i
 	(*e)->is_interactive = is_interactive;
 }
 
-void	delete_list(void *element, t_list_type type)
+void	delete_execute_list(void *element, t_list_type type)
 {
 	if (!element)
 		return ;
@@ -25,16 +25,16 @@ void	delete_list(void *element, t_list_type type)
 	}
 	else if (type == T_COMPOUND_LIST)
 	{
-		delete_list(((t_compound_list *)element)->pipeline, T_PIPELINE);
-		delete_list(((t_compound_list *)element)->next, T_COMPOUND_LIST);
+		delete_execute_list(((t_compound_list *)element)->pipeline, T_PIPELINE);
+		delete_execute_list(((t_compound_list *)element)->next, T_COMPOUND_LIST);
 	}
 	else if (type == T_SUBSHELL)
-		delete_list(((t_subshell *)element)->compound_list, T_COMPOUND_LIST);
+		delete_execute_list(((t_subshell *)element)->compound_list, T_COMPOUND_LIST);
 	else if (type == T_PIPELINE)
 	{
-		delete_list(((t_pipeline *)element)->command,
+		delete_execute_list(((t_pipeline *)element)->command,
 			((t_pipeline *)element)->type);
-		delete_list(((t_pipeline *)element)->next, T_PIPELINE);
+		delete_execute_list(((t_pipeline *)element)->next, T_PIPELINE);
 	}
 	free(element);
 }

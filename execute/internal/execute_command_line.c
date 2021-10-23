@@ -14,7 +14,7 @@ int	execute_command_line(t_executor *e, t_ast_node *node)
 		eval_pipeline(e, &e->pipeline, pipeline_node);
 		execute_pipeline(e, e->pipeline);
 		register_env_var_from_literal("?", NULL, e->exit_status, e->env_vars);
-		delete_list(e->pipeline, T_PIPELINE);
+		delete_execute_list(e->pipeline, T_PIPELINE);
 	}
 	if (node->type == AND_IF_NODE || node->type == OR_IF_NODE)
 	{
