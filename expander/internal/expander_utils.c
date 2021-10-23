@@ -53,6 +53,7 @@ bool	is_expandable_data(t_expander *e, t_ast_node *node, char *original_data)
 {
 	if (!*node->data && node->type == COMMAND_ARG_NODE)
 	{
+		free(node->data);
 		node->data = NULL;
 		return (false);
 	}
