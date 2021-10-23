@@ -144,4 +144,5 @@ void	word_splitting(t_ast_node *node, t_expander *e, char *original_data)
 	if (!split_arg_node(split, node, expanded_data))
 		expand_redirect_error(original_data, e);
 	free(expanded_data);
+	free(split);
 }
