@@ -20,5 +20,6 @@ struct dirent	*x_readdir(DIR *dirp);
 void			x_closedir(DIR *dir);
 char			**x_split(const char *s, char c);
 char			*x_strndup(const char *str, size_t size);
+char			*x_itoa(int n);
 
 #endif
