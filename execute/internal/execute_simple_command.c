@@ -2,7 +2,7 @@
 
 #include "execute_internal.h"
 #include "../exit_status.h"
-#include "../../builtin/builtin.h"
+#include "../builtin/builtin.h"
 
 static void	execute_redirect(t_simple_command *sc);
 static bool	execute_builtin(t_executor *e, int argc, char **argv);

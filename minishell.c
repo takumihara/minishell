@@ -55,7 +55,11 @@ int minishell(char *line)
 
 	register_env_var_from_literal("?", "0", 0, &env_vars);
 	if (line)
-		return (execute(parse(lex(line)), &env_vars, false));
+	{
+		exit_status = execute(parse(lex(line)), &env_vars, false);
+		delete_env_lst(env_vars);
+		return (exit_status);
+	}
 	exit_status = EXIT_SUCCESS;
 	set_signal_handler();
 	while (1)
@@ -70,6 +74,7 @@ int minishell(char *line)
 		add_history(line);
 		free(line);
 	}
+	delete_env_lst(env_vars);
 	ft_putstr_fd("exit\n", STDERR_FILENO);
 	return (exit_status);
 }
