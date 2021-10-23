@@ -6,6 +6,8 @@
 #define ERROR_CASE (-2)
 
 #define BLUE    "\033[34m"      /* Blue */
+#define RESET   "\033[0m"
+#define RED     "\033[31m"
 
 
 char *debug_node_type[20] = {

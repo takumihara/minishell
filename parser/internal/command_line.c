@@ -61,6 +61,7 @@ t_ast_node	*pipeline(t_parser *p)
 	t_ast_node	*command_;
 	t_ast_node	*pipeline_;
 
+	p->is_first_word = true;
 	if (!assign_ast_node(&command_, command(p)))
 		return (NULL);
 	if (!consume_token(p, PIPE, NULL))
@@ -104,7 +105,7 @@ t_ast_node	*subshell(t_parser *p)
 	if (!assign_ast_node(&compound_list_, compound_list(p)))
 	{
 		if (!p->err)
-			p->err = ERR_UNEXPECTED_TOKEN;
+			p->err = ERR_UNEXPECTED_EOF;
 		return (NULL);
 	}
 	if (!consume_token(p, RPAREN, NULL))

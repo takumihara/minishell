@@ -22,6 +22,7 @@ t_ast_node	*simple_command(t_parser *p)
 
 	if (!assign_ast_node(&simple_command_element_, simple_command_element(p)))
 		return (NULL);
+	p->is_first_word = false;
 	if (assign_ast_node(&simple_command_, simple_command(p)))
 		attach_ast_nodes(simple_command_element_, NULL, simple_command_);
 	if (p->err)
@@ -51,7 +52,13 @@ t_ast_node	*word(t_parser *p)
 	new_ast_node(&simple_command_element);
 	if (!consume_token(p, STRING, simple_command_element))
 	{
-		if (p->token->type == LPAREN || (p->token->type == RPAREN && !p->is_subshell))
+		if ((p->is_first_word
+			&& (p->token->type == AND_IF
+			|| p->token->type == OR_IF
+			|| p->token->type == PIPE
+			|| p->token->type == LPAREN
+			|| p->token->type == RPAREN))
+			|| (!p->is_subshell && p->token->type == RPAREN))
 			p->err = ERR_UNEXPECTED_TOKEN;
 		return (delete_ast_nodes(simple_command_element, NULL));
 	}
