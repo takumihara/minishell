@@ -104,7 +104,7 @@ char	**split_by_space_skip_quotes(char const *str, const char *delims)
 	return (split);
 }
 
-static bool	split_arg_node(char **split, t_ast_node *node, char *expand_env_data)
+static bool	split_arg_node(char **split, t_ast_node *node, char *expanded_data)
 {
 	const t_ast_node	*original_right = node->right;
 	int					i;
@@ -115,7 +115,7 @@ static bool	split_arg_node(char **split, t_ast_node *node, char *expand_env_data
 	{
 		if (i == 0)
 		{
-			if (node->type != COMMAND_ARG_NODE && ft_strcmp(split[i], expand_env_data))
+			if (node->type != COMMAND_ARG_NODE && ft_strcmp(split[i], expanded_data))
 				return (false);
 			free(node->data);
 			node->data = remove_quotes(split[i]);
@@ -136,14 +136,14 @@ static bool	split_arg_node(char **split, t_ast_node *node, char *expand_env_data
 void	word_splitting(t_ast_node *node, t_expander *e, char *original_data)
 {
 	char	**split;
-	char	*expand_env_data;
+	char	*expanded_data;
 
 	if (!*node->data)
 		return ;
-	expand_env_data = x_strdup(node->data);
+	expanded_data = x_strdup(node->data);
 	remove_null_argument(node->data);
 	split = split_by_space_skip_quotes(node->data, " \t\n");
-	if (!split_arg_node(split, node, expand_env_data))
+	if (!split_arg_node(split, node, expanded_data))
 		expand_redirect_error(original_data, e);
-	free(expand_env_data);
+	free(expanded_data);
 }
