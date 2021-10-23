@@ -1,5 +1,5 @@
 #include "../execute.h"
-#include "exit_status.h"
+#include "../exit_status.h"
 #include "execute_internal.h"
 #include "../../expander/expander.h"
 #include "eval.h"

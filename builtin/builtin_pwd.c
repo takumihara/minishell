@@ -1,5 +1,6 @@
 #include "builtin.h"
 
+//todo: cannot reproduce EACCES
 int	builtin_pwd(void)
 {
 	char	*cwd;
@@ -7,7 +8,7 @@ int	builtin_pwd(void)
 	cwd = getcwd(NULL, 0);
 	if (!cwd)
 	{
-		perror("minishell: pwd"); //todo: cannot reproduce EACCES
+		perror("minishell: pwd");
 		return (EXIT_FAILURE);
 	}
 	ft_putendl_fd(cwd, 1);
