@@ -5,7 +5,7 @@
 #include "../builtin/builtin.h"
 
 static void	execute_redirect(t_simple_command *sc);
-static bool	execute_builtin(t_executor *e, int argc, char **argv);
+static bool	execute_builtin(t_executor *e, int argc, char **argv, bool is_pipe);
 static void	print_err_msg(char *path, char *msg);
 static void	handle_exec_error(char *path, bool is_exec_run);
 
@@ -23,14 +23,14 @@ int	execute_simple_command(t_executor *e,
 		e->exit_status = EXIT_SUCCESS;
 		return (CHILD_PROCESS_NOT_CREATED);
 	}
-	if (!info->is_pipe && execute_builtin(e, sc->argc, sc->argv))
+	if (!info->is_pipe && execute_builtin(e, sc->argc, sc->argv, info->is_pipe))
 		return (CHILD_PROCESS_NOT_CREATED);
 	pid = x_fork();
 	if (pid == CHILD_PROCESS)
 	{
 		if (info->is_pipe && !info->is_last)
 			close(info->pipefd[READ]);
-		if (execute_builtin(e, sc->argc, sc->argv))
+		if (execute_builtin(e, sc->argc, sc->argv, info->is_pipe))
 			exit(EXIT_SUCCESS);
 		path = get_cmd_path(e, sc->argv[0]);
 		if (!path)
@@ -49,14 +49,14 @@ void	execute_redirect(t_simple_command *sc)
 		x_dup2(sc->r_out, STDOUT_FILENO);
 }
 
-bool	execute_builtin(t_executor *e, int argc, char **argv)
+bool	execute_builtin(t_executor *e, int argc, char **argv, bool is_pipe)
 {
 	if (!ft_strcmp(argv[0], "cd"))
 		e->exit_status = builtin_cd(argc, argv, e->env_vars);
 	else if (!ft_strcmp(argv[0], "pwd"))
 		e->exit_status = builtin_pwd();
 	else if (!ft_strcmp(argv[0], "exit"))
-		e->exit_status = builtin_exit(e, argc, argv);
+		e->exit_status = builtin_exit(e, argc, argv, is_pipe);
 	else if (!ft_strcmp(argv[0], "echo"))
 		e->exit_status = builtin_echo(argc, argv);
 	else if (!ft_strcmp(argv[0], "export"))

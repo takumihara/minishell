@@ -92,17 +92,16 @@ int		execute_simple_command(t_executor *e,
 			  t_simple_command *sc, t_exec_pipe_info *info);
 
 // execute_utils.c
-void	new_executor(t_executor **e, t_env_var **env_vars, t_ast_node *root, bool is_interactive);
+void	new_executor(t_executor **e, t_env_var **env_vars,
+			 t_ast_node *root, bool is_interactive);
 void	delete_execute_list(void *element, t_execute_list_type type);
 bool	is_execute_condition(int condition, int exit_status);
+bool	is_dir(const char *path);
 
 // get_cmd_path.c
 char	*get_cmd_path(t_executor *e, char *command);
 
 // create_envp.c
 char	**create_envp(t_executor *e);
-
-// is_dir.c
-bool	is_dir(const char *path);
 
 #endif //EXECUTE_INTERNAL_H

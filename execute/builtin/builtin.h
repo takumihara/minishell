@@ -14,12 +14,11 @@
 # include "../../expander/expander.h"
 # include "../../env/env.h"
 # include "../../wrapper/x.h"
-// todo: maybe I wanna move the place of builtin dir
 # include "../internal/execute_internal.h"
 
 int		builtin_cd(int argc, char **argv, t_env_var **env_vars);
 int		builtin_pwd(void);
-int		builtin_exit(t_executor *e, int argc, char **argv);
+int		builtin_exit(t_executor *e, int argc, char **argv, bool is_pipe);
 int		builtin_echo(int argc, char **argv);
 int		builtin_export(int argc, char **argv, t_env_var **env_vars);
 int		builtin_env(t_env_var *env_vars);

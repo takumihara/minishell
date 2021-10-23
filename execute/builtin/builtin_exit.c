@@ -1,11 +1,11 @@
 #include "builtin.h"
 #include "../exit_status.h"
 
-int	builtin_exit(t_executor *e, int argc, char **argv)
+int	builtin_exit(t_executor *e, int argc, char **argv, bool is_pipe)
 {
 	int	exit_status;
 
-	if (e->is_interactive)
+	if (e->is_interactive && !is_pipe)
 		ft_putendl_fd("exit", STDERR_FILENO);
 	if (argc == 1)
 		exit_status = e->exit_status;
