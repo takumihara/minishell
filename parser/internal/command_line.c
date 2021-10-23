@@ -31,16 +31,13 @@ t_ast_node	*command_line(t_parser *p)
 
 	if (!assign_ast_node(&pipeline_, pipeline(p)))
 		return (NULL);
+	if (p->token->type == EOL)
+		return (pipeline_);
 	new_ast_node(&result);
 	if (consume_token(p, AND_IF, NULL))
 		result->type = AND_IF_NODE;
 	else if (consume_token(p, OR_IF, NULL))
 		result->type = OR_IF_NODE;
-	else if (p->token->type == EOL)
-	{
-		free(result);
-		return (pipeline_);
-	}
 	else
 	{
 		p->err = ERR_UNEXPECTED_TOKEN;
