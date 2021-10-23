@@ -51,182 +51,182 @@ int main(int ac, char **av) {
 		};
 		test_expander(input, expected, ENV_VARS);
 	}
-	// {
-	// 	setenv("TEST", "ho", 1);
-	// 	char input[] = "ec$TEST hello";
-	// 	t_test expected[] = {
-	// 			{COMMAND_ARG_NODE, "echo"},
-	// 			{COMMAND_ARG_NODE, "hello"},
-	// 	};
-	// 	test_expander(input, expected, ENV_VARS);
-	// }
-	// {
-	// 	setenv("TEST", "hoge", 1);
-	// 	char input[] = "echo aaa$TEST$TEST";
-	// 	t_test expected[] = {
-	// 			{COMMAND_ARG_NODE, "echo"},
-	// 			{COMMAND_ARG_NODE, "aaahogehoge"},
-	// 	};
-	// 	test_expander(input, expected, ENV_VARS);
-	// }
-	// {
-	// 	setenv("TEST", "echo hello", 1);
-	// 	char input[] = "$TEST";
-	// 	t_test expected[] = {
-	// 			{COMMAND_ARG_NODE, "echo"},
-	// 			{COMMAND_ARG_NODE, "hello"},
-	// 	};
-	// 	test_expander(input, expected, ENV_VARS);
-	// }
-	// {
-	// 	char input[] = "echo $HOGE";
-	// 	t_test expected[] = {
-	// 			{COMMAND_ARG_NODE, "echo"},
-	// 			{COMMAND_ARG_NODE, ""},
-	// 	};
-	// 	test_expander(input, expected, ENV_VARS);
-	// }
-	// {
-	// 	char input[] = "echo hello$HOGE";
-	// 	t_test expected[] = {
-	// 			{COMMAND_ARG_NODE, "echo"},
-	// 			{COMMAND_ARG_NODE, "hello"},
-	// 	};
-	// 	test_expander(input, expected, ENV_VARS);
-	// }
-	// {
-	// 	char input[] = "echo \"hoge\"";
-	// 	t_test expected[] = {
-	// 			{COMMAND_ARG_NODE, "echo"},
-	// 			{COMMAND_ARG_NODE, "hoge"},
-	// 	};
-	// 	test_expander(input, expected, QUOTES);
-	// }
-	// {
-	// 	setenv("TEST", "example", 1);
-	// 	char input[] = "echo \"$TEST\"";
-	// 	t_test expected[] = {
-	// 			{COMMAND_ARG_NODE, "echo"},
-	// 			{COMMAND_ARG_NODE, "example"},
-	// 	};
-	// 	test_expander(input, expected, QUOTES);
-	// }
-	// {
-	// 	setenv("TEST", "example", 1);
-	// 	char input[] = "echo \'$TEST\'";
-	// 	t_test expected[] = {
-	// 			{COMMAND_ARG_NODE, "echo"},
-	// 			{COMMAND_ARG_NODE, "$TEST"},
-	// 	};
-	// 	test_expander(input, expected, QUOTES);
-	// }
-	// {
-	// 	setenv("USER", "user42", 1);
-	// 	char input[] = "echo \"\'$USER\'\"";
-	// 	t_test expected[] = {
-	// 			{COMMAND_ARG_NODE, "echo"},
-	// 			{COMMAND_ARG_NODE, "\'user42\'"},
-	// 	};
-	// 	test_expander(input, expected, QUOTES);
-	// }
-	// {
-	// 	setenv("USER", "user42", 1);
-	// 	char input[] = "echo \'\"$USER\"\'";
-	// 	t_test expected[] = {
-	// 			{COMMAND_ARG_NODE, "echo"},
-	// 			{COMMAND_ARG_NODE, "\"$USER\""},
-	// 	};
-	// 	test_expander(input, expected, QUOTES);
-	// }
-	// {
-	// 	char input[] = "echo exp*.c";
-	// 	t_test expected[] = {
-	// 			{COMMAND_ARG_NODE, "echo"},
-	// 			{COMMAND_ARG_NODE, "expansion_test.c"},
-	// 			{COMMAND_ARG_NODE, "expansion_wildcard_test.c"},
-	// 	};
-	// 	test_expander(input, expected, WILDCARD);
-	// }
-	// {
-	// 	char input[] = "echo *.c";
-	// 	t_test expected[] = {
-	// 			{COMMAND_ARG_NODE, "echo"},
-	// 			{COMMAND_ARG_NODE, "expansion_test.c"},
-	// 			{COMMAND_ARG_NODE, "expansion_wildcard_test.c"},
-	// 	};
-	// 	test_expander(input, expected, WILDCARD);
-	// }
-	// {
-	// 	char input[] = "echo expa*";
-	// 	t_test expected[] = {
-	// 			{COMMAND_ARG_NODE, "echo"},
-	// 			{COMMAND_ARG_NODE, "expansion_test.c"},
-	// 			{COMMAND_ARG_NODE, "expansion_wildcard_test.c"},
-	// 	};
-	// 	test_expander(input, expected, WILDCARD);
-	// }
-	// {
-	// 	char input[] = "echo \"ex\"p*.\'c\'";
-	// 	t_test expected[] = {
-	// 			{COMMAND_ARG_NODE, "echo"},
-	// 			{COMMAND_ARG_NODE, "expansion_test.c"},
-	// 			{COMMAND_ARG_NODE, "expansion_wildcard_test.c"},
-	// 	};
-	// 	test_expander(input, expected, WILDCARD);
-	// }
-	// {
-	// 	char input[] = "echo *";
-	// 	t_test expected[] = {
-	// 			{COMMAND_ARG_NODE, "echo"},
-	// 			{COMMAND_ARG_NODE, "Makefile"},
-	// 			{COMMAND_ARG_NODE, "a.out"},
-	// 			{COMMAND_ARG_NODE, "expansion_test.c"},
-	// 			{COMMAND_ARG_NODE, "expansion_wildcard_test.c"},
-	// 			{COMMAND_ARG_NODE, "obj"},
-	// 	};
-	// 	test_expander(input, expected, WILDCARD);
-	// }
-	// {
-	// 	char input[] = "echo \"*\"";
-	// 	t_test expected[] = {
-	// 			{COMMAND_ARG_NODE, "echo"},
-	// 			{COMMAND_ARG_NODE, "*"},
-	// 	};
-	// 	test_expander(input, expected, WILDCARD);
-	// }
-	// {
-	// 	char input[] = "echo o*";
-	// 	t_test expected[] = {
-	// 			{COMMAND_ARG_NODE, "echo"},
-	// 			{COMMAND_ARG_NODE, "obj"},
-	// 	};
-	// 	test_expander(input, expected, WILDCARD);
-	// }
-	// {
-	// 	char input[] = "\"echo hello\"";
-	// 	t_test expected[] = {
-	// 			{COMMAND_ARG_NODE, "echo hello"},
-	// 	};
-	// 	test_expander(input, expected, WORD_SPLIT);
-	// }
-	// {
-	// 	setenv("TEST", "echo hello", 1);
-	// 	char input[] = "\"ls -l\"$TEST";
-	// 	t_test expected[] = {
-	// 			{COMMAND_ARG_NODE, "ls -lecho"},
-	// 			{COMMAND_ARG_NODE, "hello"},
-	// 	};
-	// 	test_expander(input, expected, WORD_SPLIT);
-	// }
-	// {
-	// 	setenv("TEST", "echo hello", 1);
-	// 	char input[] = "hoge\"ls -l\"$TEST";
-	// 	t_test expected[] = {
-	// 			{COMMAND_ARG_NODE, "hogels -lecho"},
-	// 			{COMMAND_ARG_NODE, "hello"},
-	// 	};
-	// 	test_expander(input, expected, WORD_SPLIT);
-	// }
+	{
+		setenv("TEST", "ho", 1);
+		char input[] = "ec$TEST hello";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "hello"},
+		};
+		test_expander(input, expected, ENV_VARS);
+	}
+	{
+		setenv("TEST", "hoge", 1);
+		char input[] = "echo aaa$TEST$TEST";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "aaahogehoge"},
+		};
+		test_expander(input, expected, ENV_VARS);
+	}
+	{
+		setenv("TEST", "echo hello", 1);
+		char input[] = "$TEST";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "hello"},
+		};
+		test_expander(input, expected, ENV_VARS);
+	}
+	{
+		char input[] = "echo $HOGE";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, ""},
+		};
+		test_expander(input, expected, ENV_VARS);
+	}
+	{
+		char input[] = "echo hello$HOGE";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "hello"},
+		};
+		test_expander(input, expected, ENV_VARS);
+	}
+	{
+		char input[] = "echo \"hoge\"";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "hoge"},
+		};
+		test_expander(input, expected, QUOTES);
+	}
+	{
+		setenv("TEST", "example", 1);
+		char input[] = "echo \"$TEST\"";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "example"},
+		};
+		test_expander(input, expected, QUOTES);
+	}
+	{
+		setenv("TEST", "example", 1);
+		char input[] = "echo \'$TEST\'";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "$TEST"},
+		};
+		test_expander(input, expected, QUOTES);
+	}
+	{
+		setenv("USER", "user42", 1);
+		char input[] = "echo \"\'$USER\'\"";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "\'user42\'"},
+		};
+		test_expander(input, expected, QUOTES);
+	}
+	{
+		setenv("USER", "user42", 1);
+		char input[] = "echo \'\"$USER\"\'";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "\"$USER\""},
+		};
+		test_expander(input, expected, QUOTES);
+	}
+	{
+		char input[] = "echo exp*.c";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "expansion_test.c"},
+				{COMMAND_ARG_NODE, "expansion_wildcard_test.c"},
+		};
+		test_expander(input, expected, WILDCARD);
+	}
+	{
+		char input[] = "echo *.c";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "expansion_test.c"},
+				{COMMAND_ARG_NODE, "expansion_wildcard_test.c"},
+		};
+		test_expander(input, expected, WILDCARD);
+	}
+	{
+		char input[] = "echo expa*";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "expansion_test.c"},
+				{COMMAND_ARG_NODE, "expansion_wildcard_test.c"},
+		};
+		test_expander(input, expected, WILDCARD);
+	}
+	{
+		char input[] = "echo \"ex\"p*.\'c\'";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "expansion_test.c"},
+				{COMMAND_ARG_NODE, "expansion_wildcard_test.c"},
+		};
+		test_expander(input, expected, WILDCARD);
+	}
+	{
+		char input[] = "echo *";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "Makefile"},
+				{COMMAND_ARG_NODE, "a.out"},
+				{COMMAND_ARG_NODE, "expansion_test.c"},
+				{COMMAND_ARG_NODE, "obj"},
+				{COMMAND_ARG_NODE, "res"},
+		};
+		test_expander(input, expected, WILDCARD);
+	}
+	{
+		char input[] = "echo \"*\"";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "*"},
+		};
+		test_expander(input, expected, WILDCARD);
+	}
+	{
+		char input[] = "echo o*";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "obj"},
+		};
+		test_expander(input, expected, WILDCARD);
+	}
+	{
+		char input[] = "\"echo hello\"";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo hello"},
+		};
+		test_expander(input, expected, WORD_SPLIT);
+	}
+	{
+		setenv("TEST", "echo hello", 1);
+		char input[] = "\"ls -l\"$TEST";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "ls -lecho"},
+				{COMMAND_ARG_NODE, "hello"},
+		};
+		test_expander(input, expected, WORD_SPLIT);
+	}
+	{
+		setenv("TEST", "echo hello", 1);
+		char input[] = "hoge\"ls -l\"$TEST";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "hogels -lecho"},
+				{COMMAND_ARG_NODE, "hello"},
+		};
+		test_expander(input, expected, WORD_SPLIT);
+	}
 	system("leaks a.out");
 }
 
@@ -280,7 +280,7 @@ void test_ast_nodes(t_ast_node *node, int level, t_test *expected) {
 				debug_node_type[expected[ast_index].expected_type], debug_node_type[node->type]);
 		err_cnt++;
 	}
-	if (ft_strcmp(node->data, expected[ast_index].expected_literal)) {
+	if (node->data && ft_strcmp(node->data, expected[ast_index].expected_literal)) {
 		fprintf(stderr, RED "test[%d] - node literal wrong. expected=%s, got=%s\n" RESET, ast_index,
 				expected[ast_index].expected_literal,
 				node->data);
