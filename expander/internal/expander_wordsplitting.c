@@ -142,7 +142,10 @@ void	word_splitting(t_ast_node *node, t_expander *e, char *original_data)
 	remove_null_argument(node->data);
 	split = split_by_space_skip_quotes(node->data, " \t\n");
 	if (!split_arg_node(split, node, expanded_data))
+	{
+		free_2d_array((void ***)&split);
 		expand_redirect_error(original_data, e);
+	}
 	free(expanded_data);
 	free(split);
 }
