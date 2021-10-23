@@ -8,14 +8,14 @@
 # define EXPORT_ARG_ERROR 0
 # define UNSET_ARG_ERROR 1
 
-# include "../libft/libft.h"
-# include "../utils/utils.h"
-# include "../execute/execute.h"
-# include "../expander/expander.h"
-# include "../env/env.h"
-# include "../wrapper/x.h"
+# include "../../libft/libft.h"
+# include "../../utils/utils.h"
+# include "../execute.h"
+# include "../../expander/expander.h"
+# include "../../env/env.h"
+# include "../../wrapper/x.h"
 // todo: maybe I wanna move the place of builtin dir
-# include "../execute/internal/execute_internal.h"
+# include "../internal/execute_internal.h"
 
 int		builtin_cd(int argc, char **argv, t_env_var **env_vars);
 int		builtin_pwd(void);

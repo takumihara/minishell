@@ -1,5 +1,5 @@
 #include "builtin.h"
-#include "../execute/exit_status.h"
+#include "../exit_status.h"
 
 int	builtin_exit(t_executor *e, int argc, char **argv)
 {
