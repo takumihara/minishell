@@ -44,7 +44,7 @@ static void	search_command_arg_node(t_expander *e, t_ast_node *node)
 		return ;
 	}
 	node->data = expand_word(e, node->data, '*');
-	node = word_splitting(node, e, original_data);
+	word_splitting(node, e, original_data);
 	free(original_data);
 }
 
