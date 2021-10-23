@@ -8,18 +8,6 @@ void	new_expander(t_expander **e, t_env_var *env_vars)
 	(*e)->env_vars = env_vars;
 }
 
-// int	expand_perror(t_expander *e, const char *s)
-// {
-// 	perror(s);
-// 	if (e)
-// 	{
-// 		delete_ast_nodes(e->node, NULL);
-// 		delete_env_lst(e->env_vars, NULL, NULL);
-// 	}
-// 	free(e);
-// 	return (EXIT_FAILURE);
-// }
-
 void	expand_redirect_error(char *original_data, t_expander *e)
 {
 	if (e->err != NO_ERR)
@@ -59,4 +47,19 @@ t_ast_node	*handle_expand_error(t_expander *e)
 	free(e->err_data);
 	free(e);
 	return (NULL);
+}
+
+bool	is_expandable_data(t_expander *e, t_ast_node *node, char *original_data)
+{
+	if (!*node->data && node->type == COMMAND_ARG_NODE)
+	{
+		node->data = NULL;
+		return (false);
+	}
+	else if (!*node->data && *original_data && node->type != COMMAND_ARG_NODE)
+	{
+		expand_redirect_error(original_data, e);
+		return (false);
+	}
+	return (true);
 }

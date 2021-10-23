@@ -138,11 +138,6 @@ void	word_splitting(t_ast_node *node, t_expander *e, char *original_data)
 	char	**split;
 	char	*expand_env_data;
 
-	if (!*node->data && *original_data && node->type != COMMAND_ARG_NODE)
-	{
-		expand_redirect_error(original_data, e);
-		return ;
-	}
 	if (!*node->data)
 		return ;
 	expand_env_data = x_strdup(node->data);
