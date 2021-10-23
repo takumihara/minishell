@@ -349,6 +349,25 @@ int main() {
 		};
 		test_parser(input, expected, ERROR_CASE, 0);
 	}
+	{
+		char input[] = "(cat xxxx || (cat xxxx || echo ok) && echo $?)";
+		test expected[] = {
+				{SUBSHELL_NODE,    0, ""},
+				{OR_IF_NODE,       1, ""},
+				{COMMAND_ARG_NODE, 2, "cat"},
+				{COMMAND_ARG_NODE, 3, "xxxx"},
+				{AND_IF_NODE,      2, ""},
+				{SUBSHELL_NODE,    3, ""},
+				{OR_IF_NODE,       4, ""},
+				{COMMAND_ARG_NODE, 5, "cat"},
+				{COMMAND_ARG_NODE, 6, "xxxx"},
+				{COMMAND_ARG_NODE, 5, "echo"},
+				{COMMAND_ARG_NODE, 6, "ok"},
+				{COMMAND_ARG_NODE, 3, "echo"},
+				{COMMAND_ARG_NODE, 4, "$?"},
+		};
+		test_parser(input, expected, SUBSHELL_NODE, sizeof(expected) / sizeof(test));
+	}
 
 	print_err_cnt();
 //	system("leaks a.out");
