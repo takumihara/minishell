@@ -18,26 +18,18 @@ t_ast_node	*handle_expand_error(t_expander *e)
 	return (NULL);
 }
 
-bool	is_empty_data(t_expander *e, t_ast_node *node, char *orig_data)
+bool	is_empty_data(t_expander *e, t_ast_node *node, char *original_data)
 {
-	const bool	is_empty = (node->data[0] == '\0');
-	const bool	is_empty_command_arg_node =
-		(is_empty && node->type == COMMAND_ARG_NODE);
-	const bool	is_empty_redirection_node =
-		(is_empty && orig_data[0] != '\0' && node->type != COMMAND_ARG_NODE);
-
-	if (is_empty_command_arg_node)
+	if (node->data[0] == '\0')
 	{
-		free(node->data);
-		node->data = NULL;
+		if (node->type == COMMAND_ARG_NODE)
+		{
+			free(node->data);
+			node->data = NULL;
+		}
+		else
+			expand_redirect_error(original_data, e);
 		return (true);
 	}
-	else if (is_empty_redirection_node)
-	{
-		expand_redirect_error(orig_data, e);
-		return (true);
-	}
-	else if (is_empty)
-		return (true);
 	return (false);
 }
