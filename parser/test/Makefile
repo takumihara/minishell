@@ -4,14 +4,15 @@ CUR_PATH	= .
 PARSER_PATH	= ..
 PARSER_INT_PATH	= ../internal
 LEXER_PATH	= ../../lexer
+LEXER_INT_PATH= ../../lexer/internal
 AST_PATH	= ../../ast
 UTILS_PATH	= ../../utils
 WRAPPER_PATH= ../../wrapper
 
-SRC_PATHS	= $(CUR_PATH) $(PARSER_PATH) $(PARSER_INT_PATH) $(LEXER_PATH) $(AST_PATH) $(UTILS_PATH) $(WRAPPER_PATH)
+SRC_PATHS	= $(CUR_PATH) $(PARSER_PATH) $(PARSER_INT_PATH) $(LEXER_PATH) $(LEXER_INT_PATH) $(AST_PATH) $(UTILS_PATH) $(WRAPPER_PATH)
 SRCS		= $(foreach path, $(SRC_PATHS), $(wildcard $(path)/*.c))
 
-VPATH		= $(CUR_PATH):$(PARSER_PATH):$(PARSER_INT_PATH):$(LEXER_PATH):$(AST_PATH):$(UTILS_PATH):$(WRAPPER_PATH)
+VPATH		= $(CUR_PATH):$(PARSER_PATH):$(PARSER_INT_PATH):$(LEXER_PATH):$(LEXER_INT_PATH):$(AST_PATH):$(UTILS_PATH):$(WRAPPER_PATH)
 
 OBJDIR  = ./obj
 OBJS    = $(addprefix $(OBJDIR)/, $(notdir $(SRCS:%.c=%.o)))

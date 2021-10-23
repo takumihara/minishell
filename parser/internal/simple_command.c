@@ -56,7 +56,8 @@ t_ast_node	*word(t_parser *p)
 			&& (p->token->type == AND_IF
 			|| p->token->type == OR_IF
 			|| p->token->type == PIPE
-			|| p->token->type == LPAREN))
+			|| p->token->type == LPAREN
+			|| p->token->type == RPAREN))
 			|| (!p->is_subshell && p->token->type == RPAREN))
 			p->err = ERR_UNEXPECTED_TOKEN;
 		return (delete_ast_nodes(simple_command_element, NULL));

@@ -105,7 +105,8 @@ t_ast_node	*subshell(t_parser *p)
 	if (!assign_ast_node(&compound_list_, compound_list(p)))
 	{
 		if (!p->err)
-			p->err = ERR_UNEXPECTED_TOKEN;
+			p->err = ERR_UNEXPECTED_EOF;
+//			p->err = ERR_UNEXPECTED_TOKEN;
 		return (NULL);
 	}
 	if (!consume_token(p, RPAREN, NULL))
