@@ -18,30 +18,29 @@ t_ast_node	*handle_expand_error(t_expander *e)
 	return (NULL);
 }
 
-static bool	is_empty_command_arg_node(char *data, t_node_type type)
-{
-	return (data[0] == '\0' && type == COMMAND_ARG_NODE);
-}
-
-static bool	is_empty_redirection_node(char *data, char *orig, t_node_type type)
-{
-	return (data[0] == '\0' && orig[0] != '\0' && type != COMMAND_ARG_NODE);
-}
-
 bool	is_empty_data(t_expander *e, t_ast_node *node, char *original_data)
 {
-	if (is_empty_command_arg_node(node->data, node->type))
+	const bool	is_empty_command_arg_node =
+		(node->data[0] == '\0'
+		&& node->type == COMMAND_ARG_NODE);
+	const bool	is_empty_redirection_node =
+		(node->data[0] == '\0'
+		&& original_data[0] != '\0'
+		&& node->type != COMMAND_ARG_NODE);
+	const bool	is_only_empty = (node->data[0] == '\0');
+
+	if (is_empty_command_arg_node)
 	{
 		free(node->data);
 		node->data = NULL;
 		return (true);
 	}
-	else if (is_empty_redirection_node(node->data, original_data, node->type))
+	else if (is_empty_redirection_node)
 	{
 		expand_redirect_error(original_data, e);
 		return (true);
 	}
-	else if (node->data[0] == '\0')
+	else if (is_only_empty)
 		return (true);
 	return (false);
 }
