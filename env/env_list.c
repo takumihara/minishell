@@ -13,12 +13,10 @@ t_env_var	*init_env_var(char *key, char *value)
 	return (env_var);
 }
 
-int	delete_env_lst(t_env_var *env_vars, char *key, char *value)
+void	delete_env_lst(t_env_var *env_vars)
 {
 	t_env_var	*next_env_var;
 
-	free(key);
-	free(value);
 	while (env_vars)
 	{
 		next_env_var = env_vars->next;
@@ -27,7 +25,6 @@ int	delete_env_lst(t_env_var *env_vars, char *key, char *value)
 		free(env_vars);
 		env_vars = next_env_var;
 	}
-	return (EXIT_FAILURE);
 }
 
 t_env_var	*init_env_lst(void)
