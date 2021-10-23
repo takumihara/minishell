@@ -1,0 +1,76 @@
+(xxxx) || (ls)
+(xxxx || ls)
+(ls) && (xxxx)
+(ls && xxxx)
+(xxxx || pwd && ls)
+(pwd && ls || cat)
+(xxxx && pwd || ls)
+pwd && (cd ..) && pwd
+pwd && (cd .. && pwd)
+pwd && (cd .. && pwd && cd ../../ && pwd)
+(pwd && xxxx || cd .. && pwd)
+(xxxx || pwd && ls)
+(echo hello | cat) && ls
+(ls | cat) || (ls && pwd)
+(ls || cat) && (pwd) || (ls)
+(echo x)
+echo $?
+(xxxx)
+echo $?
+(echo | xxxxx)
+echo $?
+(echo | cat xxxx)
+echo $?
+(echo a && echo b)
+echo $?
+(echo a || echo b)
+echo $?
+(cat xxxx && echo b && echo $?)
+echo $?
+(cat xxxx || echo b && echo $?)
+echo $?
+echo "(cat xxxx || (cat xxxx || echo ok) && echo $?)"
+echo $?
+pwd && (pwd && cd .. && pwd) && pwd
+ls && (ls && cd .. && ls) && ls
+echo hello | (echo world && cat && echo mash) | cat
+echo hello | (echo world && cat && cat white || echo mash) | cat
+echo hello | (echo world && cat && cat white && echo mash) | cat
+echo hello | ( cat )
+echo fuck
+echo world
+echo $?
+echo hello | ( cat )
+echo world
+echo $?
+echo hello | ( cat ) | (cat ) | ( cat) | (cat)
+echo $?
+(ls) | (cat)
+echo $?
+(ls) | cat
+echo $?
+ls | (cat)
+echo $?
+(echo hello && echo world) | wc
+(echo hello | cat) | cat
+(echo hello | echo world) | cat
+(ls > tmpfile1) && cat tmpfile1
+(ls >> tmpfile1) && (cat < tmpfile1)
+(ls > tmpfile1 > tmpfile2) && cat < tmpfile1 && cat tmpfile2
+cat < tmpfile1 && cat < tmpfile2
+(ls >> tmpfile1 >> tmpfile2) && cat tmpfile1 && cat tmpfile2
+(cat < tmpfile1 && cat <tmpfile2)
+(ls)
+(/bin/ls)
+(///bin/ls)
+pwd
+(cd)
+pwd
+(cd ..)
+pwd
+(cd /)
+pwd
+(export PWD=xxxx)
+echo $PWD
+(unset PWD)
+echo $PWD
