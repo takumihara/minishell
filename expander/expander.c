@@ -22,14 +22,14 @@ static char	*expand_word(t_expander *e, char *data, char delimiter)
 	return (data);
 }
 
-static void	search_command_arg_node(t_expander *e, t_ast_node *node)
+static void	search_expandable_node(t_expander *e, t_ast_node *node)
 {
 	char		*original_data;
 
 	if (!node)
 		return ;
-	search_command_arg_node(e, node->right);
-	search_command_arg_node(e, node->left);
+	search_expandable_node(e, node->right);
+	search_expandable_node(e, node->left);
 	if (node->type != COMMAND_ARG_NODE
 		&& node->type != REDIRECT_IN_NODE
 		&& node->type != REDIRECT_OUT_NODE
@@ -44,6 +44,7 @@ static void	search_command_arg_node(t_expander *e, t_ast_node *node)
 		return ;
 	}
 	node->data = expand_word(e, node->data, '*');
+	// if (!is_valid_expansion(e, ))
 	word_splitting(node, e, original_data);
 	free(original_data);
 }
