@@ -1,7 +1,7 @@
 #include "errno.h"
 
 #include "execute_internal.h"
-#include "exit_status.h"
+#include "../exit_status.h"
 #include "../../builtin/builtin.h"
 
 static void	execute_redirect(t_simple_command *sc);
@@ -56,7 +56,7 @@ bool	execute_builtin(t_executor *e, int argc, char **argv)
 	else if (!ft_strcmp(argv[0], "pwd"))
 		e->exit_status = builtin_pwd();
 	else if (!ft_strcmp(argv[0], "exit"))
-		e->exit_status = builtin_exit(argc, argv, e->exit_status);
+		e->exit_status = builtin_exit(e, argc, argv);
 	else if (!ft_strcmp(argv[0], "echo"))
 		e->exit_status = builtin_echo(argc, argv);
 	else if (!ft_strcmp(argv[0], "export"))

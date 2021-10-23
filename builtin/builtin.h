@@ -5,8 +5,6 @@
 # include <stdio.h>
 # include <stdlib.h>
 
-# define BUILTIN_MALLOC_ERROR -1
-
 # define EXPORT_ARG_ERROR 0
 # define UNSET_ARG_ERROR 1
 
@@ -16,12 +14,12 @@
 # include "../expander/expander.h"
 # include "../env/env.h"
 # include "../wrapper/x.h"
-
-# define EXIT_STATUS_OUT_OF_RANGE 255
+// todo: maybe I wanna move the place of builtin dir
+# include "../execute/internal/execute_internal.h"
 
 int		builtin_cd(int argc, char **argv, t_env_var **env_vars);
 int		builtin_pwd(void);
-int		builtin_exit(int argc, char **argv, int last_exit_status);
+int		builtin_exit(t_executor *e, int argc, char **argv);
 int		builtin_echo(int argc, char **argv);
 int		builtin_export(int argc, char **argv, t_env_var **env_vars);
 int		builtin_env(t_env_var *env_vars);

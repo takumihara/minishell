@@ -1,5 +1,5 @@
 pwd
 pwd a
 pwd a b
-echo $OLDPWD
-echo $OLDPWD, export OLDPWD=/
+nothandled && echo $OLDPWD
+nothandled && echo $OLDPWD, export OLDPWD=/

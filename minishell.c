@@ -15,7 +15,7 @@
 #include "expander/expander.h"
 #include "execute/execute.h"
 #include "utils/get_next_line.h"
-#include "execute/internal/exit_status.h"
+#include "execute/exit_status.h"
 
 #define BLUE    "\033[1;34m"
 #define RESET   "\033[0m"

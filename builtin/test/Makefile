@@ -63,4 +63,7 @@ re: fclean all
 run: $(NAME)
 	./$(NAME)
 
-.PHONY: all re clean fclean run
+norm:
+	norminette $(BUILTIN_PATH)/*.c $(BUILTIN_PATH)/*.h | grep Error
+
+.PHONY: all re clean fclean
