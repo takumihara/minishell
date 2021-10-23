@@ -58,8 +58,7 @@ echo $?
 (ls >> tmpfile1) && (cat < tmpfile1)
 (ls > tmpfile1 > tmpfile2) && cat < tmpfile1 && cat tmpfile2
 cat < tmpfile1 && cat < tmpfile2
-(ls >> tmpfile1 >> tmpfile2) && cat tmpfile1 && cat tmpfile2
-(cat < tmpfile1 && cat <tmpfile2)
+(ls >> tmpfile1 >> tmpfile2) && (cat < tmpfile1 && cat <tmpfile2)
 (ls)
 (/bin/ls)
 (///bin/ls)
