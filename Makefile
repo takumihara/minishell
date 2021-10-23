@@ -25,7 +25,7 @@ OBJS    	= $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.c=.o)))
 LIBFT_PATH	= libft
 
 CC      	= gcc
-CFLAGS   	= -Wall -Wextra -Werror -fsanitize=address
+CFLAGS   	= -Wall -Wextra -Werror #-fsanitize=address
 
 LIB			= -L$(LIBFT_PATH) -lft
 INCLUDE		=
