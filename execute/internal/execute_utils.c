@@ -27,9 +27,7 @@ void	delete_list(void *element, t_list_type type)
 		delete_list(((t_compound_list *)element)->next, T_COMPOUND_LIST);
 	}
 	else if (type == T_SUBSHELL)
-	{
 		delete_list(((t_subshell *)element)->compound_list, T_COMPOUND_LIST);
-	}
 	else if (type == T_PIPELINE)
 	{
 		delete_list(((t_pipeline *)element)->command,

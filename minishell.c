@@ -80,7 +80,7 @@ int	main(int argc, char **argv)
 	int				exit_status;
 
 	if (argc == 3 && !ft_strcmp(argv[1], "-c"))
-		return (minishell(ft_strdup(argv[2])));
+		return (minishell(argv[2]));
 	else
 	{
 		if (isatty(STDIN_FILENO) == 0)

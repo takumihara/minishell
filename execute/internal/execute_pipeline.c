@@ -3,8 +3,10 @@
 #include "execute_internal.h"
 #include "../../wrapper/x.h"
 
-static void	get_child_process_status(t_executor *e, int child_process_cnt, pid_t child_pid);
-static int	execute_pipeline_internal(t_executor *e, t_pipeline *pl, int stdout_fd, int *child_pid);
+static void	get_child_process_status(t_executor *e,
+				int child_process_cnt, pid_t child_pid);
+static int	execute_pipeline_internal(t_executor *e,
+				t_pipeline *pl, int stdout_fd, int *child_pid);
 static void	save_orig_stdfd(int orig_stdfd[]);
 static void	set_orig_stdfd(int orig_stdfd[]);
 
@@ -15,13 +17,15 @@ int	execute_pipeline(t_executor *e, t_pipeline *pl)
 	int		child_process_cnt;
 
 	save_orig_stdfd(orig_stdfd);
-	child_process_cnt = execute_pipeline_internal(e, pl, orig_stdfd[WRITE], &child_pid);
+	child_process_cnt = execute_pipeline_internal(e,
+			  pl, orig_stdfd[WRITE], &child_pid);
 	set_orig_stdfd(orig_stdfd);
 	get_child_process_status(e, child_process_cnt, child_pid);
 	return (e->exit_status);
 }
 
-void	get_child_process_status(t_executor *e, int child_process_cnt, pid_t child_pid)
+void	get_child_process_status(t_executor *e,
+		 int child_process_cnt, pid_t child_pid)
 {
 	int		statloc;
 
@@ -37,7 +41,8 @@ void	get_child_process_status(t_executor *e, int child_process_cnt, pid_t child_
 	}
 }
 
-int	execute_pipeline_internal(t_executor *e, t_pipeline *pl, int stdout_fd, int *child_pid)
+int	execute_pipeline_internal(t_executor *e,
+		 t_pipeline *pl, int stdout_fd, int *child_pid)
 {
 	t_exec_pipe_info	info;
 	int					child_process_cnt;
@@ -48,8 +53,7 @@ int	execute_pipeline_internal(t_executor *e, t_pipeline *pl, int stdout_fd, int 
 	while (pl)
 	{
 		x_dup2(info.pipefd[READ], STDIN_FILENO);
-		if (info.pipefd[READ] != STDIN_FILENO)
-			close(info.pipefd[READ]);
+		info.pipefd[READ] != STDIN_FILENO && close(info.pipefd[READ]);
 		if (pl->next)
 		{
 			x_pipe(info.pipefd);
