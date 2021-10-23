@@ -79,3 +79,7 @@ echo -n a
 echo -n hello world
 echo a "$NO_SUCH_ENV" b $NO_SUCH_ENV c, unset NO_SUCH_ENV
 $HOGE
+export TEST=res && cat < $TEST
+export TEST=res* && cat < $TEST
+export TEST="res res2" && cat < $TEST
+export TEST= && cat < $TEST
