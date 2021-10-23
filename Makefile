@@ -1,5 +1,5 @@
 NAME    	= minishell
-
+NAME_LEAKS	= minishell_leaks
 CURRENT_PATH		= .
 EXECUTE_PATH		= execute
 BUILTIN_PATH		= execute/builtin
@@ -14,11 +14,12 @@ LEXER_INT_PATH		= lexer/internal
 AST_PATH			= ast
 UTILS_PATH			= utils
 ENV_PATH			= env
+TESTER_PATH			= test
 
 SRC_PATHS		= $(CURRENT_PATH) $(EXPANDER_PATH) $(EXPANDER_INT_PATH) $(WRAPPER_PATH) $(BUILTIN_PATH) $(EXECUTE_PATH) $(EXECUTE_INT_PATH) $(PARSER_PATH) $(PARSER_INT_PATH) $(LEXER_PATH) $(LEXER_INT_PATH) $(AST_PATH) $(UTILS_PATH) $(ENV_PATH)
 SRCS			= $(foreach path, $(SRC_PATHS), $(wildcard $(path)/*.c))
 
-VPATH		= $(CURRENT_PATH):$(BUILTIN_PATH):$(EXECUTE_PATH):$(EXECUTE_INT_PATH):$(WRAPPER_PATH):$(PARSER_PATH):$(PARSER_INT_PATH):$(LEXER_PATH):$(LEXER_INT_PATH):$(AST_PATH):$(UTILS_PATH):$(ENV_PATH):$(EXPANDER_PATH):$(EXPANDER_INT_PATH)
+VPATH		= $(CURRENT_PATH):$(BUILTIN_PATH):$(EXECUTE_PATH):$(EXECUTE_INT_PATH):$(WRAPPER_PATH):$(PARSER_PATH):$(PARSER_INT_PATH):$(LEXER_PATH):$(LEXER_INT_PATH):$(AST_PATH):$(UTILS_PATH):$(ENV_PATH):$(EXPANDER_PATH):$(EXPANDER_INT_PATH):$(TESTER_PATH)
 
 OBJDIR  	= ./obj
 OBJS    	= $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.c=.o)))
@@ -29,6 +30,13 @@ CFLAGS   	= -Wall -Wextra -Werror #-fsanitize=address
 
 LIB			= -L$(LIBFT_PATH) -lft
 INCLUDE		=
+
+LEAKS_SRC	:= test/leaks.c
+
+ifdef LEAKS
+SRCS		+= test/leaks.c
+NAME		:= $(NAME_LEAKS)
+endif
 
 ifeq ($(shell uname), Darwin)
 	INCLUDE += -I$(shell brew --prefix readline)/include
@@ -64,5 +72,8 @@ run:
 
 norm:
 	norminette $(SRC_PATHS) | grep Error
+
+leaks:
+	$(MAKE) CFLAGS="$(CFLAGS) -D LEAKS=1" LEAKS=TRUE
 
 .PHONY: all bonus clean fclean re run

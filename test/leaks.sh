@@ -4,8 +4,8 @@
 # User settings
 # ------------------------------------------------------------------------------
 readonly MINISHELL_DIR="../../minishell"
-readonly MINISHELL_EXE="minishell"
-readonly MAKE_TARGET="minishell"
+readonly MINISHELL_EXE="minishell_leaks"
+readonly MAKE_TARGET="leaks"
 # ------------------------------------------------------------------------------
 
 readonly SCRIPT_FILE="$0"
@@ -38,6 +38,7 @@ assert () {
 
 is_ok () {
 	cat ${MINISHELL_STDOUT_FILE} | grep "0 leaks for 0 total leaked bytes." > /dev/null
+#	cat ${MINISHELL_STDOUT_FILE}
 	return $?
 }
 
