@@ -1,7 +1,12 @@
 #include <string.h>
 #include "../expander.h"
+#include "../internal/expander_internal.h"
+#include "../../parser/parser.h"
+#include "../../lexer/lexer.h"
 
 #define BLUE    "\033[34m"      /* Blue */
+#define RESET   "\033[0m"
+#define RED     "\033[31m"
 
 #define GENERAL_CASE -1
 #define ERROR_CASE -2
@@ -176,8 +181,8 @@ int main(int ac, char **av) {
 				{COMMAND_ARG_NODE, "Makefile"},
 				{COMMAND_ARG_NODE, "a.out"},
 				{COMMAND_ARG_NODE, "expansion_test.c"},
-				{COMMAND_ARG_NODE, "expansion_wildcard_test.c"},
 				{COMMAND_ARG_NODE, "obj"},
+				{COMMAND_ARG_NODE, "res"},
 		};
 		test_expander(input, expected, WILDCARD);
 	}
@@ -222,6 +227,7 @@ int main(int ac, char **av) {
 		};
 		test_expander(input, expected, WORD_SPLIT);
 	}
+	system("leaks a.out");
 }
 
 void test_expander(char input[], t_test *expected, int test_type) {
@@ -239,7 +245,7 @@ void test_expander(char input[], t_test *expected, int test_type) {
 	t_token		*token = lex(input);
 	t_ast_node	*root = parse(token);
 	t_env_var	*env_vars = init_env_lst();
-				root = expand(root, env_vars);
+				root = expand(root, &env_vars);
 	// if (!res) {
 	// 	fprintf(stderr, RED "parse() returned NULL!\n" RESET);
 	// 	err_cnt++;
@@ -259,6 +265,8 @@ void test_expander(char input[], t_test *expected, int test_type) {
 		print_ast_nodes(root, 0);
 		ast_index = 0;
 		test_ast_nodes(root, 0, expected);
+		delete_env_lst(env_vars);
+		delete_ast_nodes(root, NULL);
 	// }
 
 	printf("\n---------------------------------\n");
@@ -272,7 +280,7 @@ void test_ast_nodes(t_ast_node *node, int level, t_test *expected) {
 				debug_node_type[expected[ast_index].expected_type], debug_node_type[node->type]);
 		err_cnt++;
 	}
-	if (ft_strcmp(node->data, expected[ast_index].expected_literal)) {
+	if (node->data && ft_strcmp(node->data, expected[ast_index].expected_literal)) {
 		fprintf(stderr, RED "test[%d] - node literal wrong. expected=%s, got=%s\n" RESET, ast_index,
 				expected[ast_index].expected_literal,
 				node->data);
