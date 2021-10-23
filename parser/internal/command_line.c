@@ -97,15 +97,16 @@ t_ast_node	*subshell(t_parser *p)
 {
 	t_ast_node	*result;
 	t_ast_node	*compound_list_;
+	static int	subshell_level;
 
 	if (!consume_token(p, LPAREN, NULL))
 		return (NULL);
+	subshell_level++;
 	p->is_subshell = true;
 	consume_token(p, SUBSHELL_NEWLINE_MS, NULL);
 	if (!assign_ast_node(&compound_list_, compound_list(p)))
 	{
-		if (!p->err)
-			p->err = ERR_UNEXPECTED_EOF;
+		!p->err && (p->err = ERR_UNEXPECTED_EOF);
 		return (NULL);
 	}
 	if (!consume_token(p, RPAREN, NULL))
@@ -113,7 +114,8 @@ t_ast_node	*subshell(t_parser *p)
 		p->err = ERR_UNEXPECTED_EOF;
 		return (delete_ast_nodes(compound_list_, NULL));
 	}
-	p->is_subshell = false;
+	if (--subshell_level == 0)
+		p->is_subshell = false;
 	new_ast_node(&result);
 	result->type = SUBSHELL_NODE;
 	set_ast_nodes(result, compound_list_, NULL);

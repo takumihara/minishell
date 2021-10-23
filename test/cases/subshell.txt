@@ -29,7 +29,7 @@ echo $?
 echo $?
 (cat xxxx || echo b && echo $?)
 echo $?
-echo "(cat xxxx || (cat xxxx || echo ok) && echo $?)"
+(cat xxxx || (cat xxxx || echo ok) && echo $?)
 echo $?
 pwd && (pwd && cd .. && pwd) && pwd
 ls && (ls && cd .. && ls) && ls

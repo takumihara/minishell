@@ -23,11 +23,7 @@ bool	consume_token(t_parser *p, t_token_type expected, t_ast_node *node)
 	if (p->token->type != expected)
 		return (false);
 	if (node)
-	{
-		node->data = ft_strndup(p->token->literal.start, p->token->literal.len);
-		if (!node->data)
-			perror_exit("malloc", EXIT_FAILURE);
-	}
+		node->data = x_strndup(p->token->literal.start, p->token->literal.len);
 	p->token = p->token->next;
 	return (true);
 }
