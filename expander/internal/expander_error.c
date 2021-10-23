@@ -28,18 +28,20 @@ static bool	is_empty_redirection_node(char *data, char *orig, t_node_type type)
 	return (data[0] == '\0' && orig[0] != '\0' && type != COMMAND_ARG_NODE);
 }
 
-bool	is_expandable_data(t_expander *e, t_ast_node *node, char *original_data)
+bool	is_empty_data(t_expander *e, t_ast_node *node, char *original_data)
 {
 	if (is_empty_command_arg_node(node->data, node->type))
 	{
 		free(node->data);
 		node->data = NULL;
-		return (false);
+		return (true);
 	}
 	else if (is_empty_redirection_node(node->data, original_data, node->type))
 	{
 		expand_redirect_error(original_data, e);
-		return (false);
+		return (true);
 	}
-	return (true);
+	else if (node->data[0] == '\0')
+		return (true);
+	return (false);
 }

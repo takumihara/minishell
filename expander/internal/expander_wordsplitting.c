@@ -138,8 +138,6 @@ void	word_splitting(t_ast_node *node, t_expander *e, char *original_data)
 	char	**split;
 	char	*expanded_data;
 
-	if (node->data[0] == '\0')
-		return ;
 	expanded_data = x_strdup(node->data);
 	remove_null_argument(node->data);
 	split = split_by_space_skip_quotes(node->data, " \t\n");

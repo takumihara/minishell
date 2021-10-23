@@ -68,6 +68,6 @@ void		word_splitting(t_ast_node *node, t_expander *e, char *original_data);
 // expander_error.c
 void		expand_redirect_error(char *original_data, t_expander *e);
 t_ast_node	*handle_expand_error(t_expander *e);
-bool		is_expandable_data(t_expander *e, t_ast_node *node, char *original_data);
+bool		is_empty_data(t_expander *e, t_ast_node *node, char *original_data);
 
 #endif
