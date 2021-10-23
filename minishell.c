@@ -55,7 +55,7 @@ int minishell(char *line)
 
 	register_env_var_from_literal("?", "0", 0, &env_vars);
 	if (line)
-		return (execute(parse(lex(line)), &env_vars));
+		return (execute(parse(lex(line)), &env_vars, false));
 	exit_status = EXIT_SUCCESS;
 	set_signal_handler();
 	while (1)
@@ -66,7 +66,7 @@ int minishell(char *line)
 		// line can be NULL when Ctrl+d
 		t_token *token = lex(line);
 		t_ast_node *node = parse(token);
-		exit_status = execute(node, &env_vars);
+		exit_status = execute(node, &env_vars, true);
 		add_history(line);
 		free(line);
 	}

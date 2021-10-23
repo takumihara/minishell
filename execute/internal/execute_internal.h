@@ -42,6 +42,7 @@ typedef struct s_executor {
 	t_pipeline	*pipeline;
 	t_ast_node	*root;
 	t_env_var	**env_vars;
+	bool		is_interactive;
 }	t_executor;
 
 struct s_pipeline {
@@ -91,7 +92,7 @@ int		execute_simple_command(t_executor *e,
 			  t_simple_command *sc, t_exec_pipe_info *info);
 
 // execute_utils.c
-void	new_executor(t_executor **e, t_env_var **env_vars, t_ast_node *root);
+void	new_executor(t_executor **e, t_env_var **env_vars, t_ast_node *root, bool is_interactive);
 void	delete_list(void *element, t_list_type type);
 bool	is_execute_condition(int condition, int exit_status);
 

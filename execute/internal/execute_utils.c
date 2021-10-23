@@ -2,7 +2,7 @@
 #include "../../builtin/builtin.h"
 #include "execute_internal.h"
 
-void	new_executor(t_executor **e, t_env_var **env_vars, t_ast_node *root)
+void	new_executor(t_executor **e, t_env_var **env_vars, t_ast_node *root, bool is_interactive)
 {
 	*e = x_malloc(sizeof(**e));
 	(*e)->exit_status = EXIT_SUCCESS;
@@ -10,6 +10,7 @@ void	new_executor(t_executor **e, t_env_var **env_vars, t_ast_node *root)
 	(*e)->pipeline = NULL;
 	(*e)->root = root;
 	(*e)->env_vars = env_vars;
+	(*e)->is_interactive = is_interactive;
 }
 
 void	delete_list(void *element, t_list_type type)
