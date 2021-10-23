@@ -34,7 +34,7 @@ int	execute_compound_list(t_executor *e, t_compound_list *cl)
 	pid = x_fork();
 	if (pid == CHILD_PROCESS)
 	{
-		new_executor(&exe_child, e->env_vars, NULL);
+		new_executor(&exe_child, e->env_vars, NULL, false);
 		exe_child->pipeline = cl->pipeline;
 		exit_status = execute_pipeline(exe_child, exe_child->pipeline);
 		if (cl->compound_list_next)

@@ -2,6 +2,7 @@ NAME    	= minishell
 
 CURRENT_PATH		= .
 EXECUTE_PATH		= execute
+BUILTIN_PATH		= execute/builtin
 EXECUTE_INT_PATH	= execute/internal
 WRAPPER_PATH		= wrapper
 EXPANDER_PATH		= expander
@@ -12,7 +13,6 @@ LEXER_PATH			= lexer
 LEXER_INT_PATH		= lexer/internal
 AST_PATH			= ast
 UTILS_PATH			= utils
-BUILTIN_PATH		= builtin
 ENV_PATH			= env
 
 SRC_PATHS		= $(CURRENT_PATH) $(EXPANDER_PATH) $(EXPANDER_INT_PATH) $(WRAPPER_PATH) $(BUILTIN_PATH) $(EXECUTE_PATH) $(EXECUTE_INT_PATH) $(PARSER_PATH) $(PARSER_INT_PATH) $(LEXER_PATH) $(LEXER_INT_PATH) $(AST_PATH) $(UTILS_PATH) $(ENV_PATH)

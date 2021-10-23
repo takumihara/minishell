@@ -22,13 +22,13 @@ typedef struct s_subshell		t_subshell;
 typedef struct s_compound_list	t_compound_list;
 typedef struct s_simple_command	t_simple_command;
 
-typedef enum e_list_type {
+typedef enum e_execute_list_type {
 	UNSET,
 	T_SIMPLE_COMMAND,
 	T_COMPOUND_LIST,
 	T_SUBSHELL,
 	T_PIPELINE,
-}	t_list_type;
+}	t_execute_list_type;
 
 typedef enum e_simple_command_err {
 	NO_SC_ERR,
@@ -42,12 +42,13 @@ typedef struct s_executor {
 	t_pipeline	*pipeline;
 	t_ast_node	*root;
 	t_env_var	**env_vars;
+	bool		is_interactive;
 }	t_executor;
 
 struct s_pipeline {
-	void		*command;
-	t_list_type	type;
-	t_pipeline	*next;
+	void				*command;
+	t_execute_list_type	type;
+	t_pipeline			*next;
 };
 
 struct s_subshell {
@@ -91,8 +92,8 @@ int		execute_simple_command(t_executor *e,
 			  t_simple_command *sc, t_exec_pipe_info *info);
 
 // execute_utils.c
-void	new_executor(t_executor **e, t_env_var **env_vars, t_ast_node *root);
-void	delete_list(void *element, t_list_type type);
+void	new_executor(t_executor **e, t_env_var **env_vars, t_ast_node *root, bool is_interactive);
+void	delete_execute_list(void *element, t_execute_list_type type);
 bool	is_execute_condition(int condition, int exit_status);
 
 // get_cmd_path.c

@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-#include "../../utils/utils.h"
+#include "../../../utils/utils.h"
 #include "../builtin.h"
 
 #define RESET   "\033[0m"
