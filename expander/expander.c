@@ -5,20 +5,27 @@ static char	*expand_word(t_expander *e, char *data, char delimiter)
 {
 	int		status;
 	size_t	i;
+	char	*original;
 
 	i = 0;
 	status = OUTSIDE;
+	original = x_strdup(data);
 	while (data[i])
 	{
 		status = quotation_status(data[i], status);
 		if (data[i] == '$' && delimiter == '$' && status != IN_SINGLE_QUOTE)
+		{
 			data = expand_environment_variable(data, i, e, status);
+			if (ft_strcmp(original, data))
+				continue ;
+		}
 		else if (data[i] == '*' && delimiter == '*' && status == OUTSIDE)
 			data = expand_wildcard(data, i);
 		if (!data[i])
 			break ;
 		i++;
 	}
+	free(original);
 	return (data);
 }
 
