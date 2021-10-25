@@ -18,4 +18,4 @@ char	*ft_strstr(const char *hay, const char *needle);
 char	*read_all(int fd);
 void	quick_sort_str(char **array, size_t left, size_t right);
 
-# endif //UTILS_H
+#endif

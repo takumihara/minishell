@@ -7,7 +7,7 @@ bool	atoi_strict(const char *str, int *num)
 
 	converted = 0;
 	sign = 1;
-	while (('\t' <= *str && *str <= '\r') || *str == ' ')
+	while (ft_isspace(*str))
 		str++;
 	if ((*str == '+' || *str == '-') && *str++ == '-')
 		sign = -1;
@@ -15,17 +15,15 @@ bool	atoi_strict(const char *str, int *num)
 		return (false);
 	while (ft_isdigit(*str))
 	{
-		if ((sign * converted * 10 + sign * (*str - '0')) / 10 != sign * converted)
+		if ((sign * converted * 10 + sign * (*str - '0')) / 10
+			!= sign * converted)
 			return (false);
-		converted = converted * 10 + *str - '0';
-		str++;
+		converted = converted * 10 + *str++ - '0';
 	}
-	while (('\t' <= *str && *str <= '\r') || *str == ' ')
+	while (ft_isspace(*str))
 		str++;
+	*num = (int)(sign * converted);
 	if (*str == '\0')
-	{
-		*num = (int)(sign * converted);
 		return (true);
-	}
 	return (false);
 }
