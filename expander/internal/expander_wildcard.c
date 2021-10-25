@@ -1,6 +1,6 @@
 #include "expander_internal.h"
 
-char	*append_wildcard_strings(char *dst, char *src, const char *data)
+static char	*append_wildcard_strings(char *dst, char *src, const char *data)
 {
 	if (dst == data)
 		return (x_strdup(src));
@@ -12,7 +12,7 @@ char	*append_wildcard_strings(char *dst, char *src, const char *data)
 	}
 }
 
-bool	is_match_pattern(const char *data, size_t len, char *name)
+static bool	is_match_pattern(const char *data, size_t len, char *name)
 {
 	size_t	i;
 	size_t	j;
@@ -32,7 +32,7 @@ bool	is_match_pattern(const char *data, size_t len, char *name)
 	return (true);
 }
 
-char	*sort_strings(char *src, char *data)
+static char	*sort_strings(char *src, char *data)
 {
 	char	**wildcard_array;
 	size_t	word_num;

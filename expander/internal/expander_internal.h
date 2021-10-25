@@ -34,35 +34,32 @@ struct s_expander {
 	int			exit_status;
 };
 
-char		*remove_quotes(char *data);
-
 // expander_utils.c
 void		new_expander(t_expander **e, t_env_var *env_vars);
 int			quotation_status(char c, int status);
 
 // expander_env.c
-size_t		var_strlen(const char *str);
-char		*str_insert(char *data, size_t replace_start, char *env_value,
-				size_t env_value_len);
-bool		is_expandable_env_var(char start, int status);
 char		*expand_environment_variable(char *data, size_t replace_starts,
 				t_expander *e, int status);
 
 // expander_wildcard.c
-char		*append_wildcard_strings(char *dst, char *src, const char *data);
-void		quick_sort(char **array, size_t left, size_t right);
-bool		is_match_pattern(const char *data, size_t len, char *name);
-char		*sort_strings(char *src, char *data);
 char		*expand_wildcard(char *data, size_t pre_len);
 
-// expander_quote.c
+// expander_remove_quote.c
+void		remove_null_argument(char *str);
+char		*remove_quotes(char *data);
+
+// expander_quote_utils.c
+int			in_quotes_type(char c, size_t count);
 bool		is_quote(const char c);
 size_t		unquoted_strlen(const char *str);
-int			in_quotes_type(char c, size_t count);
-void		remove_null_argument(char *str);
 
-// expander_splitting.c
+// expander_word_splitting.c
 void		word_splitting(t_ast_node *node, t_expander *e, char *orig_data);
+
+// expander_word_splitting_utils.c
+size_t		skip_quotes(const char *str, char quote_type);
+bool		is_delims(char c, char const *delims);
 
 // expander_error.c
 void		expand_redirect_error(char *original_data, t_expander *e);

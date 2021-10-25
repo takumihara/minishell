@@ -1,6 +1,6 @@
 #include "expander_internal.h"
 
-size_t	var_strlen(const char *str)
+static size_t	var_strlen(const char *str)
 {
 	size_t	len;
 
@@ -12,7 +12,7 @@ size_t	var_strlen(const char *str)
 	return (len);
 }
 
-char	*str_insert(char *data, size_t replace_start,
+static char	*str_insert(char *data, size_t replace_start,
 				char *env_value, size_t env_value_len)
 {
 	const size_t	origin_len = ft_strlen(data);
@@ -34,7 +34,7 @@ char	*str_insert(char *data, size_t replace_start,
 	return (data);
 }
 
-bool	is_expandable_env_var(char start, int status)
+static bool	is_expandable_env_var(char start, int status)
 {
 	if (ft_isspace(start) || start == '\0')
 		return (false);
