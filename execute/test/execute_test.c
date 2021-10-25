@@ -1,5 +1,5 @@
 #include "../execute.h"
-#include "../../builtin/builtin.h"
+#include "../builtin/builtin.h"
 #include "../internal/split_path_from_env.h"
 #include "../internal/execute_internal.h"
 
@@ -76,7 +76,7 @@ void test_create_envp(char **expected, t_env_var *env_vars)
 	t_executor *e;
 	char		**envp;
 
-	new_executor(&e, &env_vars);
+	new_executor(&e, &env_vars, NULL, false);
 	envp = create_envp(e);
 	for (int i = 0; expected[i] && envp[i]; i++) {
 		if (ft_strcmp(expected[i], envp[i]))
