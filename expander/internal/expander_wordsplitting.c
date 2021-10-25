@@ -77,7 +77,7 @@ static char	*ft_strdup_split(char const *src, const char *delims)
 	return (str);
 }
 
-char	**split_by_space_skip_quotes(char const *str, const char *delims)
+static char	**split_by_space_skip_quotes(char const *str, const char *delims)
 {
 	size_t	i;
 	size_t	j;
@@ -104,7 +104,8 @@ char	**split_by_space_skip_quotes(char const *str, const char *delims)
 	return (split);
 }
 
-static bool	split_arg_node(char **split, t_ast_node *node, char *expanded_data)
+static bool	split_arg_node(char **split, t_ast_node *node,
+		char *expanded)
 {
 	const t_ast_node	*original_right = node->right;
 	int					i;
@@ -115,7 +116,7 @@ static bool	split_arg_node(char **split, t_ast_node *node, char *expanded_data)
 	{
 		if (i == 0)
 		{
-			if (node->type != COMMAND_ARG_NODE && ft_strcmp(split[i], expanded_data))
+			if (node->type != COMMAND_ARG_NODE && ft_strcmp(split[i], expanded))
 				return (false);
 			free(node->data);
 			node->data = remove_quotes(split[i]);

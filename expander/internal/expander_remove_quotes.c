@@ -32,9 +32,9 @@ bool	contain_quotes(const char *str)
 	return (ft_strchr(str, '\'') || ft_strchr(str, '\"'));
 }
 
-int		in_quotes_type(char c, size_t count)
+int	in_quotes_type(char c, size_t count)
 {
-	if  (c == '\"' && count % 2 == 0)
+	if (c == '\"' && count % 2 == 0)
 		return (DOUBLE_QUOTE);
 	else if (c == '\'' && count % 2 == 0)
 		return (SINGLE_QUOTE);

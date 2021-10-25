@@ -42,9 +42,11 @@ int			quotation_status(char c, int status);
 
 // expander_env.c
 size_t		var_strlen(const char *str);
-char		*str_insert(char *data, size_t replace_start, char *env_value, size_t env_value_len);
+char		*str_insert(char *data, size_t replace_start, char *env_value,
+				size_t env_value_len);
 bool		is_expandable_env_var(char start, int status);
-char		*expand_environment_variable(char *data, size_t replace_starts, t_expander *e, int status);
+char		*expand_environment_variable(char *data, size_t replace_starts,
+				t_expander *e, int status);
 
 // expander_wildcard.c
 char		*append_wildcard_strings(char *dst, char *src, const char *data);
@@ -62,8 +64,7 @@ int			in_quotes_type(char c, size_t count);
 void		remove_null_argument(char *str);
 
 // expander_splitting.c
-char		**split_by_space_skip_quotes(char const *str, const char *delims);
-void		word_splitting(t_ast_node *node, t_expander *e, char *original_data);
+void		word_splitting(t_ast_node *node, t_expander *e, char *orig_data);
 
 // expander_error.c
 void		expand_redirect_error(char *original_data, t_expander *e);
