@@ -21,7 +21,7 @@ void	quick_sort_str(char **array, size_t left, size_t right)
 		return ;
 	while (1)
 	{
-		while (ft_strcmp(array[i], pivot) < 0) 
+		while (ft_strcmp(array[i], pivot) < 0)
 			i++;
 		while (ft_strcmp(array[j], pivot) > 0)
 			j--;
