@@ -58,8 +58,6 @@ char		*expand_wildcard(char *data, size_t pre_len);
 // expander_quote.c
 bool		is_quote(const char c);
 size_t		unquoted_strlen(const char *str);
-bool		contain_quotes(const char *str);
-char		*unquoted_memmove(char *dst, char *src);
 int			in_quotes_type(char c, size_t count);
 void		remove_null_argument(char *str);
 
