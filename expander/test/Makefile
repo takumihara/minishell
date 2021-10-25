@@ -52,4 +52,7 @@ re: fclean all
 run:
 	./$(NAME)
 
+norm:
+	norminette $(EXPANDER_PATH)/*.c $(EXPANDER_PATH)/*.h $(EXPANDER_INT_PATH)/*.c $(EXPANDER_INT_PATH)/*.h | grep Error
+
 .PHONY: all re clean fclean run
