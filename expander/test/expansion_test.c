@@ -236,6 +236,15 @@ int main(int ac, char **av) {
 		};
 		test_expander(input, expected, WORD_SPLIT);
 	}
+	{
+		setenv("wildcard", "*", 1);
+		char input[] = "echo $wildcard.c";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "hogels -lecho"},
+				{COMMAND_ARG_NODE, "hello"},
+		};
+		test_expander(input, expected, WORD_SPLIT);
+	}
 	system("leaks a.out");
 }
 

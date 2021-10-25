@@ -12,7 +12,7 @@
 # include <dirent.h>
 
 # define EXPANDABLE "\"\'$"
-# define EXPANSION_DELIMITER "\"\'$|&<>() =\t\n"
+# define EXPANSION_DELIMITER "\"\'$|&<>(). =\t\n"
 
 # define DOUBLE_QUOTE 0
 # define SINGLE_QUOTE 1
