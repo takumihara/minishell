@@ -1,6 +1,6 @@
 #include "expander_internal.h"
 
-size_t	var_strlen(const char *str)
+static size_t	var_strlen(const char *str)
 {
 	size_t	len;
 
@@ -12,7 +12,8 @@ size_t	var_strlen(const char *str)
 	return (len);
 }
 
-char	*str_insert(char *data, size_t replace_start, char *env_value, size_t env_value_len)
+static char	*str_insert(char *data, size_t replace_start,
+				char *env_value, size_t env_value_len)
 {
 	const size_t	origin_len = ft_strlen(data);
 	const size_t	env_var_len = var_strlen(&data[replace_start + 1]) + 1;
@@ -25,14 +26,15 @@ char	*str_insert(char *data, size_t replace_start, char *env_value, size_t env_v
 	ft_memmove(&expanded_str[0], &data[0], replace_start);
 	ft_memmove(&expanded_str[replace_start], env_value, env_value_len);
 	ft_memmove(&expanded_str[replace_start + env_value_len],
-		&data[replace_start + env_var_len], origin_len - replace_start - env_var_len);
+		&data[replace_start + env_var_len],
+		origin_len - replace_start - env_var_len);
 	data = expanded_str;
 	free(prev_data);
 	expanded_str[expansion_len] = '\0';
 	return (data);
 }
 
-bool	is_expandable_env_var(char start, int status)
+static bool	is_expandable_env_var(char start, int status)
 {
 	if (ft_isspace(start) || start == '\0')
 		return (false);
@@ -41,7 +43,8 @@ bool	is_expandable_env_var(char start, int status)
 	return (true);
 }
 
-char	*expand_environment_variable(char *data, size_t replace_start, t_expander *e, int status)
+char	*expand_environment_variable(char *data, size_t replace_start,
+	t_expander *e, int status)
 {
 	const char		*var_start = &data[replace_start + 1];
 	const size_t	var_len = var_strlen(var_start);

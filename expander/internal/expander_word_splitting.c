@@ -1,29 +1,5 @@
 #include "expander_internal.h"
 
-static bool	is_delims(char c, char const *delims)
-{
-	size_t	j;
-
-	j = 0;
-	while (delims[j])
-	{
-		if (delims[j] == c)
-			return (true);
-		j++;
-	}
-	return (false);
-}
-
-static size_t	skip_quotes(const char *str, char quote_type)
-{
-	size_t	len;
-
-	len = 1;
-	while (str[len] && str[len] != quote_type)
-		len++;
-	return (len);
-}
-
 static char	**row_malloc_split(char const *str, const char *delims, size_t *row)
 {
 	size_t	len;
@@ -77,7 +53,7 @@ static char	*ft_strdup_split(char const *src, const char *delims)
 	return (str);
 }
 
-char	**split_by_space_skip_quotes(char const *str, const char *delims)
+static char	**split_by_space_skip_quotes(char const *str, const char *delims)
 {
 	size_t	i;
 	size_t	j;
@@ -104,7 +80,8 @@ char	**split_by_space_skip_quotes(char const *str, const char *delims)
 	return (split);
 }
 
-static bool	split_arg_node(char **split, t_ast_node *node, char *expanded_data)
+static bool	split_arg_node(char **split, t_ast_node *node,
+		char *expanded)
 {
 	const t_ast_node	*original_right = node->right;
 	int					i;
@@ -115,7 +92,7 @@ static bool	split_arg_node(char **split, t_ast_node *node, char *expanded_data)
 	{
 		if (i == 0)
 		{
-			if (node->type != COMMAND_ARG_NODE && ft_strcmp(split[i], expanded_data))
+			if (node->type != COMMAND_ARG_NODE && ft_strcmp(split[i], expanded))
 				return (false);
 			free(node->data);
 			node->data = remove_quotes(split[i]);
