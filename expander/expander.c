@@ -31,7 +31,7 @@ static char	*expand_word(t_expander *e, char *data, char delimiter)
 				continue ;
 		}
 		else if (data[i] == '*' && delimiter == '*' && status == OUTSIDE)
-			data = expand_wildcard(data, i);
+			data = handle_multiple_stars(data, i);
 		if (!data[i])
 			break ;
 		i++;

@@ -58,19 +58,20 @@ static char	*sort_strings(char *src, char *data)
 	return (rtn);
 }
 
-static bool	is_valid_dot_files(char *d_name, size_t len, char *data)
+static bool	is_not_printable_dot_files(char *d_name, size_t len, char *data)
 {
 	bool	valid_dot;
 	char	*data_copy;
 	char	*unquoted_data;
 
-	valid_dot = false;
+	valid_dot = true;
 	data_copy = x_strndup(data, len);
 	unquoted_data = remove_quotes(data_copy);
-	if (!ft_strcmp(unquoted_data, "."))
-		valid_dot = true;
-	else if (!ft_strcmp(d_name, "..") && !ft_strcmp(unquoted_data, ".."))
-		valid_dot = true;
+	if (!ft_strncmp(d_name, ".", 1) || !ft_strncmp(d_name, "..", 2))
+		if (!ft_strcmp(unquoted_data, "."))
+			valid_dot = false;
+	if (!ft_strncmp(d_name, "..", 2) && !ft_strcmp(unquoted_data, ".."))
+		valid_dot = false;
 	free(unquoted_data);
 	return (valid_dot);
 }
@@ -90,8 +91,9 @@ char	*expand_wildcard(char *data, size_t pre_len)
 		dp = x_readdir(dir);
 		if (!dp)
 			break ;
-		if (!is_valid_dot_files(dp->d_name, pre_len, data))
-			continue ;
+		if (!ft_strncmp(dp->d_name, ".", 1) || !ft_strncmp(dp->d_name, "..", 2))
+			if (is_not_printable_dot_files(dp->d_name, pre_len, data))
+				continue ;
 		if (is_match_pattern(data, pre_len, dp->d_name)
 			&& is_match_pattern(post_start, post_len,
 				ft_strchr(dp->d_name, 0) - post_len))

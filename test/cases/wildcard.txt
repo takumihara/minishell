@@ -23,7 +23,11 @@ echo *".c"
 echo "*"*
 echo *"*"
 echo ."*"
-nothandled && echo "."**
+echo **
+echo "."**a
+echo **.txt
+echo *****.txt
+echo "."**
 echo ".."*
 echo "."*
 export wildcard="*" && echo $wildcard
