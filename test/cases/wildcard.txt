@@ -25,6 +25,7 @@ echo *"*"
 echo ."*"
 nothandled && echo "."**
 echo ".."*
+echo "."*
 export wildcard="*" && echo $wildcard
 export wildcard="*" && echo "$wildcard"
 export wildcard="*" && echo '$wildcard'

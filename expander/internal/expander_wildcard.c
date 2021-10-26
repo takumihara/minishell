@@ -16,12 +16,16 @@ static bool	is_match_pattern(const char *data, size_t len, char *name)
 {
 	size_t	i;
 	size_t	j;
+	int		s;
 
 	i = 0;
 	j = 0;
+	s = OUTSIDE;
 	while (i < len)
 	{
-		if (data[i] == '\"' || data[i] == '\'')
+		s = quotation_status(data[i], s);
+		if ((data[i] == '\"' && (s == OUTSIDE || s == IN_DOUBLE_QUOTE))
+			|| (data[i] == '\'' && (s == OUTSIDE || s == IN_SINGLE_QUOTE)))
 		{	
 			i++;
 			continue ;
@@ -54,6 +58,23 @@ static char	*sort_strings(char *src, char *data)
 	return (rtn);
 }
 
+static bool	is_valid_dot_files(char *d_name, size_t len, char *data)
+{
+	bool	valid_dot;
+	char	*data_copy;
+	char	*unquoted_data;
+
+	valid_dot = false;
+	data_copy = x_strndup(data, len);
+	unquoted_data = remove_quotes(data_copy);
+	if (!ft_strcmp(unquoted_data, "."))
+		valid_dot = true;
+	else if (!ft_strcmp(d_name, "..") && !ft_strcmp(unquoted_data, ".."))
+		valid_dot = true;
+	free(unquoted_data);
+	return (valid_dot);
+}
+
 char	*expand_wildcard(char *data, size_t pre_len)
 {
 	DIR				*dir;
@@ -69,9 +90,9 @@ char	*expand_wildcard(char *data, size_t pre_len)
 		dp = x_readdir(dir);
 		if (!dp)
 			break ;
-		if (!ft_strncmp(dp->d_name, ".", 1))
+		if (!is_valid_dot_files(dp->d_name, pre_len, data))
 			continue ;
-		if (is_match_pattern(rtn, pre_len, dp->d_name)
+		if (is_match_pattern(data, pre_len, dp->d_name)
 			&& is_match_pattern(post_start, post_len,
 				ft_strchr(dp->d_name, 0) - post_len))
 			rtn = append_wildcard_strings(rtn, dp->d_name, data);
