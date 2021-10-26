@@ -1,10 +1,22 @@
 #include "expander.h"
 #include "internal/expander_internal.h"
 
+static bool	is_expanded_data(char *pre_expansion_data, char *data)
+{
+	bool	expanded;
+
+	expanded = false;
+	if (ft_strcmp(pre_expansion_data, data))
+		expanded = true;
+	free(pre_expansion_data);
+	return (expanded);
+}
+
 static char	*expand_word(t_expander *e, char *data, char delimiter)
 {
 	int		status;
 	size_t	i;
+	char	*pre_expansion_data;
 
 	i = 0;
 	status = OUTSIDE;
@@ -12,9 +24,14 @@ static char	*expand_word(t_expander *e, char *data, char delimiter)
 	{
 		status = quotation_status(data[i], status);
 		if (data[i] == '$' && delimiter == '$' && status != IN_SINGLE_QUOTE)
+		{
+			pre_expansion_data = x_strdup(data);
 			data = expand_environment_variable(data, i, e, status);
+			if (is_expanded_data(pre_expansion_data, data))
+				continue ;
+		}
 		else if (data[i] == '*' && delimiter == '*' && status == OUTSIDE)
-			data = expand_wildcard(data, i);
+			data = handle_multiple_stars(data, i);
 		if (!data[i])
 			break ;
 		i++;

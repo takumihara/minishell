@@ -12,7 +12,7 @@
 # include <dirent.h>
 
 # define EXPANDABLE "\"\'$"
-# define EXPANSION_DELIMITER "\"\'$|&<>() =\t\n"
+# define EXPANSION_DELIMITER "\"\'$|&<>(). =\t\n"
 
 # define DOUBLE_QUOTE 0
 # define SINGLE_QUOTE 1
@@ -37,6 +37,7 @@ struct s_expander {
 // expander_utils.c
 void		new_expander(t_expander **e, t_env_var *env_vars);
 int			quotation_status(char c, int status);
+char		*handle_multiple_stars(char *data, size_t pre_len);
 
 // expander_env.c
 char		*expand_environment_variable(char *data, size_t replace_starts,
@@ -44,6 +45,7 @@ char		*expand_environment_variable(char *data, size_t replace_starts,
 
 // expander_wildcard.c
 char		*expand_wildcard(char *data, size_t pre_len);
+char		*handle_multiple_stars(char *data, size_t pre_len);
 
 // expander_remove_quote.c
 void		remove_null_argument(char *str);

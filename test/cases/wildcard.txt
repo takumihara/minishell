@@ -23,14 +23,18 @@ echo *".c"
 echo "*"*
 echo *"*"
 echo ."*"
-nothandled && echo "."**
-todo && echo ".."*
-export wildcard="*"
-echo $wildcard
-echo "$wildcard"
-echo '$wildcard'
-echo "'$wildcard'"
-echo '"$wildcard"'
-todo && echo $wildcard.c
-echo .$wildcard
+echo **
+echo "."**a
+echo **.txt
+echo *****.txt
+echo "."**
+echo ".."*
+echo "."*
+export wildcard="*" && echo $wildcard
+export wildcard="*" && echo "$wildcard"
+export wildcard="*" && echo '$wildcard'
+export wildcard="*" && echo "'$wildcard'"
+export wildcard="*" && echo '"$wildcard"'
+export wildcard="*" && echo $wildcard.c
+export wildcard="*" && echo .$wildcard
 nothandled && echo ${wildcard}c
