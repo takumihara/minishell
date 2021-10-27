@@ -2,7 +2,7 @@
 
 #include "../utils/utils.h"
 
-void *x_malloc(size_t size)
+void	*x_malloc(size_t size)
 {
 	void	*res;
 

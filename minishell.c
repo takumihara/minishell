@@ -46,13 +46,14 @@ void	set_signal_handler(void)
 	}
 }
 
-int minishell(char *line)
+int	minishell(char *line)
 {
 	t_env_var	*env_vars;
-	int 		exit_status;
+	int			exit_status;
+	t_token		*token;
+	t_ast_node	*node;
 
 	env_vars = init_env_lst();
-
 	register_env_var_from_literal("?", "0", 0, &env_vars);
 	if (line)
 	{
@@ -67,9 +68,8 @@ int minishell(char *line)
 		line = readline(BLUE "minishell> " RESET);
 		if (!line)
 			break ;
-		// line can be NULL when Ctrl+d
-		t_token *token = lex(line);
-		t_ast_node *node = parse(token);
+		token = lex(line);
+		node = parse(token);
 		exit_status = execute(node, &env_vars, true);
 		add_history(line);
 		free(line);

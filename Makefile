@@ -19,6 +19,30 @@ TESTER_PATH			= test
 SRC_PATHS		= $(CURRENT_PATH) $(EXPANDER_PATH) $(EXPANDER_INT_PATH) $(WRAPPER_PATH) $(BUILTIN_PATH) $(EXECUTE_PATH) $(EXECUTE_INT_PATH) $(PARSER_PATH) $(PARSER_INT_PATH) $(LEXER_PATH) $(LEXER_INT_PATH) $(AST_PATH) $(UTILS_PATH) $(ENV_PATH)
 SRCS			= $(foreach path, $(SRC_PATHS), $(wildcard $(path)/*.c))
 
+HEADERS	= \
+	minishell.h \
+	ast/ast.h \
+	env/env.h \
+	execute/builtin/builtin.h \
+	execute/internal/eval.h \
+	execute/internal/eval_utils.h \
+	execute/internal/execute_internal.h \
+	execute/internal/split_path_from_env.h \
+	execute/execute.h \
+	execute/exit_status.h \
+	expander/internal/expander_internal.h \
+	expander/expander.h \
+	lexer/internal/lexer_internal.h \
+	lexer/lexer.h \
+	libft/libft.h \
+	parser/internal/parser_internal.h \
+	parser/parser.h \
+	token/token.h \
+	utils/get_next_line.h \
+	utils/utils.h \
+	wrapper/x.h
+
+
 VPATH		= $(CURRENT_PATH):$(BUILTIN_PATH):$(EXECUTE_PATH):$(EXECUTE_INT_PATH):$(WRAPPER_PATH):$(PARSER_PATH):$(PARSER_INT_PATH):$(LEXER_PATH):$(LEXER_INT_PATH):$(AST_PATH):$(UTILS_PATH):$(ENV_PATH):$(EXPANDER_PATH):$(EXPANDER_INT_PATH):$(TESTER_PATH)
 
 OBJDIR  	= ./obj
@@ -71,7 +95,7 @@ run:
 	./$(NAME)
 
 norm:
-	norminette $(SRC_PATHS) | grep Error
+	norminette $(SRCS) $(HEADERS) | grep Error
 
 leaks:
 	$(MAKE) CFLAGS="$(CFLAGS) -D LEAKS=1" LEAKS=TRUE
