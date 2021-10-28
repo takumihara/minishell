@@ -1,11 +1,38 @@
 #include "minishell.h"
 
-int	abnormal_input_minishell(char *line, t_env_var **env_vars)
+int	minishell_command(char *line, t_env_var **env_vars)
 {
 	int	exit_status;
 
 	exit_status = execute(parse(lex(line)), env_vars, false);
 	delete_env_lst(*env_vars);
+	return (exit_status);
+}
+
+int	minishell_repl(t_env_var **env_vars)
+{
+	char	*line;
+	int		exit_status;
+
+	exit_status = EXIT_SUCCESS;
+	while (1)
+	{
+		g_signal = -1;
+		set_signal_handler(READLINE_SIGNAL);
+		line = readline(BLUE "minishell> " RESET);
+		if (!line)
+			break ;
+		if (!ft_strcmp(line, ""))
+		{
+			free(line);
+			continue ;
+		}
+		if (g_signal == SIGINT)
+			register_env_var_from_literal("?", NULL, 1, env_vars);
+		exit_status = execute(parse(lex(line)), env_vars, true);
+		add_history(line);
+		free(line);
+	}
 	return (exit_status);
 }
 
@@ -15,20 +42,10 @@ int	minishell(char *line)
 	int			exit_status;
 
 	env_vars = init_env_lst();
-	register_env_var_from_literal("?", "0", 0, &env_vars);
+	register_env_var_from_literal("?", NULL, 0, &env_vars);
 	if (line)
-		return (abnormal_input_minishell(line, &env_vars));
-	exit_status = EXIT_SUCCESS;
-	while (1)
-	{
-		set_signal_handler(READLINE_SIGNAL);
-		line = readline(BLUE "minishell> " RESET);
-		if (!line)
-			break ;
-		exit_status = execute(parse(lex(line)), &env_vars, true);
-		add_history(line);
-		free(line);
-	}
+		return (minishell_command(line, &env_vars));
+	exit_status = minishell_repl(&env_vars);
 	delete_env_lst(env_vars);
 	ft_putstr_fd("exit\n", STDERR_FILENO);
 	return (exit_status);

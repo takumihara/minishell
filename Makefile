@@ -17,8 +17,80 @@ ENV_PATH			= env
 SIGNAL_PATH			= signal
 TESTER_PATH			= test
 
-SRC_PATHS		= $(CURRENT_PATH) $(EXPANDER_PATH) $(EXPANDER_INT_PATH) $(WRAPPER_PATH) $(BUILTIN_PATH) $(EXECUTE_PATH) $(EXECUTE_INT_PATH) $(PARSER_PATH) $(PARSER_INT_PATH) $(LEXER_PATH) $(LEXER_INT_PATH) $(AST_PATH) $(UTILS_PATH) $(ENV_PATH) $(SIGNAL_PATH)
-SRCS			= $(foreach path, $(SRC_PATHS), $(wildcard $(path)/*.c))
+SRCS = \
+    wrapper/x_malloc.c \
+    wrapper/x_dup.c \
+    wrapper/x_readdir.c \
+    wrapper/x_dup2.c \
+    wrapper/x_strdup.c \
+    wrapper/x_stat.c \
+    wrapper/x_get_next_line.c \
+    wrapper/x_substr.c \
+    wrapper/x_signal.c \
+    wrapper/x_split.c \
+    wrapper/x_itoa.c \
+    wrapper/x_fork.c \
+    wrapper/x_pipe.c \
+    wrapper/x_closedir.c \
+    wrapper/x_opendir.c \
+    wrapper/x_strndup.c \
+    lexer/lexer_list.c \
+    lexer/lexer.c \
+    lexer/internal/lexer_new_token.c \
+    lexer/internal/lexer_utils.c \
+    lexer/internal/next_token.c \
+    utils/strappend.c \
+    utils/split_by_delims.c \
+    utils/assign_mem.c \
+    utils/read_all.c \
+    utils/ft_strstr.c \
+    utils/quick_sort_str.c \
+    utils/get_next_line.c \
+    utils/atoi_strict.c \
+    utils/strjoin_three.c \
+    utils/perror_exit.c \
+    utils/ft_strndup.c \
+    utils/free_2d_array.c \
+    parser/internal/parser_utils.c \
+    parser/internal/command_line.c \
+    parser/internal/simple_command.c \
+    parser/parser.c \
+    env/register_env_var_from_literal.c \
+    env/env_list.c \
+    env/env_utils.c \
+    expander/expander.c \
+    expander/internal/expander_remove_quotes.c \
+    expander/internal/expander_quote_utils.c \
+    expander/internal/expander_wildcard.c \
+    expander/internal/expander_env.c \
+    expander/internal/expander_word_splitting_utils.c \
+    expander/internal/expander_error.c \
+    expander/internal/expander_utils.c \
+    expander/internal/expander_word_splitting.c \
+    ast/ast.c \
+    execute/execute.c \
+    execute/internal/execute_utils.c \
+    execute/internal/eval.c \
+    execute/internal/create_envp.c \
+    execute/internal/execute_simple_command.c \
+    execute/internal/eval_utils.c \
+    execute/internal/execute_pipeline.c \
+    execute/internal/execute_command_line.c \
+    execute/internal/split_path_from_env.c \
+    execute/internal/eval_utils_redirect.c \
+    execute/internal/get_cmd_path.c \
+    execute/internal/execute_command.c \
+    execute/builtin/builtin_echo.c \
+    execute/builtin/builtin_export.c \
+    execute/builtin/builtin_unset.c \
+    execute/builtin/builtin_pwd.c \
+    execute/builtin/builtin_env.c \
+    execute/builtin/builtin_exit.c \
+    execute/builtin/builtin_cd.c \
+    execute/builtin/is_valid_argument.c \
+    signal/signal.c \
+    minishell.c
+
 
 HEADERS	= \
 	minishell.h \
@@ -69,7 +141,7 @@ else
 	 LIB += -lreadline
 endif
 
-all: $(NAME) run
+all: $(NAME)
 
 $(NAME): $(OBJS)
 	@make -C $(LIBFT_PATH)
@@ -95,9 +167,9 @@ run:
 	./$(NAME)
 
 norm:
-	norminette $(SRCS) $(HEADERS) | grep Error
+	norminette $(SRCS) $(HEADERS) | grep -E '^(Error|Warning)'
 
 leaks:
 	$(MAKE) CFLAGS="$(CFLAGS) -D LEAKS=1" LEAKS=TRUE
 
-.PHONY: all bonus clean fclean re run
+.PHONY: all bonus clean fclean re
