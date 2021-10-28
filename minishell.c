@@ -1,79 +1,51 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-// #include "/usr/local/opt/readline/include/readline/readline.h"
-// #include "/usr/local/opt/readline/include/readline/history.h"
-#include <signal.h>
-#include <sys/fcntl.h> 
-#include <sys/stat.h>
-#include <sys/ioctl.h>  
+#include "minishell.h"
 
-#include "libft/libft.h"
-#include "parser/parser.h"
-#include "lexer/lexer.h"
-#include "expander/expander.h"
-#include "execute/execute.h"
-#include "utils/get_next_line.h"
-#include "execute/exit_status.h"
-
-#define BLUE    "\033[1;34m"
-#define RESET   "\033[0m"
-
-// 何らかのSIGNAL(Ctrl-C(SIGINT), Ctrl-\(SIGQUIT))を受け取った時の挙動を定義する
-static void	signal_handler(int signo)
+int	minishell_command(char *line, t_env_var **env_vars)
 {
-	if (signo == SIGINT)
-	{
-		printf("\n");
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-	}
+	int	exit_status;
+
+	exit_status = execute(parse(lex(line)), env_vars, false);
+	delete_env_lst(*env_vars);
+	return (exit_status);
 }
 
-void	set_signal_handler(void)
+int	minishell_repl(t_env_var **env_vars)
 {
-	if (signal(SIGINT, &signal_handler) == SIG_ERR)
+	char	*line;
+	int		exit_status;
+
+	exit_status = EXIT_SUCCESS;
+	while (1)
 	{
-		perror("signal");
-		exit(EXIT_FAILURE);
+		g_signal = -1;
+		set_signal_handler(READLINE_SIGNAL);
+		line = readline(BLUE "minishell> " RESET);
+		if (!line)
+			break ;
+		if (!ft_strcmp(line, ""))
+		{
+			free(line);
+			continue ;
+		}
+		if (g_signal == SIGINT)
+			register_env_var_from_literal("?", NULL, 1, env_vars);
+		exit_status = execute(parse(lex(line)), env_vars, true);
+		add_history(line);
+		free(line);
 	}
-	if (signal(SIGQUIT, &signal_handler) == SIG_ERR)
-	{
-		perror("signal");
-		exit(EXIT_FAILURE);
-	}
+	return (exit_status);
 }
 
 int	minishell(char *line)
 {
 	t_env_var	*env_vars;
 	int			exit_status;
-	t_token		*token;
-	t_ast_node	*node;
 
 	env_vars = init_env_lst();
-	register_env_var_from_literal("?", "0", 0, &env_vars);
+	register_env_var_from_literal("?", NULL, 0, &env_vars);
 	if (line)
-	{
-		exit_status = execute(parse(lex(line)), &env_vars, false);
-		delete_env_lst(env_vars);
-		return (exit_status);
-	}
-	exit_status = EXIT_SUCCESS;
-	set_signal_handler();
-	while (1)
-	{
-		line = readline(BLUE "minishell> " RESET);
-		if (!line)
-			break ;
-		token = lex(line);
-		node = parse(token);
-		exit_status = execute(node, &env_vars, true);
-		add_history(line);
-		free(line);
-	}
+		return (minishell_command(line, &env_vars));
+	exit_status = minishell_repl(&env_vars);
 	delete_env_lst(env_vars);
 	ft_putstr_fd("exit\n", STDERR_FILENO);
 	return (exit_status);
