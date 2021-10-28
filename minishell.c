@@ -1,76 +1,31 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-// #include "/usr/local/opt/readline/include/readline/readline.h"
-// #include "/usr/local/opt/readline/include/readline/history.h"
-#include <signal.h>
-#include <sys/fcntl.h> 
-#include <sys/stat.h>
-#include <sys/ioctl.h>  
+#include "minishell.h"
 
-#include "libft/libft.h"
-#include "parser/parser.h"
-#include "lexer/lexer.h"
-#include "expander/expander.h"
-#include "execute/execute.h"
-#include "utils/get_next_line.h"
-#include "execute/exit_status.h"
-
-#define BLUE    "\033[1;34m"
-#define RESET   "\033[0m"
-
-// 何らかのSIGNAL(Ctrl-C(SIGINT), Ctrl-\(SIGQUIT))を受け取った時の挙動を定義する
-static void	signal_handler(int signo)
+int	abnormal_input_minishell(char *line, t_env_var **env_vars)
 {
-	if (signo == SIGINT)
-	{
-		printf("\n");
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-	}
-}
+	int	exit_status;
 
-void	set_signal_handler(void)
-{
-	if (signal(SIGINT, &signal_handler) == SIG_ERR)
-	{
-		perror("signal");
-		exit(EXIT_FAILURE);
-	}
-	if (signal(SIGQUIT, &signal_handler) == SIG_ERR)
-	{
-		perror("signal");
-		exit(EXIT_FAILURE);
-	}
+	exit_status = execute(parse(lex(line)), env_vars, false);
+	delete_env_lst(*env_vars);
+	return (exit_status);
 }
 
 int	minishell(char *line)
 {
 	t_env_var	*env_vars;
 	int			exit_status;
-	t_token		*token;
-	t_ast_node	*node;
 
 	env_vars = init_env_lst();
 	register_env_var_from_literal("?", "0", 0, &env_vars);
 	if (line)
-	{
-		exit_status = execute(parse(lex(line)), &env_vars, false);
-		delete_env_lst(env_vars);
-		return (exit_status);
-	}
+		return (abnormal_input_minishell(line, &env_vars));
 	exit_status = EXIT_SUCCESS;
-	set_signal_handler();
 	while (1)
 	{
+		set_signal_handler(READLINE_SIGNAL);
 		line = readline(BLUE "minishell> " RESET);
 		if (!line)
 			break ;
-		token = lex(line);
-		node = parse(token);
-		exit_status = execute(node, &env_vars, true);
+		exit_status = execute(parse(lex(line)), &env_vars, true);
 		add_history(line);
 		free(line);
 	}

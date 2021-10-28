@@ -12,11 +12,13 @@
 # include <sys/ioctl.h>
 
 # include "../env/env.h"
+# include "../wrapper/x.h"
+
+# define READLINE_SIGNAL 0
+# define EXECUTE_SIGNAL 1
 
 volatile sig_atomic_t	g_signal;
 
-void	set_signal_handler(void);
-int		check_state(void);
-bool	check_sigint(t_env_var **env_vars, char *line);
+void	set_signal_handler(int sig_type);
 
 #endif
