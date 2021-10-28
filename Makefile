@@ -41,7 +41,8 @@ HEADERS	= \
 	token/token.h \
 	utils/get_next_line.h \
 	utils/utils.h \
-	wrapper/x.h
+	wrapper/x.h \
+	signal/signal.h
 
 VPATH		= $(CURRENT_PATH):$(BUILTIN_PATH):$(EXECUTE_PATH):$(EXECUTE_INT_PATH):$(WRAPPER_PATH):$(PARSER_PATH):$(PARSER_INT_PATH):$(LEXER_PATH):$(LEXER_INT_PATH):$(AST_PATH):$(UTILS_PATH):$(ENV_PATH):$(EXPANDER_PATH):$(EXPANDER_INT_PATH):$(TESTER_PATH):$(SIGNAL_PATH)
 
