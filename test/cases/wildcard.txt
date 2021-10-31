@@ -43,3 +43,10 @@ echo *.***
 echo ***.***
 echo *."*"
 echo e*t*
+echo *"**"
+echo M*"k"*le*
+echo M*k*le*
+echo mi*ni*she*ll
+echo mi*ni*she*ll*
+echo *.*
+echo *"."*
