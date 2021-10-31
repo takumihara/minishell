@@ -61,7 +61,8 @@ SRCS = \
     expander/expander.c \
     expander/internal/expander_remove_quotes.c \
     expander/internal/expander_quote_utils.c \
-    expander/internal/expander_wildcard.c \
+    expander/internal/expander_wildcard_new.c \
+    expander/internal/expander_wildcard_utils.c \
     expander/internal/expander_env.c \
     expander/internal/expander_word_splitting_utils.c \
     expander/internal/expander_error.c \
@@ -164,7 +165,7 @@ fclean: clean
 
 re: fclean all
 
-run:
+test: $(NAME)
 	./$(NAME)
 
 norm:

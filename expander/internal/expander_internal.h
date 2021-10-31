@@ -47,6 +47,15 @@ char		*expand_environment_variable(char *data, size_t replace_starts,
 char		*expand_wildcard(char *data, size_t pre_len);
 char		*handle_multiple_stars(char *data, size_t pre_len);
 
+// expander_wildcard_new.c
+char		*expand_wildcard(char *data, size_t pre_len);
+
+// expander_wildcard_utils.c
+bool		is_not_printable_dot_files(char *d_name, size_t len, char *data);
+char		*sort_strings(char *src, char *data);
+char		*append_wildcard_strings(char *dst, char *src, const char *data);
+char		*strrchr_skip_quotes(char *data, int c);
+
 // expander_remove_quote.c
 void		remove_null_argument(char *str);
 char		*remove_quotes(char *data);
