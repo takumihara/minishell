@@ -61,7 +61,8 @@ SRCS = \
     expander/expander.c \
     expander/internal/expander_remove_quotes.c \
     expander/internal/expander_quote_utils.c \
-    expander/internal/expander_wildcard_new.c \
+    expander/internal/expander_wildcard.c \
+    expander/internal/expander_wildcard_star_utils.c \
     expander/internal/expander_wildcard_utils.c \
     expander/internal/expander_env.c \
     expander/internal/expander_word_splitting_utils.c \
@@ -124,7 +125,7 @@ OBJS    	= $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.c=.o)))
 LIBFT_PATH	= libft
 
 CC      	= gcc
-CFLAGS   	= -Wall -Wextra -Werror #-fsanitize=address
+CFLAGS   	= -Wall -Wextra -Werror -fsanitize=address
 
 LIB			= -L$(LIBFT_PATH) -lft
 INCLUDE		=

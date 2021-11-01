@@ -1,88 +1,65 @@
 #include "expander_internal.h"
 
-static char	*append_wildcard_strings(char *dst, char *src, const char *data)
+static bool	find_mid_str(char *d_name, char *mid_start, size_t mid_len, size_t *name_pos)
 {
-	if (dst == data)
-		return (x_strdup(src));
+	char	*mid_pattern;
+	bool	match_mid_pattern;
+	char	*pattern_start;
+
+	match_mid_pattern = true;
+	mid_pattern = x_strndup(mid_start, mid_len);
+	mid_pattern = remove_quotes(mid_pattern);
+	pattern_start = ft_strstr(d_name, mid_pattern);
+	if (!pattern_start)
+		match_mid_pattern = false;
 	else
-	{
-		dst = strappend(dst, " ", 1);
-		dst = strappend(dst, src, ft_strlen(src));
-		return (dst);
-	}
+		*name_pos += pattern_start - d_name + ft_strlen(mid_pattern);
+	free(mid_pattern);
+	return (match_mid_pattern);
 }
 
-static bool	is_match_pattern(const char *data, size_t len, char *name)
+static bool	match_mid(char *data, char *d_name, size_t name_pos)
 {
-	size_t	i;
-	size_t	j;
-	int		s;
+	size_t		i;
+	size_t		len;
+	int			status;
+	int			star_count;
 
-	i = 0;
-	j = 0;
-	s = OUTSIDE;
-	while (i < len)
+	status = OUTSIDE;
+	star_count = 1;
+	i = name_pos;
+	len = name_pos;
+	while (data[i++])
 	{
-		s = quotation_status(data[i], s);
-		if ((data[i] == '\"' && (s == OUTSIDE || s == IN_DOUBLE_QUOTE))
-			|| (data[i] == '\'' && (s == OUTSIDE || s == IN_SINGLE_QUOTE)))
-		{	
-			i++;
-			continue ;
+		status = quotation_status(data[i], status);
+		if (data[i] == '*' && status == OUTSIDE)
+		{
+			if (!find_mid_str(&d_name[name_pos], &data[len + star_count],
+					i - len - star_count, &name_pos))
+				return (false);
+			len = i - star_count;
+			star_count++;
 		}
-		if (data[i++] != name[j++])
-			return (false);
 	}
 	return (true);
 }
 
-static char	*sort_strings(char *src, char *data)
+static bool
+	match_pre_post(char *data, char *d_name, size_t pre_len, size_t post_len)
 {
-	char	**wildcard_array;
-	size_t	word_num;
-	char	*rtn;
-	size_t	i;
+	const char	*post_start = strrchr_skip_quotes(data, '*') + 1;
 
-	free(data);
-	wildcard_array = x_split(src, ' ');
-	free(src);
-	word_num = 0;
-	while (wildcard_array[word_num])
-		word_num++;
-	quick_sort_str(wildcard_array, 0, word_num - 1);
-	rtn = NULL;
-	i = 0;
-	while (i < word_num)
-		rtn = append_wildcard_strings(rtn, wildcard_array[i++], NULL);
-	free_2d_array((void ***)&wildcard_array);
-	return (rtn);
+	return (strncmp_skip_quotes(data, d_name, pre_len)
+		&& strncmp_skip_quotes(post_start,
+			ft_strchr(d_name, 0) - unquoted_strlen(post_start), post_len));
 }
 
-static bool	is_not_printable_dot_files(char *d_name, size_t len, char *data)
-{
-	bool	valid_dot;
-	char	*data_copy;
-	char	*unquoted_data;
-
-	valid_dot = true;
-	data_copy = x_strndup(data, len);
-	unquoted_data = remove_quotes(data_copy);
-	if (!ft_strncmp(d_name, ".", 1) || !ft_strncmp(d_name, "..", 2))
-		if (!ft_strcmp(unquoted_data, "."))
-			valid_dot = false;
-	if (!ft_strncmp(d_name, "..", 2) && !ft_strcmp(unquoted_data, ".."))
-		valid_dot = false;
-	free(unquoted_data);
-	return (valid_dot);
-}
-
-char	*expand_wildcard(char *data, size_t pre_len)
+static char	*expand_matching_pattern(char *data, size_t pre_len)
 {
 	DIR				*dir;
 	struct dirent	*dp;
-	const char		*post_start = &data[pre_len + 1];
-	const size_t	post_len = unquoted_strlen(post_start);
 	char			*rtn;
+	const size_t	post_len = ft_strlen(strrchr_skip_quotes(data, '*') + 1);
 
 	dir = x_opendir(".");
 	rtn = data;
@@ -94,13 +71,33 @@ char	*expand_wildcard(char *data, size_t pre_len)
 		if (!ft_strncmp(dp->d_name, ".", 1) || !ft_strncmp(dp->d_name, "..", 2))
 			if (is_not_printable_dot_files(dp->d_name, pre_len, data))
 				continue ;
-		if (is_match_pattern(data, pre_len, dp->d_name)
-			&& is_match_pattern(post_start, post_len,
-				ft_strchr(dp->d_name, 0) - post_len))
+		if (match_pre_post(data, dp->d_name, pre_len, post_len)
+			&& match_mid(data, dp->d_name, pre_len))
 			rtn = append_wildcard_strings(rtn, dp->d_name, data);
 	}
 	x_closedir(dir);
 	if (rtn != data)
 		rtn = sort_strings(rtn, data);
 	return (rtn);
+}
+
+char	*expand_wildcard(char *data, size_t pre_len)
+{
+	char	*original_data;
+	bool	pattern_stars;
+
+	original_data = x_strdup(data);
+	data = remove_multi_stars(data);
+	pattern_stars = contain_stars_as_pattern(data);
+	data = expand_matching_pattern(data, pre_len);
+	if (!pattern_stars && ft_strchr(data, '*'))
+	{
+		free(data);
+		return (original_data);
+	}
+	else
+	{
+		free(original_data);
+		return (data);
+	}
 }
