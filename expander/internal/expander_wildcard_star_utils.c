@@ -22,21 +22,3 @@ char	*remove_multi_stars(char *data)
 	}
 	return (data);
 }
-
-bool	contain_stars_as_pattern(char *original_data)
-{
-	int		status;
-	size_t	i;
-
-	i = 0;
-	if (!ft_strcmp(original_data, "*"))
-		return (true);
-	while (original_data[i])
-	{
-		status = quotation_status(original_data[i], status);
-		if (status != OUTSIDE && original_data[i] == '*')
-			return (true);
-		i++;
-	}
-	return (false);
-}
