@@ -1,6 +1,7 @@
 #include "expander_internal.h"
 
-static bool	find_mid_str(char *d_name, char *mid_start, size_t mid_len, size_t *name_pos)
+static bool	find_mid_str(char *d_name, char *mid_start,
+	size_t mid_len, size_t *name_pos)
 {
 	char	*mid_pattern;
 	bool	match_mid_pattern;
