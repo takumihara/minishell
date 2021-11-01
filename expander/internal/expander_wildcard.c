@@ -46,9 +46,10 @@ static bool	match_mid(char *data, char *d_name, size_t name_pos)
 }
 
 static bool
-	match_pre_post(char *data, char *d_name, size_t pre_len, size_t post_len)
+	match_pre_post(char *data, char *d_name, size_t pre_len)
 {
-	const char	*post_start = strrchr_skip_quotes(data, '*') + 1;
+	const char		*post_start = strrchr_skip_quotes(data, '*') + 1;
+	const size_t	post_len = ft_strlen(post_start);
 
 	return (strncmp_skip_quotes(data, d_name, pre_len)
 		&& strncmp_skip_quotes(post_start,
@@ -60,7 +61,6 @@ static char	*expand_matching_pattern(char *data, size_t pre_len)
 	DIR				*dir;
 	struct dirent	*dp;
 	char			*rtn;
-	const size_t	post_len = ft_strlen(strrchr_skip_quotes(data, '*') + 1);
 
 	dir = x_opendir(".");
 	rtn = data;
@@ -72,7 +72,7 @@ static char	*expand_matching_pattern(char *data, size_t pre_len)
 		if (!ft_strncmp(dp->d_name, ".", 1) || !ft_strncmp(dp->d_name, "..", 2))
 			if (is_not_printable_dot_files(dp->d_name, pre_len, data))
 				continue ;
-		if (match_pre_post(data, dp->d_name, pre_len, post_len)
+		if (match_pre_post(data, dp->d_name, pre_len)
 			&& match_mid(data, dp->d_name, pre_len))
 			rtn = append_wildcard_strings(rtn, dp->d_name, data);
 	}
