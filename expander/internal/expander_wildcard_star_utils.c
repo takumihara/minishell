@@ -27,18 +27,16 @@ bool	contain_stars_as_pattern(char *original_data)
 {
 	int		status;
 	size_t	i;
-	bool	valid_stars;
 
 	i = 0;
-	valid_stars = false;
 	if (!ft_strcmp(original_data, "*"))
-		valid_stars = true;
+		return (true);
 	while (original_data[i])
 	{
 		status = quotation_status(original_data[i], status);
 		if (status != OUTSIDE && original_data[i] == '*')
-			valid_stars = true;
+			return (true);
 		i++;
 	}
-	return (valid_stars);
+	return (false);
 }
