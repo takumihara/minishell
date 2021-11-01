@@ -25,6 +25,9 @@
 # define NO_ERR 0
 # define AMBIGUOUS_REDIRECT_ERR 1
 
+# define PRE 0
+# define POST 1
+
 typedef struct s_expander	t_expander;
 
 struct s_expander {
@@ -47,7 +50,6 @@ char		*expand_wildcard(char *data, size_t pre_len);
 
 // expander_wildcard_star_utils.c
 char		*remove_multi_stars(char *data);
-bool		contain_stars_as_pattern(char *original_data);
 
 // expander_wildcard_utils.c
 bool		is_not_printable_dot_files(char *d_name, size_t len, char *data);

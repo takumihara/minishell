@@ -1,6 +1,6 @@
 #include "expander_internal.h"
 
-static bool	find_mid_str(char *d_name, char *mid_start,
+static bool	match_mid(char *d_name, char *mid_start,
 	size_t mid_len, size_t *name_pos)
 {
 	char	*mid_pattern;
@@ -19,13 +19,34 @@ static bool	find_mid_str(char *d_name, char *mid_start,
 	return (match_mid_pattern);
 }
 
-static bool	match_mid(char *data, char *d_name, size_t name_pos)
+static bool
+	match_pre_post(char *data, char *d_name, size_t pre_len, int type)
+{
+	const char		*post_data_start = strrchr_skip_quotes(data, '*') + 1;
+	const size_t	post_data_len = ft_strlen(post_data_start);
+	const size_t	post_d_name_len = ft_strlen(d_name);
+
+	if (type == PRE)
+		return (strncmp_skip_quotes(data, d_name, pre_len));
+	else
+	{
+		if (post_data_len > post_d_name_len)
+			return (false);
+		return (strncmp_skip_quotes(post_data_start,
+				ft_strchr(d_name, 0) - unquoted_strlen(post_data_start),
+				post_data_len));
+	}
+}
+
+static bool	match_pattern(char *data, char *d_name, size_t name_pos)
 {
 	size_t		i;
 	size_t		len;
 	int			status;
 	int			star_count;
 
+	if (!match_pre_post(data, d_name, name_pos, PRE))
+		return (false);
 	status = OUTSIDE;
 	star_count = 1;
 	i = name_pos;
@@ -35,25 +56,14 @@ static bool	match_mid(char *data, char *d_name, size_t name_pos)
 		status = quotation_status(data[i], status);
 		if (data[i] == '*' && status == OUTSIDE)
 		{
-			if (!find_mid_str(&d_name[name_pos], &data[len + star_count],
+			if (!match_mid(&d_name[name_pos], &data[len + star_count],
 					i - len - star_count, &name_pos))
 				return (false);
 			len = i - star_count;
 			star_count++;
 		}
 	}
-	return (true);
-}
-
-static bool
-	match_pre_post(char *data, char *d_name, size_t pre_len)
-{
-	const char		*post_start = strrchr_skip_quotes(data, '*') + 1;
-	const size_t	post_len = ft_strlen(post_start);
-
-	return (strncmp_skip_quotes(data, d_name, pre_len)
-		&& strncmp_skip_quotes(post_start,
-			ft_strchr(d_name, 0) - unquoted_strlen(post_start), post_len));
+	return (match_pre_post(data, &d_name[name_pos], 0, POST));
 }
 
 static char	*expand_matching_pattern(char *data, size_t pre_len)
@@ -72,8 +82,7 @@ static char	*expand_matching_pattern(char *data, size_t pre_len)
 		if (!ft_strncmp(dp->d_name, ".", 1) || !ft_strncmp(dp->d_name, "..", 2))
 			if (is_not_printable_dot_files(dp->d_name, pre_len, data))
 				continue ;
-		if (match_pre_post(data, dp->d_name, pre_len)
-			&& match_mid(data, dp->d_name, pre_len))
+		if (match_pattern(data, dp->d_name, pre_len))
 			rtn = append_wildcard_strings(rtn, dp->d_name, data);
 	}
 	x_closedir(dir);
@@ -85,19 +94,21 @@ static char	*expand_matching_pattern(char *data, size_t pre_len)
 char	*expand_wildcard(char *data, size_t pre_len)
 {
 	char	*original_data;
-	bool	pattern_stars;
+	char	*removed_stars_data;
 
 	original_data = x_strdup(data);
 	data = remove_multi_stars(data);
-	pattern_stars = contain_stars_as_pattern(data);
+	removed_stars_data = x_strdup(data);
 	data = expand_matching_pattern(data, pre_len);
-	if (!pattern_stars && ft_strchr(data, '*'))
+	if (!ft_strcmp(removed_stars_data, data))
 	{
+		free(removed_stars_data);
 		free(data);
 		return (original_data);
 	}
 	else
 	{
+		free(removed_stars_data);
 		free(original_data);
 		return (data);
 	}
