@@ -262,7 +262,55 @@ int main(int ac, char **av) {
 		test_expander(input, expected, WORD_SPLIT);
 	}
 	{
-		char input[] = "echo \"..\"**";
+		char input[] = "echo *.***";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "hogels -lecho"},
+				{COMMAND_ARG_NODE, "hello"},
+		};
+		test_expander(input, expected, WORD_SPLIT);
+	}
+	{
+		char input[] = "echo ***.***";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "hogels -lecho"},
+				{COMMAND_ARG_NODE, "hello"},
+		};
+		test_expander(input, expected, WORD_SPLIT);
+	}
+	{
+		char input[] = "echo *.\"*\"";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "hogels -lecho"},
+				{COMMAND_ARG_NODE, "hello"},
+		};
+		test_expander(input, expected, WORD_SPLIT);
+	}
+	{
+		char input[] = "echo M*\"k\"*le*";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "hogels -lecho"},
+				{COMMAND_ARG_NODE, "hello"},
+		};
+		test_expander(input, expected, WORD_SPLIT);
+	}
+	{
+		char input[] = "echo mi*ni*she*ll*";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "hogels -lecho"},
+				{COMMAND_ARG_NODE, "hello"},
+		};
+		test_expander(input, expected, WORD_SPLIT);
+	}
+	{
+		char input[] = "echo mi*ni*she*ll";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "hogels -lecho"},
+				{COMMAND_ARG_NODE, "hello"},
+		};
+		test_expander(input, expected, WORD_SPLIT);
+	}
+	{
+		char input[] = "echo *\".\"*";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "hogels -lecho"},
 				{COMMAND_ARG_NODE, "hello"},
