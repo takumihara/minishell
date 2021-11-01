@@ -83,4 +83,3 @@ export TEST=res && cat < $TEST
 export TEST=res* && cat < $TEST
 export TEST="res res2" && cat < $TEST
 export TEST= && cat < $TEST
-touch strstrstr && echo strs*str*rstr && rm strstrstr

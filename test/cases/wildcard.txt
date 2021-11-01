@@ -50,3 +50,4 @@ echo mi*ni*she*ll
 echo mi*ni*she*ll*
 echo *.*
 echo *"."*
+touch strstrstr && echo strs*str*rstr && rm strstrstr
