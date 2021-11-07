@@ -20,50 +20,43 @@ static bool	match_mid(char *d_name, char *mid_start,
 }
 
 static bool
-	match_pre_post(char *data, char *d_name, size_t pre_len, int type)
+	match_post(char *data, char *d_name)
 {
 	const char		*post_data_start = strrchr_skip_quotes(data, '*') + 1;
 	const size_t	post_data_len = ft_strlen(post_data_start);
 	const size_t	post_d_name_len = ft_strlen(d_name);
 
-	if (type == PRE)
-		return (strncmp_skip_quotes(data, d_name, pre_len));
-	else
-	{
-		if (post_data_len > post_d_name_len)
-			return (false);
-		return (strncmp_skip_quotes(post_data_start,
-				ft_strchr(d_name, 0) - unquoted_strlen(post_data_start),
-				post_data_len));
-	}
+	if (post_data_len > post_d_name_len)
+		return (false);
+	return (strncmp_skip_quotes(post_data_start,
+			ft_strchr(d_name, 0) - unquoted_strlen(post_data_start),
+			post_data_len));
 }
 
 static bool	match_pattern(char *data, char *d_name, size_t name_pos)
 {
+	const bool	pre_matched = strncmp_skip_quotes(data, d_name, name_pos);
 	size_t		i;
-	size_t		len;
+	size_t		last_star_pos;
 	int			status;
-	int			star_count;
 
-	if (!match_pre_post(data, d_name, name_pos, PRE))
+	if (!pre_matched)
 		return (false);
 	status = OUTSIDE;
-	star_count = 1;
 	i = name_pos;
-	len = name_pos;
+	last_star_pos = name_pos;
 	while (data[i++])
 	{
 		status = quotation_status(data[i], status);
 		if (data[i] == '*' && status == OUTSIDE)
 		{
-			if (!match_mid(&d_name[name_pos], &data[len + star_count],
-					i - len - star_count, &name_pos))
+			if (!match_mid(&d_name[name_pos], &data[last_star_pos + 1],
+					i - last_star_pos - 1, &name_pos))
 				return (false);
-			len = i - star_count;
-			star_count++;
+			last_star_pos = i;
 		}
 	}
-	return (match_pre_post(data, &d_name[name_pos], 0, POST));
+	return (match_post(data, &d_name[name_pos]));
 }
 
 static char	*expand_matching_pattern(char *data, size_t pre_len)

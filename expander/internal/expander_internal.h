@@ -25,9 +25,6 @@
 # define NO_ERR 0
 # define AMBIGUOUS_REDIRECT_ERR 1
 
-# define PRE 0
-# define POST 1
-
 typedef struct s_expander	t_expander;
 
 struct s_expander {
