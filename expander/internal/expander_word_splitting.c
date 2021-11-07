@@ -94,12 +94,12 @@ static bool	split_arg_node(char **split, t_ast_node *node,
 			if (node->type != COMMAND_ARG_NODE && ft_strcmp(split[i], expanded))
 				return (false);
 			free(node->data);
-			node->data = remove_quotes(split[i]);
+			node->data = split[i];
 		}
 		else
 		{
 			new_ast_node(&result);
-			result->data = remove_quotes(split[i]);
+			result->data = split[i];
 			result->type = COMMAND_ARG_NODE;
 			node->right = result;
 			node = node->right;
