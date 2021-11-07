@@ -1,17 +1,5 @@
 #include "expander_internal.h"
 
-static size_t	var_strlen(const char *str)
-{
-	size_t	len;
-
-	len = 0;
-	if (*str == '?')
-		return (1);
-	while (!ft_strchr(EXPANSION_DELIMITER, str[len]))
-		len++;
-	return (len);
-}
-
 static char	*str_insert(char *data, size_t replace_start,
 				char *env_value, size_t env_value_len)
 {
@@ -34,16 +22,7 @@ static char	*str_insert(char *data, size_t replace_start,
 	return (data);
 }
 
-static bool	is_expandable_env_var(char start, int status)
-{
-	if (ft_isspace(start) || start == '\0')
-		return (false);
-	else if (status == IN_DOUBLE_QUOTE && (start == '\'' || start == '\"'))
-		return (false);
-	return (true);
-}
-
-char	*expand_environment_variable(char *data, size_t replace_start,
+static char	*expand_environment_variable(char *data, size_t replace_start,
 	t_expander *e, int status)
 {
 	const char		*var_start = &data[replace_start + 1];
@@ -67,4 +46,29 @@ char	*expand_environment_variable(char *data, size_t replace_start,
 		return (str_insert(data, replace_start, value, ft_strlen(value)));
 	else
 		return (str_insert(data, replace_start, "", 0));
+}
+
+char	*variable_expansion(t_expander *e, char *data)
+{
+	int		status;
+	size_t	i;
+	char	*pre_expansion_data;
+
+	i = 0;
+	status = OUTSIDE;
+	while (data[i])
+	{
+		status = quotation_status(data[i], status);
+		if (data[i] == '$' && status != IN_SINGLE_QUOTE)
+		{
+			pre_expansion_data = x_strdup(data);
+			data = expand_environment_variable(data, i, e, status);
+			if (is_expanded_data(pre_expansion_data, data))
+				continue ;
+		}
+		if (!data[i])
+			break ;
+		i++;
+	}
+	return (data);
 }

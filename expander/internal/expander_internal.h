@@ -39,8 +39,12 @@ void		new_expander(t_expander **e, t_env_var *env_vars);
 int			quotation_status(char c, int status);
 
 // expander_env.c
-char		*expand_environment_variable(char *data, size_t replace_starts,
-				t_expander *e, int status);
+char		*variable_expansion(t_expander *e, char *data);
+
+// expander_env_utils.c
+bool		is_expanded_data(char *pre_expansion_data, char *data);
+bool		is_expandable_env_var(char start, int status);
+size_t		var_strlen(const char *str);
 
 // expander_wildcard.c
 char		*expand_wildcard(char *data, size_t pre_len);
