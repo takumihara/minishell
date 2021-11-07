@@ -69,7 +69,8 @@ bool		is_quote(const char c);
 size_t		unquoted_strlen(const char *str);
 
 // expander_word_splitting.c
-void		word_splitting(t_ast_node *node, t_expander *e, char *orig_data);
+void		word_splitting(t_ast_node *node, t_expander *e, char *orig_data,
+				const t_ast_node *original_right);
 
 // expander_word_splitting_utils.c
 size_t		skip_quotes(const char *str, char quote_type);

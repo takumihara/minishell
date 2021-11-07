@@ -81,9 +81,8 @@ static char	**split_by_space_skip_quotes(char const *str, const char *delims)
 }
 
 static bool	split_arg_node(char **split, t_ast_node *node,
-		char *expanded)
+		char *expanded, const t_ast_node *original_right)
 {
-	const t_ast_node	*original_right = node->right;
 	int					i;
 	t_ast_node			*result;
 
@@ -110,7 +109,8 @@ static bool	split_arg_node(char **split, t_ast_node *node,
 	return (true);
 }
 
-void	word_splitting(t_ast_node *node, t_expander *e, char *original_data)
+void	word_splitting(t_ast_node *node, t_expander *e, char *original_data,
+	const t_ast_node *original_right)
 {
 	char	**split;
 	char	*expanded_data;
@@ -118,7 +118,7 @@ void	word_splitting(t_ast_node *node, t_expander *e, char *original_data)
 	expanded_data = x_strdup(node->data);
 	remove_null_argument(node->data);
 	split = split_by_space_skip_quotes(node->data, " \t\n");
-	if (!split_arg_node(split, node, expanded_data))
+	if (!split_arg_node(split, node, expanded_data, original_right))
 	{
 		free_2d_array((void ***)&split);
 		expand_redirect_error(original_data, e);

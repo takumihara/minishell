@@ -3,7 +3,8 @@
 
 static void	search_expandable_node(t_expander *e, t_ast_node *node)
 {
-	char		*original_data;
+	const t_ast_node	*original_right = node->right;
+	char				*original_data;
 
 	if (!node)
 		return ;
@@ -16,9 +17,9 @@ static void	search_expandable_node(t_expander *e, t_ast_node *node)
 		return ;
 	original_data = x_strdup(node->data);
 	node->data = variable_expansion(e, node->data);
-	// node->data = expand_word(e, node->data, '*');
 	if (!is_empty_data(e, node, original_data))
-		word_splitting(node, e, original_data);
+		word_splitting(node, e, original_data, original_right);
+	filename_expansion(node, e, original_data, original_right);
 	free(original_data);
 }
 
