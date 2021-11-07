@@ -37,7 +37,6 @@ struct s_expander {
 // expander_utils.c
 void		new_expander(t_expander **e, t_env_var *env_vars);
 int			quotation_status(char c, int status);
-char		*handle_multiple_stars(char *data, size_t pre_len);
 
 // expander_env.c
 char		*expand_environment_variable(char *data, size_t replace_starts,
@@ -45,7 +44,16 @@ char		*expand_environment_variable(char *data, size_t replace_starts,
 
 // expander_wildcard.c
 char		*expand_wildcard(char *data, size_t pre_len);
-char		*handle_multiple_stars(char *data, size_t pre_len);
+
+// expander_wildcard_star_utils.c
+char		*remove_multi_stars(char *data);
+
+// expander_wildcard_utils.c
+bool		is_specified_dot_files(char *d_name, size_t len, char *data);
+char		*sort_strings(char *src, char *data);
+char		*append_wildcard_strings(char *dst, char *src, const char *data);
+char		*strrchr_skip_quotes(char *data, int c);
+bool		strncmp_skip_quotes(const char *data, char *d_name, size_t len);
 
 // expander_remove_quote.c
 void		remove_null_argument(char *str);

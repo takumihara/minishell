@@ -38,3 +38,16 @@ export wildcard="*" && echo '"$wildcard"'
 export wildcard="*" && echo $wildcard.c
 export wildcard="*" && echo .$wildcard
 nothandled && echo ${wildcard}c
+echo *.*
+echo *.***
+echo ***.***
+echo *."*"
+echo e*t*
+echo *"**"
+echo M*"k"*le*
+echo M*k*le*
+echo mi*ni*she*ll
+echo mi*ni*she*ll*
+echo *.*
+echo *"."*
+touch strstrstr && echo strs*str*rstr && rm strstrstr
