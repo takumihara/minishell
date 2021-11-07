@@ -80,7 +80,7 @@ static char	*expand_matching_pattern(char *data, size_t pre_len)
 		if (!dp)
 			break ;
 		if (!ft_strncmp(dp->d_name, ".", 1) || !ft_strncmp(dp->d_name, "..", 2))
-			if (is_not_printable_dot_files(dp->d_name, pre_len, data))
+			if (!is_specified_dot_files(dp->d_name, pre_len, data))
 				continue ;
 		if (match_pattern(data, dp->d_name, pre_len))
 			rtn = append_wildcard_strings(rtn, dp->d_name, data);

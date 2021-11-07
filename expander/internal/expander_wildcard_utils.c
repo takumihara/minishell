@@ -1,19 +1,18 @@
 #include "expander_internal.h"
 
-bool	is_not_printable_dot_files(char *d_name, size_t len, char *data)
+bool	is_specified_dot_files(char *d_name, size_t len, char *data)
 {
 	bool	valid_dot;
 	char	*data_copy;
 	char	*unquoted_data;
 
-	valid_dot = true;
+	valid_dot = false;
 	data_copy = x_strndup(data, len);
 	unquoted_data = remove_quotes(data_copy);
-	if (!ft_strncmp(d_name, ".", 1) || !ft_strncmp(d_name, "..", 2))
-		if (!ft_strcmp(unquoted_data, "."))
-			valid_dot = false;
+	if (!ft_strcmp(unquoted_data, "."))
+		valid_dot = true;
 	if (!ft_strncmp(d_name, "..", 2) && !ft_strcmp(unquoted_data, ".."))
-		valid_dot = false;
+		valid_dot = true;
 	free(unquoted_data);
 	return (valid_dot);
 }

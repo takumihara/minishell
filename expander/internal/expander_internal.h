@@ -52,7 +52,7 @@ char		*expand_wildcard(char *data, size_t pre_len);
 char		*remove_multi_stars(char *data);
 
 // expander_wildcard_utils.c
-bool		is_not_printable_dot_files(char *d_name, size_t len, char *data);
+bool		is_specified_dot_files(char *d_name, size_t len, char *data);
 char		*sort_strings(char *src, char *data);
 char		*append_wildcard_strings(char *dst, char *src, const char *data);
 char		*strrchr_skip_quotes(char *data, int c);
