@@ -317,6 +317,32 @@ int main(int ac, char **av) {
 		};
 		test_expander(input, expected, WORD_SPLIT);
 	}
+	{
+		char input[] = "echo hello > res*";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "hogels -lecho"},
+				{COMMAND_ARG_NODE, "hello"},
+		};
+		test_expander(input, expected, WORD_SPLIT);
+	}
+	{
+		if (setenv("TEST", "res res1", 1) != 0)
+			perror("setenv");
+		char input[] = "echo hello > $TEST";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "hello"},
+		};
+		test_expander(input, expected, ENV_VARS);
+	}
+	{
+		char input[] = "echo hello > $TEST";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "echo"},
+				{COMMAND_ARG_NODE, "hello"},
+		};
+		test_expander(input, expected, ENV_VARS);
+	}
 	system("leaks a.out");
 }
 
