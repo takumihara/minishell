@@ -62,6 +62,9 @@ SRCS = \
     expander/internal/expander_remove_quotes.c \
     expander/internal/expander_quote_utils.c \
     expander/internal/expander_wildcard.c \
+    expander/internal/expander_wildcard_lst.c \
+    expander/internal/expander_wildcard_matching_pattern.c \
+    expander/internal/expander_wildcard_sort.c \
     expander/internal/expander_wildcard_star_utils.c \
     expander/internal/expander_wildcard_utils.c \
     expander/internal/expander_env.c \
