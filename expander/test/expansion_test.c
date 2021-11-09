@@ -318,7 +318,19 @@ int main(int ac, char **av) {
 		test_expander(input, expected, WORD_SPLIT);
 	}
 	{
-		char input[] = "echo hello > res*";
+		if (setenv("TEST", "res* res*", 1) != 0)
+			perror("setenv");
+		char input[] = "echo hello > $TEST";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "hogels -lecho"},
+				{COMMAND_ARG_NODE, "hello"},
+		};
+		test_expander(input, expected, WORD_SPLIT);
+	}
+	{
+		if (setenv("TEST", "res* res*", 1) != 0)
+			perror("setenv");
+		char input[] = "echo $TEST";
 		t_test expected[] = {
 				{COMMAND_ARG_NODE, "hogels -lecho"},
 				{COMMAND_ARG_NODE, "hello"},
@@ -343,6 +355,14 @@ int main(int ac, char **av) {
 		};
 		test_expander(input, expected, ENV_VARS);
 	}
+	{
+		char input[] = "echo res*";
+		t_test expected[] = {
+				{COMMAND_ARG_NODE, "hogels -lecho"},
+				{COMMAND_ARG_NODE, "hello"},
+		};
+		test_expander(input, expected, WORD_SPLIT);
+	}
 	system("leaks a.out");
 }
 
@@ -361,7 +381,6 @@ void test_expander(char input[], t_test *expected, int test_type) {
 	t_token		*token = lex(input);
 	t_ast_node	*root = parse(token);
 	t_env_var	*env_vars = init_env_lst();
-				root = expand(root, &env_vars);
 	// if (!res) {
 	// 	fprintf(stderr, RED "parse() returned NULL!\n" RESET);
 	// 	err_cnt++;
@@ -377,6 +396,7 @@ void test_expander(char input[], t_test *expected, int test_type) {
 	// 		err_cnt++;
 	// 	}
 	// } else {
+		expand(root, &env_vars);
 		ast_index = 0;
 		print_ast_nodes(root, 0);
 		ast_index = 0;
