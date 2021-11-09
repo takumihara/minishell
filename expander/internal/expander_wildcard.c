@@ -32,18 +32,12 @@ void	filename_expansion(t_ast_node *node, t_expander *e, char *original_data,
 	t_ast_node	*tmp_right;
 	size_t		pre_len;
 
-
 	while (node != original_right)
 	{
 		tmp_right = node->right;
 		if (contain_expandable_star(node->data, &pre_len))
-		{
 			if (!expand_wildcard(node, pre_len, tmp_right))
-			{
 				expand_redirect_error(original_data, e);
-				return ;
-			}
-		}
 		node = tmp_right;
 	}
 }
