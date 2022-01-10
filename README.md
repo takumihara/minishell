@@ -1,5 +1,3 @@
-# README.ja
-
 ## 概要
 
 GNU bash (version 3.2.57) の再実装です。
