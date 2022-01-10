@@ -6,7 +6,7 @@ GNU bash (version 3.2.57) の再実装です。
 
 ## デモ
 
-![demo.gif](https://github.com/tacomeet/minishell/tree/master/gif/demo.gif)
+![demo.gif](https://github.com/tacomeet/minishell/blob/master/gif/demo.gif?raw=true)
 
 ## インストール方法
 
