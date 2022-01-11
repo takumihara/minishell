@@ -134,36 +134,36 @@ typedef struct s_token {
 ```c
 // parser/minishell.bnf
 <command_line>	::= <pipeline> '&&' <newline> <command_line> //パターン1
-								|   <pipeline> '||' <newline> <command_line> //パターン2
-								|   <pipeline> //パターン3
+		|   <pipeline> '||' <newline> <command_line> //パターン2
+		|   <pipeline> //パターン3
 
 <pipeline>	::=  <command> '|' <newline> <pipeline>
-						|    <command>
+		|    <command>
 
 <command>	::= <subshell>
-					|	  <simple_command>
+		|   <simple_command>
 
-<subshell>	::=	'(' <compound_list> ')' <redirection_list>
-						|	  '(' <compound_list> ')'
+<subshell>	::= '(' <compound_list> ')' <redirection_list>
+		|   '(' <compound_list> ')'
 
-<compound_list>	::=	<pipeline> '&&' <newline> <compound_list>
-       					|	  <pipeline> '||' <newline> <compound_list>
-      		   		|	  <pipeline> '\n' <newline> <compound_list>
-        		 		|	  <pipeline>
+<compound_list>	::= <pipeline> '&&' <newline> <compound_list>
+       		|   <pipeline> '||' <newline> <compound_list>
+      		|   <pipeline> '\n' <newline> <compound_list>
+        	|   <pipeline>
 
-<simple_command>	::= <simple_command_element> <simple_command>
-									|   <simple_command_element>
+<simple_command> ::= <simple_command_element> <simple_command>
+		 |   <simple_command_element>
 
-<simple_command_element>	::= <word>
-													|	  <redirection>
+<simple_command_element> ::= <word>
+			 |   <redirection>
 
 <redirection_list> ::= <redirection> <redirection_list>
                    |   <redirection>
 
 <redirection>	::= <number>? '>' <word>
-							|	<number>? '<' <word>
-							|	<number>? '>>' <word>
-							|	<number>? '<<' <word>
+		|   <number>? '<' <word>
+		|   <number>? '>>' <word>
+		|   <number>? '<<' <word>
 ```
 
 ```c
