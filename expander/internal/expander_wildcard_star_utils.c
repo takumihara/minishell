@@ -22,3 +22,23 @@ char	*remove_multi_stars(char *data)
 	}
 	return (data);
 }
+
+bool	contain_expandable_star(char *data, size_t *pre_len)
+{
+	size_t	i;
+	int		status;
+
+	i = 0;
+	status = OUTSIDE;
+	while (data[i])
+	{
+		status = quotation_status(data[i], status);
+		if (data[i] == '*' && status == OUTSIDE)
+		{
+			*pre_len = i;
+			return (true);
+		}
+		i++;
+	}
+	return (false);
+}

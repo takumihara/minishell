@@ -67,3 +67,12 @@ char	*remove_quotes(char *data)
 	free(data);
 	return (unquoted_str);
 }
+
+void	quotes_removal(t_ast_node *node, t_ast_node *original_right)
+{
+	while (node != original_right)
+	{
+		node->data = remove_quotes(node->data);
+		node = node->right;
+	}
+}
