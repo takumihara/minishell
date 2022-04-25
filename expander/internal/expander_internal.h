@@ -65,8 +65,8 @@ void		expand_matching_pattern(t_ast_node *node, char *data,
 void		append_pattern_list(t_wildcard **pattern_list, const char *data);
 t_wildcard	*pattern_lstlast(t_wildcard *pattern_list);
 void		delete_pattern_list(t_wildcard *pattern_list);
-void		expand_node_from_pattern_list(t_ast_node *node, t_ast_node *tmp_right,
-				t_wildcard *pattern_list);
+void		expand_node_from_pattern_list(t_ast_node *node,
+				t_ast_node *tmp_right, t_wildcard *pattern_list);
 
 // expander_wildcard_sort.c
 void		sort_pattern(t_wildcard *pattern_list);
