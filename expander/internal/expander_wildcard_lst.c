@@ -18,7 +18,7 @@ static t_wildcard	*init_pattern_list(const char *data, t_wildcard *prev)
 	t_wildcard	*new;
 
 	new = malloc(sizeof(*new));
-	new->data = strdup(data);
+	new->data = x_strdup(data);
 	new->prev = prev;
 	new->next = NULL;
 	if (prev)
