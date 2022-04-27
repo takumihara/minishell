@@ -15,7 +15,6 @@
 # include "lexer/lexer.h"
 # include "expander/expander.h"
 # include "execute/execute.h"
-# include "utils/get_next_line.h"
 # include "execute/exit_status.h"
 # include "env/env.h"
 # include "signal/signal.h"

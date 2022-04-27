@@ -1,7 +1,8 @@
-#include <fcntl.h>
+# include <stdio.h>
+# include <readline/readline.h>
+# include <sys/fcntl.h>
 
 #include "../execute.h"
-#include "../../utils/get_next_line.h"
 #include "execute_internal.h"
 
 static int	execute_heredoc(char *delim);
@@ -37,26 +38,46 @@ void	new_redirect_in(t_simple_command *sc, char *data, t_node_type type)
 		}
 	}
 	else if (type == HEREDOC_NODE)
+	{
 		sc->r_in = execute_heredoc(data);
+		if (sc->r_in == -1)
+			sc->err = REDIRECT_ERR;
+	}
 }
 
-int	execute_heredoc(char *delim)
+void	execute_heredoc_child(char *delim, int pipefd[2])
 {
-	int		pipefd[2];
-	int		status;
 	char	*line;
 
-	x_pipe(pipefd);
+	close(pipefd[READ]);
 	while (1)
 	{
-		ft_putstr_fd("> ", STDOUT_FILENO);
-		status = x_get_next_line(STDIN_FILENO, &line);
-		if (status == GNL_STATUS_DONE || !ft_strcmp(line, delim))
+		line = readline("> ");
+		if (!line || !ft_strcmp(line, delim))
 			break ;
 		ft_putendl_fd(line, pipefd[WRITE]);
 		free(line);
 	}
 	free(line);
 	close(pipefd[WRITE]);
+	exit(EXIT_SUCCESS);
+}
+
+int	execute_heredoc(char *delim)
+{
+	pid_t	pid;
+	int		pipefd[2];
+	int		statloc;
+
+	x_pipe(pipefd);
+	pid = x_fork();
+	if (pid == CHILD_PROCESS)
+	{
+		x_signal(SIGINT, SIG_DFL);
+		execute_heredoc_child(delim, pipefd);
+	}
+	close(pipefd[WRITE]);
+	if (wait(&statloc) == pid && WIFSIGNALED(statloc))
+		pipefd[READ] = -1;
 	return (pipefd[READ]);
 }
