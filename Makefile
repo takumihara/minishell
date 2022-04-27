@@ -24,7 +24,6 @@ SRCS = \
     wrapper/x_dup2.c \
     wrapper/x_strdup.c \
     wrapper/x_stat.c \
-    wrapper/x_get_next_line.c \
     wrapper/x_substr.c \
     wrapper/x_signal.c \
     wrapper/x_split.c \
@@ -45,7 +44,6 @@ SRCS = \
     utils/read_all.c \
     utils/ft_strstr.c \
     utils/quick_sort_str.c \
-    utils/get_next_line.c \
     utils/atoi_strict.c \
     utils/strjoin_three.c \
     utils/perror_exit.c \
@@ -117,7 +115,6 @@ HEADERS	= \
 	parser/internal/parser_internal.h \
 	parser/parser.h \
 	token/token.h \
-	utils/get_next_line.h \
 	utils/utils.h \
 	wrapper/x.h \
 	signal/signal.h

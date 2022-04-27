@@ -29,8 +29,8 @@ int	minishell_repl(t_env_var **env_vars)
 		}
 		if (g_signal == SIGINT)
 			register_env_var_from_literal("?", NULL, 1, env_vars);
-		exit_status = execute(parse(lex(line)), env_vars, true);
 		add_history(line);
+		exit_status = execute(parse(lex(line)), env_vars, true);
 		free(line);
 	}
 	return (exit_status);
