@@ -362,6 +362,7 @@ void	new_redirect_in(t_simple_command *sc, char *data, t_node_type type)
 - [C 言語で glob](https://qiita.com/sassy_watson/items/03c16bd03b56e5579477)
 - [gnu libc manual](https://www.gnu.org/software/libc/manual/html_node/Freeing-after-Malloc.html)
 - [Go 言語でつくるインタプリタ](https://www.oreilly.co.jp/books/9784873118222/)
+- [詳解UNIXプログラミング](https://www.amazon.co.jp/dp/B00KRB9U8K/ref=dp-kindle-redirect?_encoding=UTF8&btkr=1)
 
 ## テスター
 
