@@ -1,6 +1,6 @@
-# include <stdio.h>
-# include <readline/readline.h>
-# include <sys/fcntl.h>
+#include <stdio.h>
+#include <readline/readline.h>
+#include <sys/fcntl.h>
 
 #include "../execute.h"
 #include "execute_internal.h"
