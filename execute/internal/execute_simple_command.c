@@ -28,12 +28,12 @@ int	execute_simple_command(t_executor *e,
 	pid = x_fork();
 	if (pid == CHILD_PROCESS)
 	{
+		x_signal(SIGQUIT, SIG_DFL);
 		if (info->is_pipe && !info->is_last)
 			close(info->pipefd[READ]);
 		if (execute_builtin(e, sc->argc, sc->argv, info->is_pipe))
 			exit(EXIT_SUCCESS);
-		path = get_cmd_path(e, sc->argv[0]);
-		if (!path)
+		if (!get_cmd_path(e, sc->argv[0], &path))
 			handle_exec_error(sc->argv[0], false);
 		if (execve(path, sc->argv, create_envp(e)) == -1)
 			handle_exec_error(path, true);

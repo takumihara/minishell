@@ -36,7 +36,11 @@ void	get_child_process_status(t_executor *e,
 			if (WIFEXITED(statloc))
 				e->exit_status = WEXITSTATUS(statloc);
 			else if (WIFSIGNALED(statloc))
+			{
+				if (WTERMSIG(statloc) == SIGQUIT)
+					ft_putendl_fd("Quit: 3", STDERR_FILENO);
 				e->exit_status = ES_SIGNAL + WTERMSIG(statloc);
+			}
 		}
 	}
 }
