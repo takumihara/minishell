@@ -99,7 +99,7 @@ bool	is_execute_condition(int condition, int exit_status);
 bool	is_dir(const char *path);
 
 // get_cmd_path.c
-char	*get_cmd_path(t_executor *e, char *command);
+bool	get_cmd_path(t_executor *e, char *command, char **path);
 
 // create_envp.c
 char	**create_envp(t_executor *e);

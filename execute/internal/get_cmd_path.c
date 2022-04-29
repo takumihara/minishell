@@ -4,19 +4,26 @@
 
 static char	*get_proper_mode_path(char **paths, char *command);
 
-char	*get_cmd_path(t_executor *e, char *command)
+bool	get_cmd_path(t_executor *e, char *command, char **path)
 {
 	const char	*path_from_env = get_env_value("PATH", *e->env_vars);
 	char		**paths;
-	char		*path;
 
 	if (ft_strchr(command, '/') || !path_from_env)
-		return (x_strdup(command));
+	{
+		*path = x_strdup(command);
+		return (true);
+	}
 	paths = split_path_from_env(path_from_env);
 	if (!paths)
-		return (x_strdup(command));
-	path = get_proper_mode_path(paths, command);
-	return (path);
+	{
+		*path = x_strdup(command);
+		return (true);
+	}
+	*path = get_proper_mode_path(paths, command);
+	if (*path == NULL)
+		return (false);
+	return (true);
 }
 
 char	*get_proper_mode_path(char **paths, char *command)
