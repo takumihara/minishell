@@ -87,18 +87,18 @@ t_token	*lex(char *input)
 	new_lexer(&l, input);
 	token.next = NULL;
 	tmp = &token;
-  // read_char()関数で文字列を読み進めていく。
+  	// read_char()関数で文字列を読み進めていく。
 	read_char(l);
 	while (1)
 	{
-    // 解析した各トークンを、リストとして繋げていく。
+    		// 解析した各トークンを、リストとして繋げていく。
 		tmp->next = next_token(l);
 		if (tmp->next->type == EOL)
 			break ;
 		tmp = tmp->next;
 	}
 	free(l);
-  // 作成したリストの先頭ポインタを返し、Parserに渡す。
+  	// 作成したリストの先頭ポインタを返し、Parserに渡す。
 	return (token.next);
 }
 ```
@@ -219,10 +219,10 @@ void	search_expandable_node(t_expander *e, t_ast_node *node)
 	// ノードの終端にたどり着いたらreturn
 	if (!node)
 		return ;
-  // 各ノードを再帰的に探索し、展開処理をしていく。
+	// 各ノードを再帰的に探索し、展開処理をしていく。
 	search_expandable_node(e, node->right);
 	search_expandable_node(e, node->left);
-　　　　// ノードが展開できない場合(&&,||など）、return
+	// ノードが展開できない場合(&&,||など）、return
 	if (node->type != COMMAND_ARG_NODE
 		&& node->type != REDIRECT_IN_NODE
 		&& node->type != REDIRECT_OUT_NODE
@@ -230,15 +230,15 @@ void	search_expandable_node(t_expander *e, t_ast_node *node)
 		return ;
 	original_right = node->right;
 	original_data = x_strdup(node->data);
-　　　　// 1.変数展開
+	// 1.変数展開
 	node->data = variable_expansion(e, node->data);
 	if (!is_empty_data(e, node, original_data))
 	{
-    // 2.文字分割
+    		// 2.文字分割
 		word_splitting(node, e, original_data, original_right);
-    // 3.ファイル名展開
+    		// 3.ファイル名展開
 		filename_expansion(node, e, original_data, original_right);
-    // 4.クオート(', ")除去
+    		// 4.クオート(', ")除去
 		quotes_removal(node, original_right);
 	}
 	free(original_data);
@@ -252,20 +252,20 @@ void	search_expandable_node(t_expander *e, t_ast_node *node)
 
 int	quotation_status(char c, int status)
 {
-  // 今読んでいる文字が　"　の場合
+  	// 今読んでいる文字が　"　の場合
 	if (c == '\"')
 	{
-    //　既に　"　の中にいる場合は、クオートから抜け出す
+   		//　既に　"　の中にいる場合は、クオートから抜け出す
 		if (status == IN_DOUBLE_QUOTE)
 			status = OUTSIDE;
-    //　既に　'　の中にいる場合は、'の中にいる状態を維持("を解釈しない)
+    		//　既に　'　の中にいる場合は、'の中にいる状態を維持("を解釈しない)
 		else if (status == IN_SINGLE_QUOTE)
 			status = IN_SINGLE_QUOTE;
-    // クオートの外にいる場合は、"の中に入る
+    		// クオートの外にいる場合は、"の中に入る
 		else
 			status = IN_DOUBLE_QUOTE;
 	}
-  // "と同様に状態を管理する
+  	// "と同様に状態を管理する
 	else if (c == '\'')
 	{
 		if (status == IN_DOUBLE_QUOTE)
@@ -275,7 +275,7 @@ int	quotation_status(char c, int status)
 		else
 			status = IN_SINGLE_QUOTE;
 	}
-　　　　// 現在の状態を返す
+　　　　	// 現在の状態を返す
 	return (status);
 }
 ```
@@ -325,7 +325,7 @@ int	execute_command_line(t_executor *e, t_ast_node *node)
 ```c
 void	new_redirect_in(t_simple_command *sc, char *data, t_node_type type)
 {
-		// 2個目以降のreadirect inの場合は`close()`
+	// 2個目以降のreadirect inの場合は`close()`
 	if (sc->r_in != UNSET_FD)
 		close(sc->r_in);
 	// 新しいファイルディスクリプターで上書き
