@@ -91,7 +91,8 @@ static bool	split_arg_node(char **split, t_ast_node *node,
 	{
 		if (i == 0)
 		{
-			if (node->type != COMMAND_ARG_NODE && ft_strcmp(split[i], expanded))
+			if (node->type != COMMAND_ARG_NODE && node->type != HEREDOC_NODE
+				&& ft_strcmp(split[i], expanded))
 				return (false);
 			free(node->data);
 			node->data = split[i];

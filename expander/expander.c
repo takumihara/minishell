@@ -13,11 +13,13 @@ static void	search_expandable_node(t_expander *e, t_ast_node *node)
 	if (node->type != COMMAND_ARG_NODE
 		&& node->type != REDIRECT_IN_NODE
 		&& node->type != REDIRECT_OUT_NODE
-		&& node->type != REDIRECT_APPEND_NODE)
+		&& node->type != REDIRECT_APPEND_NODE
+		&& node->type != HEREDOC_NODE)
 		return ;
 	original_right = node->right;
 	original_data = x_strdup(node->data);
-	node->data = variable_expansion(e, node->data);
+	if (node->type != HEREDOC_NODE)
+		node->data = variable_expansion(e, node->data);
 	if (!is_empty_data(e, node, original_data))
 	{
 		word_splitting(node, e, original_data, original_right);
