@@ -25,7 +25,7 @@ Used these versions during development.
 $ brew install readline
 ```
 
-1. installment of `minishell`
+2. installment of `minishell`
 
 ```bash
 $ git clone https://github.com/tacomea/minishell.git
