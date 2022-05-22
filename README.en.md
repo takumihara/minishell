@@ -1,31 +1,31 @@
-*English README is [here](https://github.com/tacomeet/minishell/blob/master/README.en.md)
+*日本語版はREADMEは[こちら](https://github.com/tacomeet/minishell/blob/master/README.md)
 
-## 概要
+## Summary
 
-GNU bash (version 3.2.57) の再実装です。
+A reimplementation of GNU bash (version 3.2.57).
 
-## デモ
+## Demo
 
 ![demo.gif](https://github.com/tacomeet/minishell/blob/master/gif/demo.gif?raw=true)
 
-## インストール方法
+## Installation
 
-### 必須
+### Requirement
 
 - GNU make (version 3.81)
 - GCC (Apple clang version 13.0.0)
 
-これらのバージョンを開発中に使用。
+Used these versions during development.
 
 ### Mac
 
-1. `readline` のインストール
+1. installment of `readline` 
 
 ```bash
 $ brew install readline
 ```
 
-2. `minishell` のインストール
+2. installment of `minishell`
 
 ```bash
 $ git clone https://github.com/tacomea/minishell.git
@@ -33,49 +33,49 @@ $ cd minishell
 $ make
 ```
 
-## 機能
+## Features
 
-- コマンド履歴を持つプロンプト
-- `-c` オプションまたは `|` を利用したコマンドとしての実行
-- ビルトインコマンド
-  - `echo` : `-n` オプション
-  - `cd` : 絶対／相対パス
-  - `pwd` : オプションなし
-  - `export` : オプションなし
-  - `unset`: オプションなし
-  - `env` : オプションなし
-  - `exit` : オプションなし
-- 引用符`'` `"` の解釈
-- リダイレクト
-  - `<` , `>` : 入出力リダイレクト
-  - `<<` : ヒアドキュメント
-  - `>>` : 追記モードでの出力リダイレクト
-- パイプ `|` : 各コマンドの出力と次のコマンドの入力を接続
-- サブシェル `()` : 括弧内のコマンドを別プロセスで処理
-- 変数展開 `$`
-  - `$(characters)` : 環境変数
-  - `$?` : 最後に実行したコマンドの終了ステータス
-- シグナル
-  - `ctrl-C` : 改行後、新しいプロンプトを表示
-  - `ctrl-D` : シェルを終了
-  - `ctrl-\` : 何もしない
-- 制御演算子
-  - `&&` : `cmd1 && cmd2` コマンド 1 が終了ステータス 0 で終了した場合のみ、コマンド 2 を実行
-  - `||` : `cmd1 || cmd2` コマンド 1 が終了ステータス 0 以外で終了した場合のみ、コマンド 2 を実行
-- ワイルドカード `*` : カレントディレクトリ内でのみ動作
-- 非対応
-  - 閉じられていない引用符
-  - `\` や `;` などの特殊な文字の解釈
+- prompt with command history
+- `-c` option or running command using `|`
+- builtin
+  - `echo` : `-n` option
+  - `cd` :  relative or absolute path
+  - `pwd` : no option
+  - `export` : no option
+  - `unset`: no option
+  - `env` : no option
+  - `exit` : no option
+- quotes `'` `"` 
+- redirections
+  - `<` , `>` : redirect input/output
+  - `<<` : here document
+  - `>>` : redirect output in append mode
+- pipes `|` 
+- subshell `()`
+- variables expansion `$`
+  - `$(characters)` : environment variable
+  - `$?` : exit status
+- signal
+  - `ctrl-C`
+  - `ctrl-D`
+  - `ctrl-\`
+- control operator
+  - `&&`
+  - `||`
+- wildcards `*` : only in current working directory
+- unsupported
+  - unclosed quotation marks
+  - interpretation of special characters such as `\` and `;`
 
-## 工夫した点
+## Where we worked hard
 
-### 全体
+### through project
 
-- 機能ごとにモジュールを分割し、依存関係を明確にした。各ディレクトリ内に `internal` ディレクトリを作成。外部モジュールの `internal` 内のヘッダーファイルは読み込まないようにした。
+- Split modules by their functionality and clarify dependencies. Created `internal` directory in each directory. Made sure not to include header files in `internal` of external modules.
 
 ### Lexer
 
-- 入力された文字列を解釈して各トークンに分割する際、後の Parser などでも解析しやすいように、トークンをリスト構造を用いて管理するようにした。
+- When interpreting the input string and dividing it into tokens, the tokens are managed using a linked-list so that they can be easily parsed later.
 
 ```c
 // lexer/lexer.c
@@ -89,18 +89,18 @@ t_token	*lex(char *input)
 	new_lexer(&l, input);
 	token.next = NULL;
 	tmp = &token;
-  	// read_char()関数で文字列を読み進めていく。
+  	// read_char() read through the string.
 	read_char(l);
 	while (1)
 	{
-    		// 解析した各トークンを、リストとして繋げていく。
+    		// Connect each analyzed token as a list
 		tmp->next = next_token(l);
 		if (tmp->next->type == EOL)
 			break ;
 		tmp = tmp->next;
 	}
 	free(l);
-  	// 作成したリストの先頭ポインタを返し、Parserに渡す。
+  	// Returns the first pointer of the created list and passes it to the Parser。
 	return (token.next);
 }
 ```
@@ -108,7 +108,7 @@ t_token	*lex(char *input)
 ```c
 // lexer/internal/lexer_internal.h
 
-// t_lexer　構造体で、解析している文字列の位置などを管理。
+// t_lexer manages the position of the string being parsed.
 typedef struct s_lexer
 {
 	char	*input;
@@ -121,7 +121,7 @@ typedef struct s_lexer
 
 // token/token.h
 
-// 各トークンのタイプや文字列を保持するリスト
+// t_token holds the type and string of each token
 typedef struct s_token {
 	enum e_token_type	type;
 	t_string			literal;
@@ -131,13 +131,13 @@ typedef struct s_token {
 
 ### Parser
 
-- BNF (バッカス・ナウア記法) で文法を記した上でそれに則った実装にすることで高い拡張性を実現
+- Achieved high extensibility by writing the grammar in BNF (Backus–Naur form) and implementing it accordingly.
 
 ```c
 // parser/minishell.bnf
-<command_line>	::= <pipeline> '&&' <newline> <command_line> //パターン1
-		|   <pipeline> '||' <newline> <command_line> //パターン2
-		|   <pipeline> //パターン3
+<command_line>	::= <pipeline> '&&' <newline> <command_line> //pattern 1
+		|   <pipeline> '||' <newline> <command_line> //pattern 2
+		|   <pipeline> //pattern 3
 
 <pipeline>	::=  <command> '|' <newline> <pipeline>
 		|    <command>
@@ -177,14 +177,14 @@ t_ast_node	*command_line(t_parser *p)
 	t_ast_node	*pipeline_;
 	t_ast_node	*commandline_;
 
-	// 一つ目の要素はpipelineなので、それを読み取る
+	// The first element is always a pipeline, so read it
 	if (!assign_ast_node(&pipeline_, pipeline(p)))
 		return (NULL);
-	// tokenが無ければパターン3なのでリターン
+	// If there is no token, it is pattern 3, so return
 	if (p->token->type == EOL)
 		return (pipeline_);
 	new_ast_node(&result);
-	// tokenが存在する場合は、パターン1か2で'&&','||'しかあり得ないのでそれを確認
+	// If a token exists, check it for pattern 1 or 2, which can only be '&&','||'.
 	if (consume_token(p, AND_IF, NULL))
 		result->type = AND_IF_NODE;
 	else if (consume_token(p, OR_IF, NULL))
@@ -194,13 +194,13 @@ t_ast_node	*command_line(t_parser *p)
 		p->err = ERR_UNEXPECTED_TOKEN;
 		return (delete_ast_nodes(pipeline_, result));
 	}
-	// 右側にくるcommand lineを読み取る。
+	// Read the command line.
 	if (!assign_ast_node(&commandline_, command_line(p)))
 	{
 		p->err = ERR_UNEXPECTED_EOF;
 		return (delete_ast_nodes(pipeline_, result));
 	}
-	// 二分木の左側にpipeline, 右側にcommand lineをセットしてreturn
+	// Set pipeline on the left side of the binary tree, command line on the right side, and return
 	set_ast_nodes(result, pipeline_, commandline_);
 	return (result);
 }
@@ -208,7 +208,7 @@ t_ast_node	*command_line(t_parser *p)
 
 ### Expander
 
-- [Bash のアーキテクチャ](https://www.aosabook.org/en/bash.html)に沿うように、Expander の各処理を分割し、Parser で解析された各ノードを展開。
+- Split each Expander process to follow [Bash's design](https://www.aosabook.org/en/bash.html) and expand each node parsed by Parser.
 
 ```c
 // expander/expander.c
@@ -218,13 +218,13 @@ void	search_expandable_node(t_expander *e, t_ast_node *node)
 	t_ast_node	*original_right;
 	char		*original_data;
 
-	// ノードの終端にたどり着いたらreturn
+	// When reached the end of the node, return
 	if (!node)
 		return ;
-	// 各ノードを再帰的に探索し、展開処理をしていく。
+	// Explore each node and perform the expansion process recursively.
 	search_expandable_node(e, node->right);
 	search_expandable_node(e, node->left);
-	// ノードが展開できない場合(&&,||など）、return
+	// If the node cannot be expanded (&&,|| etc.), return
 	if (node->type != COMMAND_ARG_NODE
 		&& node->type != REDIRECT_IN_NODE
 		&& node->type != REDIRECT_OUT_NODE
@@ -232,42 +232,41 @@ void	search_expandable_node(t_expander *e, t_ast_node *node)
 		return ;
 	original_right = node->right;
 	original_data = x_strdup(node->data);
-	// 1.変数展開
+	// 1.Variable Expansion
 	node->data = variable_expansion(e, node->data);
 	if (!is_empty_data(e, node, original_data))
 	{
-    		// 2.文字分割
+    		// 2.Word Splitting
 		word_splitting(node, e, original_data, original_right);
-    		// 3.ファイル名展開
+    		// 3.Filename Expansion
 		filename_expansion(node, e, original_data, original_right);
-    		// 4.クオート(', ")除去
+    		// 4.Quotes Removal
 		quotes_removal(node, original_right);
 	}
 	free(original_data);
 }
 ```
 
-- クオート`’`, `“`の内外で展開の可否が決まるため、解析している文字列の状態を管理するための関数を作成
+- Create a function to manage the state of the string being parsed.
 
 ```c
 // expander/internal/expander_utils.c
 
 int	quotation_status(char c, int status)
 {
-  	// 今読んでいる文字が　"　の場合
+  	// If the character you are reading is "
 	if (c == '\"')
 	{
-   		//　既に　"　の中にいる場合は、クオートから抜け出す
+   		//　If you are already in ", get out of the quote
 		if (status == IN_DOUBLE_QUOTE)
 			status = OUTSIDE;
-    		//　既に　'　の中にいる場合は、'の中にいる状態を維持("を解釈しない)
+    		//　If already in ', keep being in ' (do not interpret "")
 		else if (status == IN_SINGLE_QUOTE)
 			status = IN_SINGLE_QUOTE;
-    		// クオートの外にいる場合は、"の中に入る
+    		// If you are outside the quote, go inside the "
 		else
 			status = IN_DOUBLE_QUOTE;
 	}
-  	// "と同様に状態を管理する
 	else if (c == '\'')
 	{
 		if (status == IN_DOUBLE_QUOTE)
@@ -277,14 +276,13 @@ int	quotation_status(char c, int status)
 		else
 			status = IN_SINGLE_QUOTE;
 	}
-　　　　	// 現在の状態を返す
 	return (status);
 }
 ```
 
 ### Executor
 
-- Parser に揃えた再帰で実装し、可読性と拡張性の向上を目指した
+- Implemented Parser-aligned recursion to improve readability and extensibility
 
 ```c
 // execute/internal/execute_command_line.c
@@ -293,23 +291,23 @@ int	execute_command_line(t_executor *e, t_ast_node *node)
 {
 	t_ast_node	*pipeline_node;
 
-	// パターン1, 2('&&', '||'がある)時は、左のnodeを実行する
+	// When patterns 1 and 2 ('&&', '||' are present), the left node is executed
 	if (node->type == AND_IF_NODE || node->type == OR_IF_NODE)
 		pipeline_node = node->left;
 	else
 		pipeline_node = node;
-	// 1個前の終了ステータスを確認し、実行するかをチェックする
+	// Check the exit status of the previous one to see if it runs.
 	if (is_execute_condition(e->condition, e->exit_status))
 	{
-		// 全てパターンの左側のpipelineを評価・実行
+		// Evaluate and execute pipeline on left side
 		eval_pipeline(e, &e->pipeline, pipeline_node);
 		execute_pipeline(e, e->pipeline);
-		// 終了ステータスを設定
+		// Set exit status
 		register_env_var_from_literal("?", NULL, e->exit_status, e->env_vars);
-		// 不必要になったnodeを再帰的に`free()`と`close()`
+		// recursively `free()` and `close()` nodes that are no longer needed
 		delete_execute_list(e->pipeline, T_PIPELINE);
 	}
-	// パターン1, 2の時はconditionを設定して、右側のnodeを実行する
+	// When pattern 1 or 2 is used, set condition and execute the node on the right side
 	if (node->type == AND_IF_NODE || node->type == OR_IF_NODE)
 	{
 		if (node->type == AND_IF_NODE)
@@ -322,15 +320,15 @@ int	execute_command_line(t_executor *e, t_ast_node *node)
 }
 ```
 
-- リダイレクトが複数あった際に重複しているものは上書きするようにし、事後処理を楽にした
+- When there are multiple redirections, duplicate redirections are overwritten to ease post-processing.
 
 ```c
 void	new_redirect_in(t_simple_command *sc, char *data, t_node_type type)
 {
-	// 2個目以降のreadirect inの場合は`close()`
+	// close() the previous one if this is the second or subsequent input redirection
 	if (sc->r_in != UNSET_FD)
 		close(sc->r_in);
-	// 新しいファイルディスクリプターで上書き
+	// Overwrite with new file descriptor
 	if (type == REDIRECT_IN_NODE)
 	{
 		sc->r_in = open(data, O_RDONLY);
@@ -341,18 +339,18 @@ void	new_redirect_in(t_simple_command *sc, char *data, t_node_type type)
 			sc->err = REDIRECT_ERR;
 		}
 	}
-	// heredocの処理を行い、ファイルディスクリプターを上書き
+	// Process here doc and overwrite file descriptor
 	else if (type == HEREDOC_NODE)
 		sc->r_in = execute_heredoc(data);
 }
 ```
 
-## 著者
+## Authors
 
 - [tacomeet](https://github.com/tacomeet)
 - [moromin](https://github.com/moromin)
 
-## 参考サイト
+## Reference
 
 - The Architecture of Open Source Applications
   - [原文](https://www.aosabook.org/en/bash.html)
@@ -366,7 +364,7 @@ void	new_redirect_in(t_simple_command *sc, char *data, t_node_type type)
 - [Go 言語でつくるインタプリタ](https://www.oreilly.co.jp/books/9784873118222/)
 - [詳解UNIXプログラミング](https://www.amazon.co.jp/dp/B00KRB9U8K/ref=dp-kindle-redirect?_encoding=UTF8&btkr=1)
 
-## テスター
+## Tester
 
 [https://github.com/nafuka11/42_minishell_tester](https://github.com/nafuka11/42_minishell_tester)
 
