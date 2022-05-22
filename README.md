@@ -25,7 +25,7 @@ GNU bash (version 3.2.57) の再実装です。
 $ brew install readline
 ```
 
-1. `minishell` のインストール
+2. `minishell` のインストール
 
 ```bash
 $ git clone https://github.com/tacomea/minishell.git
